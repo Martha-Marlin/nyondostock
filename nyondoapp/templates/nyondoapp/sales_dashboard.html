@@ -1,0 +1,372 @@
+﻿{% load static %}
+<!-- 
+  WHAT THIS DOES: Tells Django to look for static files (CSS, images, JS) in your static folder.
+  WHY AT TOP: Must be loaded before using static tags.
+-->
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sales Dashboard</title>
+    <!-- Page title appears in browser tab -->
+
+    <!-- BOOTSTRAP CSS: Provides grid system, buttons, cards, spacing utilities -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- FONT AWESOME: Provides icons like shopping cart, warning signs, graphs -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+
+    <!-- GOOGLE FONTS: DM Sans gives modern, clean typography -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- YOUR CUSTOM CSS: Overrides/bootstrap customizations -->
+    <!-- The static tag tells Django: "Find this file in my static folder" -->
+    <link rel="stylesheet" href="{% static 'base.css' %}" />
+    <link rel="stylesheet" href="{% static 'sales_dashboard.css' %}" />
+  </head>
+  <body>
+    <!-- TOP NAVIGATION BAR -->
+    <nav class="topbar">
+      <!-- LEFT SIDE: Logo + Company Name -->
+      <div class="topbar-left">
+        <div class="logo">
+          <!-- STATIC IMAGE: Logo that appears on every page -->
+          <img
+            src="{% static 'images/logo-edit.png' %}"
+            alt="NyondoStock Logo"
+          />
+        </div>
+        <div>
+          <div class="brand-name">Nyondo Stock</div>
+          <div class="brand-sub">NYONDO General Hardware LTD</div>
+        </div>
+      </div>
+
+      <!-- RIGHT SIDE: User Info + Logout -->
+      <div class="topbar-right">
+        <!-- {{ user.username }}: Django context variable showing logged-in user's username -->
+        <span class="welcome">Welcome, {{ user.username }}</span>
+
+        <!-- {{ user.groups.first.name }}: Shows user's role (Sales Attendant, Manager, etc.) -->
+        <!-- |default:"Sales Attendant" : If user has NO group, show "Sales Attendant" as fallback -->
+        <span class="role"
+          >{{ user.groups.first.name|default:"Sales Attendant" }}</span
+        >
+
+        <!-- logout URL is defined in urls.py -->
+        <a href="{% url 'logout' %}" class="logout">Logout</a>
+      </div>
+    </nav>
+
+    <!-- MAIN LAYOUT  -->
+    <div class="container-fluid">
+      <div class="row">
+        <!-- SIDEBAR (LEFT COLUMN) -->
+        <!-- col-2: Takes 2 out of 12 Bootstrap columns (16.6% width) -->
+        <div class="col-2 bg-light min-vh-100 p-3 pt-4 d-flex flex-column">
+          <h6 class="text-muted">MENU</h6>
+          <ul class="nav flex-column">
+            <!-- ACTIVE LINK: Current page highlighted -->
+            <li class="nav-item mb-3">
+              <!-- sales_dashboard URL points to /sales-dashboard/ -->
+              <a href="{% url 'sales_dashboard' %}" class="nav-link active">
+                📊 Sales Dashboard
+              </a>
+            </li>
+
+            <!-- STOCK LINK: Visible but may be locked via CSS -->
+            <li class="nav-item mb-3">
+              <a href="{% url 'stock' %}" class="nav-link text-dark"
+                >📦 Stock</a
+              >
+            </li>
+
+            <!-- SALES LINK: Core page for sales attendant -->
+            <li class="nav-item mb-3">
+              <a href="{% url 'sales_list' %}" class="nav-link text-dark">🛒 Sales</a>
+            </li>
+
+            <!-- LOCKED NAV ITEMS: Visual indicator that user CAN'T access these -->
+            <!-- nav-locked class likely adds opacity and disables clicking -->
+            <li class="nav-item mb-3">
+              <a href="{% url 'suppliers' %}" class="nav-link nav-locked">🏭 Suppliers</a>
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'deposits' %}" class="nav-link nav-locked">💰 Deposits</a>
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'reports' %}" class="nav-link nav-locked">📈 Reports</a>
+            </li>
+          </ul>
+
+          <!-- LOW STOCK ALERT BOX: Shows warning without allowing edits -->
+          <div class="ns-alert-box mt-4">
+            <div class="ns-alert-title">⚠️ Low Stock</div>
+            <div class="ns-alert-body">15 items need attention</div>
+            <!-- Clicking takes them to stock page (view only) -->
+            <a href="{% url 'stock' %}" class="ns-alert-link">View →</a>
+          </div>
+
+          <!-- SIDEBAR FOOTER: Version and store info -->
+          <div class="sidebar-footer mt-auto pt-3">
+            <hr />
+            <small class="text-muted d-block mb-1">📦 NyondoStock v1.0</small>
+            <small class="text-muted d-block mb-1"
+              >🏪 NYONDO General Hardware</small
+            >
+            <small class="text-muted d-block">📅 April 2026</small>
+          </div>
+        </div>
+
+        <!-- MAIN CONTENT (RIGHT COLUMN) -->
+        <div class="sales-dashboard-main col-10 p-5">
+          <!-- PAGE HEADER -->
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <h4 class="mb-0">Sales Dashboard</h4>
+              <!-- HARDCODED DATE: Needs to be dynamic (will fix later) -->
+              <small class="text-muted">Wednesday, 09 April 2026</small>
+            </div>
+            <!-- PRIMARY ACTION BUTTON: Most important action for sales role -->
+            <a
+              href="{% url 'record_sales' %}"
+              class="btn btn-success btn-sm px-3"
+            >
+              + Record Sale
+            </a>
+          </div>
+
+          <!--STATISTICS CARDS ROW -->
+          <div class="row mb-4 g-3">
+            <!-- Card 1: Sales Today -->
+            <div class="col-12 col-sm-6 col-md-3">
+              <div class="stat-card">
+                <div class="stat-label">🛒 Sales Today</div>
+                <div class="stat-value">45</div>
+                <div class="stat-sub">transactions today</div>
+              </div>
+            </div>
+
+            <!-- Card 2: Pending Credits (warn variant = yellow highlight) -->
+            <div class="col-12 col-sm-6 col-md-3">
+              <div class="stat-card warn">
+                <div class="stat-label">⏳ Pending Credits</div>
+                <div class="stat-value">5</div>
+                <div class="stat-sub">credits outstanding</div>
+              </div>
+            </div>
+
+            <!-- Card 3: Low Stock Alerts (danger variant = red highlight) -->
+            <div class="col-12 col-sm-6 col-md-3">
+              <div class="stat-card danger">
+                <div class="stat-label">⚠️ Low Stock Alerts</div>
+                <div class="stat-value">15</div>
+                <div class="stat-sub">items need restocking</div>
+              </div>
+            </div>
+
+            <!-- Card 4: Revenue Today (soft variant = teal highlight) -->
+            <div class="col-12 col-sm-6 col-md-3">
+              <div class="stat-card soft">
+                <div class="stat-label">💰 Revenue Today</div>
+                <div class="stat-value">UGX 2.3M</div>
+                <div class="stat-sub">total sales value</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TWO COLUMN LAYOUT (Sales Table + Stock Check) -->
+          <div class="row g-3">
+            <!-- LEFT COLUMN: Recent Sales Table -->
+            <div class="col-md-6">
+              <div class="dashboard-list-card">
+                <div class="dashboard-list-header">
+                  <h5>My Sales Today</h5>
+                  <!-- # placeholder - will connect to sales list page later -->
+                  <a href="{% url 'sales_list' %}" class="small text-success fw-semibold"
+                    >View all →</a
+                  >
+                </div>
+                <div class="table-responsive">
+                  <table class="table dashboard-table mb-0">
+                    <thead>
+                      <tr>
+                        <th>Customer</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- HARDCODED DATA: These will come from database later -->
+                      <tr>
+                        <td>John Katongole</td>
+                        <td class="text-end">UGX 500,000</td>
+                        <td><span class="status-badge b-green">Paid</span></td>
+                      </tr>
+                      <tr>
+                        <td>Sarah Nakato</td>
+                        <td class="text-end">UGX 1,200,000</td>
+                        <td>
+                          <span class="status-badge b-yellow">Pending</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>David Ssentongo</td>
+                        <td class="text-end">UGX 800,000</td>
+                        <td><span class="status-badge b-red">Credit</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- RIGHT COLUMN: Stock Check Table -->
+            <div class="col-md-6">
+              <div class="dashboard-list-card">
+                <div class="dashboard-list-header">
+                  <h5>Stock Check</h5>
+                  <a
+                    href="{% url 'stock' %}"
+                    class="small text-success fw-semibold"
+                    >View all →</a
+                  >
+                </div>
+                <div class="table-responsive">
+                  <table class="table dashboard-table mb-0">
+                    <thead>
+                      <tr>
+                        <th>Item</th>
+                        <th>Qty</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- STATUS COLORS: b-green=good, b-yellow=low, b-red=out -->
+                      <tr>
+                        <td>Roofing Nails 5mm</td>
+                        <td>8</td>
+                        <td><span class="status-badge b-yellow">Low</span></td>
+                      </tr>
+                      <tr>
+                        <td>Cement (50kg)</td>
+                        <td>0</td>
+                        <td><span class="status-badge b-red">Out</span></td>
+                      </tr>
+                      <tr>
+                        <td>Steel Bars 12mm</td>
+                        <td>20</td>
+                        <td>
+                          <span class="status-badge b-green">In Stock</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>IronSheet 32g</td>
+                        <td>45</td>
+                        <td>
+                          <span class="status-badge b-green">In Stock</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- QUICK ACTIONS BUTTONS -->
+          <div class="mt-4">
+            <h6 class="text-muted mb-3">QUICK ACTIONS</h6>
+            <div class="row g-3">
+              <div class="col">
+                <a href="{% url 'record_sales' %}" class="ns-qa-btn primary">+ Record Sale</a>
+              </div>
+              <div class="col">
+                <a href="#" class="ns-qa-btn">Issue Receipt</a>
+              </div>
+              <div class="col">
+                <a href="{% url 'stock' %}" class="ns-qa-btn">Check Stock</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- RECENT ACTIVITY + SUMMARY -->
+          <div class="mt-4">
+            <div class="row g-3">
+              <!-- Recent Activity Feed -->
+              <div class="col-md-8">
+                <div class="dashboard-list-card">
+                  <div class="dashboard-list-header">
+                    <h5>Recent Activity</h5>
+                    <span class="text-muted small">Today</span>
+                  </div>
+                  <div class="table-responsive mt-3">
+                    <table class="table dashboard-table mb-0">
+                      <tbody>
+                        <tr>
+                          <td>Sale recorded - John Katongole</td>
+                          <td class="text-end">UGX 500,000</td>
+                          <td>
+                            <span class="status-badge b-green">Paid</span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Credit issued - David Ssentongo</td>
+                          <td class="text-end">UGX 800,000</td>
+                          <td>
+                            <span class="status-badge b-yellow">Pending</span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Stock updated - Steel Bars</td>
+                          <td class="text-end">+20 units</td>
+                          <td>
+                            <span class="status-badge b-green">Done</span>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Today's Summary Card -->
+              <div class="col-md-4">
+                <div
+                  class="dashboard-list-card d-flex flex-column justify-content-center"
+                >
+                  <h6 class="text-muted mb-3">TODAY'S SUMMARY</h6>
+                  <p class="mb-2">🛒 <strong>45 sales</strong></p>
+                  <p class="mb-2">💰 <strong>UGX 2.3M revenue</strong></p>
+                  <p class="mb-0">⚠️ <strong>15 low stock items</strong></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PERMISSION NOTE: Explains why certain links are locked -->
+
+          <div class="lock-note mt-3">
+            Suppliers, Deposits and Reports are not accessible to Sales
+            Attendants. Visible to Store Manager and Accounts/Admin only.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOOTSTRAP JAVASCRIPT: Required for interactive components (dropdowns, modals, etc.) -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"></script>
+  </body>
+</html>

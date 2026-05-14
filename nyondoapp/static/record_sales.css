@@ -1,0 +1,469 @@
+/* GLOBAL RESET */
+body {
+  margin: 0;
+  padding: 0;
+  background: #fff;
+  color: #111;
+  font-family: "DM Sans", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 16px;
+}
+
+/* TOPBAR CONTAINER */
+.topbar {
+  background: #1d9e75;
+  height: 64px;
+  padding: 0 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 12px rgba(15, 110, 86, 0.18);
+}
+
+/* TOPBAR LEFT SIDE */
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* LOGO CIRCLE */
+.logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* LOGO IMAGE */
+.logo img {
+  width: 42px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* COMPANY NAME */
+.brand-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+}
+
+/* COMPANY SUBTITLE */
+.brand-sub {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* TOPBAR RIGHT SIDE */
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* WELCOME MESSAGE */
+.welcome {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* USER ROLE BADGE */
+.role {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+}
+
+/* LOGOUT BUTTON */
+.logout {
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 7px;
+  text-decoration: none;
+}
+
+/* LOGOUT BUTTON HOVER */
+.logout:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+/* SIDEBAR BACKGROUND */
+.bg-light {
+  background: #f8f9fa !important;
+  border-right: 0;
+}
+
+/* SIDEBAR FULL HEIGHT */
+.bg-light.min-vh-100 {
+  min-height: calc(100vh - 64px) !important;
+}
+
+/* MUTED TEXT COLOR */
+.text-muted {
+  color: #6c757d !important;
+}
+
+/* NAVIGATION LINKS */
+.nav-link {
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 16px;
+  border-left: 4px solid transparent;
+  color: #212529;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+/* NAVIGATION LINK DARK TEXT */
+.nav-link.text-dark {
+  color: #212529 !important;
+}
+
+/* NAVIGATION LINKS HOVER */
+.nav-link:hover {
+  background: #f0f8f0;
+  border-left-color: #9fe1cb;
+  color: #0f6e56 !important;
+  transform: translateX(2px);
+}
+
+/* ACTIVE NAVIGATION LINK */
+.bg-light .nav-link.active {
+  background: #e6f5ee !important;
+  border-left-color: #1d9e75;
+  color: #0f6e56 !important;
+  font-weight: 600;
+}
+
+/* LOCKED NAVIGATION (RESTRICTED ACCESS) */
+.nav-locked {
+  color: #b0c4b0 !important;
+  cursor: not-allowed;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* MAIN CONTENT BACKGROUND */
+main.col-10 {
+  background: #fff;
+}
+
+/* BACK LINK (RETURN TO DASHBOARD) */
+.back-link {
+  color: #1d9e75;
+  display: block;
+  font-size: 15px;
+  margin-bottom: 12px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1280px;
+  text-decoration: none;
+  width: 100%;
+}
+
+/* BACK LINK HOVER */
+.back-link:hover {
+  color: #0f6e56;
+}
+
+/* PAGE TITLE CONTAINER */
+.page-title {
+  margin: 0 auto 18px;
+  max-width: 1280px;
+}
+
+/* PAGE TITLE HEADING */
+.page-title h4 {
+  color: #142e1a;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+/* PAGE TITLE DATE */
+.page-title small {
+  color: #6c757d;
+  font-size: 15px;
+}
+
+/* SALES FORM CONTAINER */
+.sales-form {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1280px;
+}
+
+/* REQUIRED FIELDS NOTE */
+.required-note {
+  color: #ff6b6b;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+/* FORM SECTIONS (CUSTOMER, ITEMS, PAYMENT) */
+.form-section,
+.summary-section {
+  background: #fff;
+  border: 1px solid #e6efe9;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(15, 110, 86, 0.05);
+  margin-bottom: 16px;
+  padding: 22px;
+}
+
+/* FORM SECTION HEADINGS */
+.form-section h6,
+.summary-section h6 {
+  border-bottom: 1px solid #e6efe9;
+  color: #142e1a;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 14px;
+  padding-bottom: 9px;
+}
+
+/* FORM LABELS */
+.form-label {
+  color: #5c7a64;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* FORM INPUTS AND SELECTS */
+.form-control,
+.form-select {
+  background-color: #fff;
+  border: 1px solid #dce7dd;
+  border-radius: 5px;
+  color: #111;
+  font-size: 15px;
+  min-height: 44px;
+}
+
+/* FORM INPUTS FOCUS STATE */
+.form-control:focus,
+.form-select:focus {
+  background-color: #fff;
+  border-color: #1d9e75;
+  box-shadow: 0 0 0 0.18rem rgba(29, 158, 117, 0.22);
+  color: #111;
+}
+
+/* FORM INPUTS PLACEHOLDER */
+.form-control::placeholder {
+  color: #9aad9a;
+}
+
+/* READONLY INPUTS (AUTO-FILLED FIELDS) */
+.form-control[readonly] {
+  background: #f7f9f7;
+  border-color: #dce7dd;
+  color: #0f6e56;
+  opacity: 1;
+}
+
+/* FIELD HELPER TEXT */
+.field-help {
+  color: #7a907a;
+  font-size: 13px;
+  margin: 8px 0 0;
+}
+
+/* ADD ANOTHER ITEM LINK */
+.add-item-link {
+  color: #1d9e75;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 8px;
+  text-decoration: none;
+}
+
+/* TRANSPORT SECTION (SPECIAL BACKGROUND) */
+.transport-section {
+  background: #fffbf0;
+  border-color: #f7d58a;
+  color: #142e1a;
+}
+
+/* TRANSPORT SECTION TEXT COLORS */
+.transport-section h6,
+.transport-section .form-label,
+.transport-section .field-help {
+  color: #3b3322;
+}
+
+/* TRANSPORT NOTE BOX */
+.transport-note {
+  background: #fff;
+  border-radius: 5px;
+  color: #855000;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  padding: 8px 10px;
+}
+
+/* TRANSPORT CHARGE RESULT BOX */
+.transport-result {
+  background: #e6f5ee;
+  border: 1px solid #9fe1cb;
+  border-radius: 6px;
+  color: #0f6e56;
+  min-height: 58px;
+  padding: 10px;
+  text-align: center;
+}
+
+/* TRANSPORT CHARGE LABEL */
+.transport-result span {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* TRANSPORT CHARGE VALUE */
+.transport-result strong {
+  display: block;
+  font-size: 22px;
+}
+
+/* ORDER SUMMARY ROW */
+.summary-line {
+  align-items: center;
+  border-bottom: 1px solid #e6efe9;
+  display: flex;
+  justify-content: space-between;
+  padding: 7px 0;
+}
+
+/* ORDER SUMMARY TEXT */
+.summary-line span,
+.summary-line strong {
+  color: #142e1a;
+  font-size: 15px;
+}
+
+/* TOTAL ROW (NO BORDER, LARGER TEXT) */
+.summary-line.total {
+  border-bottom: 0;
+}
+
+/* TOTAL ROW TEXT */
+.summary-line.total span,
+.summary-line.total strong {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* FORM ACTION BUTTONS CONTAINER */
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-bottom: 24px;
+}
+
+/* BASE BUTTON STYLES */
+.btn {
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 9px 18px;
+}
+
+/* SUCCESS BUTTON (SAVE SALE) */
+.btn-success {
+  background: #1d9e75;
+  border-color: #1d9e75;
+}
+
+/* SUCCESS BUTTON HOVER */
+.btn-success:hover,
+.btn-outline-success:hover {
+  background: #148764;
+  border-color: #148764;
+}
+
+/* OUTLINE SUCCESS BUTTON (SAVE & PRINT) */
+.btn-outline-success {
+  border-color: #1d9e75;
+  color: #1d9e75;
+}
+
+/* OUTLINE SECONDARY BUTTON (CANCEL) */
+.btn-outline-secondary {
+  border-color: #d5e0d5;
+  color: #2a3e2a;
+}
+
+/* OUTLINE SECONDARY BUTTON HOVER */
+.btn-outline-secondary:hover {
+  background: #f7f9f7;
+  border-color: #9fe1cb;
+  color: #0f6e56;
+}
+
+/* RESPONSIVE: TABLET AND MOBILE */
+@media (max-width: 900px) {
+  /* STACK SIDEBAR AND MAIN CONTENT */
+  .col-2,
+  .col-10 {
+    flex: 0 0 100%;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  /* SIDEBAR BECOMES DYNAMIC HEIGHT */
+  aside.position-relative {
+    min-height: auto !important;
+  }
+
+  /* HIDE SIDEBAR FOOTER ON MOBILE */
+  aside .position-absolute {
+    display: none;
+  }
+
+  /* STACK TOPBAR CONTENT */
+  .topbar {
+    height: auto;
+    padding: 14px;
+    gap: 12px;
+  }
+
+  /* STACK TOPBAR RIGHT ITEMS VERTICALLY */
+  .topbar,
+  .topbar-right {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  /* BUTTONS STACK FULL WIDTH */
+  .form-actions {
+    justify-content: stretch;
+  }
+
+  /* BUTTONS TAKE FULL WIDTH ON MOBILE */
+  .form-actions .btn {
+    flex: 1 1 100%;
+  }
+}

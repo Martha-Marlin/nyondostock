@@ -1,0 +1,212 @@
+/* applies everywhere */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "DM Sans", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #111;
+}
+/* Topbar: Green navigation bar at the top */
+.topbar {
+  background: #1d9e75;
+  height: 64px;
+  padding: 0 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 12px rgba(15, 110, 86, 0.18);
+}
+/* left side of the top bar */
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+/* The Logo and the company name */
+.logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* The logo edits */
+.logo img {
+  width: 42px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+/* Company Name edits */
+.brand-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+}
+/* subtitle below the the company */
+.brand-sub {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.72);
+}
+/* the right side with the welcome text, the log out button */
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+/* the welcome text edits */
+.welcome {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+}
+/* the role of the employee  */
+.role {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+}
+/* log out button */
+.logout {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  font-size: 12px;
+  font-family: "DM Sans", sans-serif;
+  padding: 6px 14px;
+  border-radius: 7px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s; 
+}
+.logout:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+.ns-sidebar {
+  min-height: calc(100vh - 64px);
+  position: relative;
+}
+/* nav links: rounded padding */
+.nav-link {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border-left: 4px solid transparent;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+/* Hovering state */
+.nav-link:hover {
+  background-color: #f0f8f0;
+  color: #0f6e56 !important;
+  border-left-color: #9fe1cb;
+  transform: translateX(2px);
+}
+/* active links */
+.bg-light .nav-link.active {
+  background-color: #e6f5ee !important;
+  color: #0f6e56 !important;
+  border-left-color: #1d9e75;
+  font-weight: 600;
+}
+/* edits on all the cards  */
+.card{
+  min-height: 120px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important; 
+  transition: all 0.2s ease;
+}
+
+/* card hovering effect  */
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  transform: translateY(-3px);
+}
+/* Applies on all the stat cards */
+.stat-card {
+  background: #fff;
+  border: 1px solid #e0e8e0;
+  border-radius: 11px;
+  padding: 1.2rem 1.3rem;
+  border-top: 4px solid #1d9e75;
+  transition: box-shadow 0.15s;
+  height: 100%;
+}
+.stat-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+/* warn Variant to caution */
+.stat-card.warn {
+  border-top-color: #ef9f27;
+}
+/* danger variant critical */
+.stat-card.danger {
+  border-top-color: #e24b4a;
+}
+/* soft variant for neutral */
+.stat-card.soft {
+  border-top-color: #9fe1cb;
+}
+/* stat labels */
+.stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #7a907a;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+/* stat values */
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #142e1a;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+/* stat sub the small description below the number */
+.stat-sub {
+  font-size: 11.5px;
+  color: #a0b8a0;
+  margin-top: 4px;
+}
+/* applies on all the badges */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+/* green badge for paid, deposited*/
+.b-green {
+  background: #e6f5ee;
+  color: #0f6e56;
+}
+/* yellow badge for pending, low stock, due soon  */
+.b-yellow {
+  background: #fff4e0;
+  color: #854f0b;
+}
+/* red badge credit, out of stock, overdue */
+.b-red {
+  background: #fdeaea;
+  color: #a32d2d;
+}
+/* Table cells  */
+.table td {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  vertical-align: middle;
+}

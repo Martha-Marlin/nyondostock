@@ -1,0 +1,485 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ supplier.supplier_name }} - Credit Detail | NyondoStock</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{% static 'base.css' %}" />
+    <style>
+      .stat-card { background: #fff; border-radius: 10px; padding: 20px; border-top: 4px solid #1D9E75; box-shadow: 0 1px 6px rgba(0,0,0,0.07); }
+      .stat-card.warn { border-top-color: #f59e0b; }
+      .stat-card.danger { border-top-color: #ef4444; }
+      .stat-label { font-size: 0.7rem; font-weight: 600; color: #6b7280; letter-spacing: 0.05em; text-transform: uppercase; }
+      .stat-value { font-size: 1.5rem; font-weight: 700; color: #111827; margin: 4px 0; }
+      .stat-sub { font-size: 0.75rem; color: #9ca3af; }
+      .credit-card { background: #fff; border-radius: 10px; box-shadow: 0 1px 6px rgba(0,0,0,0.07); margin-bottom: 16px; border-left: 4px solid #1D9E75; }
+      .credit-card.unpaid { border-left-color: #ef4444; }
+      .credit-card.partial { border-left-color: #f59e0b; }
+      .credit-card.cleared { border-left-color: #1D9E75; }
+      .credit-card-header { padding: 16px 20px; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center; }
+      .credit-card-body { padding: 16px 20px; }
+      .progress { height: 8px; border-radius: 4px; }
+      .badge-unpaid { background: #fee2e2; color: #dc2626; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+      .badge-partial { background: #fef3c7; color: #d97706; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+      .badge-cleared { background: #d1fae5; color: #059669; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+      .payment-row { font-size: 0.85rem; padding: 8px 0; border-bottom: 1px solid #f9fafb; }
+      .payment-row:last-child { border-bottom: none; }
+      .back-link { color: #1D9E75; text-decoration: none; font-size: 0.85rem; display: inline-block; margin-bottom: 16px; }
+      .back-link:hover { color: #157a5a; }
+      .page-title { margin-bottom: 24px; }
+      .page-title h4 { font-weight: 700; color: #111827; margin-bottom: 2px; }
+      .supplier-meta { background: #fff; border-radius: 10px; padding: 16px 20px; box-shadow: 0 1px 6px rgba(0,0,0,0.07); margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+      .supplier-meta-left { display: flex; flex-direction: column; gap: 4px; }
+      .supplier-meta-right { display: flex; gap-8px; }
+    </style>
+  </head>
+  <body>
+    <!-- TOPBAR -->
+    <nav class="topbar">
+      <div class="topbar-left">
+        <div class="logo">
+          <img
+            src="{% static 'images/logo-edit.png' %}"
+            alt="NyondoStock Logo"
+          />
+        </div>
+        <div>
+          <div class="brand-name">Nyondo Stock</div>
+          <div class="brand-sub">NYONDO General Hardware LTD</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span class="welcome">Welcome, {{ user.username }}</span>
+        <span class="role"
+          >{{ user.groups.first.name|default:"Store Manager" }}</span
+        >
+        <a href="{% url 'logout' %}" class="logout">Logout</a>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <!-- SIDEBAR -->
+        <aside class="col-2 bg-light min-vh-100 p-3 pt-4 position-relative">
+          <h6 class="text-muted">MENU</h6>
+          <ul class="nav flex-column">
+            <li class="nav-item mb-3">
+              <a href="{% url 'dashboard' %}" class="nav-link text-dark"
+                >📊 Dashboard</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'stock' %}" class="nav-link text-dark"
+                >📦 Stock</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'sales_list' %}" class="nav-link text-dark"
+                >🛒 Sales</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'suppliers' %}" class="nav-link active"
+                >🏭 Suppliers</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'deposits' %}" class="nav-link text-dark"
+                >💰 Deposits</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'reports' %}" class="nav-link text-dark"
+                >📈 Reports</a
+              >
+            </li>
+          </ul>
+          <div class="position-absolute bottom-0 start-0 p-3 w-100">
+            <hr />
+            <small class="text-muted d-block mb-1">📦 NyondoStock v1.0</small>
+            <small class="text-muted d-block mb-1"
+              >🏪 NYONDO General Hardware</small
+            >
+            <small class="text-muted d-block">📅 May 2026</small>
+          </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="col-10 p-4 p-lg-5">
+          <a href="{% url 'suppliers' %}" class="back-link"
+            >← Back to Suppliers</a
+          >
+
+          <!-- PAGE TITLE -->
+          <div class="page-title">
+            <h4>{{ supplier.supplier_name }}</h4>
+            <small class="text-muted">Credit Detail</small>
+          </div>
+
+          <!-- SUPPLIER META CARD -->
+          <div class="supplier-meta">
+         <div class="supplier-meta-left">
+    <span><i class="fa-solid fa-phone me-2 text-muted"></i>{{ supplier.phone }}</span>
+    {% if supplier.tin_number %}<span><i class="fa-solid fa-id-card me-2 text-muted"></i>{{ supplier.tin_number }}</span>{% endif %}
+    {% if supplier.email %}<span><i class="fa-solid fa-envelope me-2 text-muted"></i>{{ supplier.email }}</span>{% endif %}
+    {% if supplier.location %}<span><i class="fa-solid fa-location-dot me-2 text-muted"></i>{{ supplier.location }}</span>{% endif %}
+</div>
+            <div class="d-flex align-items-center gap-3">
+              <span>
+                Status:
+                <span
+                  class="ms-1 {% if supplier.status == 'Active' %}badge-cleared{% elif supplier.status == 'Credits Due' %}badge-partial{% else %}badge-unpaid{% endif %}"
+                >
+                  {{ supplier.status }}
+                </span>
+              </span>
+              <span
+                >Payment Terms:
+                <strong>{{ supplier.payment_terms }} days</strong></span
+              >
+            </div>
+          </div>
+
+          <!-- MESSAGES -->
+          {% if messages %}
+          <div class="mb-3">
+            {% for message in messages %}
+            <div
+              class="alert alert-{{ message.tags }} alert-dismissible fade show"
+              role="alert"
+            >
+              {{ message }}
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+              ></button>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          <!-- STAT CARDS -->
+          <div class="row g-3 mb-4">
+            <div class="col-md-3">
+              <div class="stat-card">
+                <div class="stat-label">📋 Total Credits</div>
+                <div class="stat-value">{{ credits.count }}</div>
+                <div class="stat-sub">all time</div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="stat-card danger">
+                <div class="stat-label">💸 Total Owed</div>
+                <div class="stat-value">UGX {{ total_owed|floatformat:0 }}</div>
+                <div class="stat-sub">across all credits</div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="stat-card warn">
+                <div class="stat-label">⏳ Outstanding</div>
+                <div class="stat-value">
+                  UGX {{ total_outstanding|floatformat:0 }}
+                </div>
+                <div class="stat-sub">
+                  {{ unpaid_count }} unpaid · {{ partial_count }} partial
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="stat-card">
+                <div class="stat-label">✅ Total Paid</div>
+                <div class="stat-value">UGX {{ total_paid|floatformat:0 }}</div>
+                <div class="stat-sub">across all credits</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CREDIT HISTORY HEADER -->
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0">Credit History</h5>
+            <button
+              class="btn btn-success btn-sm px-3"
+              data-bs-toggle="modal"
+              data-bs-target="#addCreditModal"
+            >
+              + Add Credit
+            </button>
+          </div>
+
+          <!-- CREDITS LIST -->
+          {% for credit in credits %}
+          <div class="credit-card {{ credit.status|lower }}">
+            <div class="credit-card-header">
+              <div>
+                <strong>Credit #{{ credit.id }}</strong>
+                <span class="text-muted ms-2" style="font-size: 0.85rem"
+                  >{{ credit.created_at|date:"d M Y" }}</span
+                >
+              </div>
+              <div class="d-flex align-items-center gap-3">
+                <span style="font-size: 0.85rem"
+                  >Due:
+                  <strong>{{ credit.due_date|date:"d M Y" }}</strong></span
+                >
+                {% if credit.status == 'Unpaid' %}
+                <span class="badge-unpaid">Unpaid</span>
+                {% elif credit.status == 'Partial' %}
+                <span class="badge-partial">Partial</span>
+                {% else %}
+                <span class="badge-cleared">Cleared</span>
+                {% endif %}
+              </div>
+            </div>
+            <div class="credit-card-body">
+              <p class="text-muted mb-3" style="font-size: 0.9rem">
+                {{ credit.description }}
+              </p>
+
+              <!-- PROGRESS BAR -->
+              <div
+                class="d-flex justify-content-between mb-1"
+                style="font-size: 0.8rem"
+              >
+                <span>Paid: UGX {{ credit.amount_paid|floatformat:0 }}</span>
+                <span>Total: UGX {{ credit.total_amount|floatformat:0 }}</span>
+              </div>
+              {% if credit.total_amount > 0 %}
+              <div class="progress mb-3">
+                <div
+                  class="progress-bar bg-success"
+                  style="width: {% widthratio credit.amount_paid credit.total_amount 100 %}%"
+                ></div>
+              </div>
+              {% endif %}
+
+              <div class="d-flex justify-content-between align-items-center">
+                <span style="font-size: 0.85rem"
+                  >Balance Due:
+                  <strong class="text-danger"
+                    >UGX {{ credit.balance_due|floatformat:0 }}</strong
+                  ></span
+                >
+                {% if credit.status != 'Cleared' %}
+                <button
+                  class="btn btn-outline-success btn-sm"
+                  data-bs-toggle="modal"
+                  data-bs-target="#payModal{{ credit.id }}"
+                >
+                  Record Payment
+                </button>
+                {% endif %}
+              </div>
+
+              <!-- PAYMENT HISTORY -->
+              {% if credit.payments.all %}
+              <div class="mt-3 pt-3 border-top">
+                <small class="text-muted fw-semibold d-block mb-2"
+                  >Payment History</small
+                >
+                {% for payment in credit.payments.all %}
+                <div
+                  class="payment-row d-flex justify-content-between align-items-center"
+                >
+                <span class="text-muted">{{ payment.paid_at|date:"d M Y" }} · {{ payment.payment_method }}{% if payment.reference_number %} · Ref: {{ payment.reference_number }}{% endif %}{% if payment.note %} · {{ payment.note }}{% endif %}</span> 
+                  <strong class="text-success"
+                    >UGX {{ payment.amount|floatformat:0 }}</strong
+                  >
+                </div>
+                {% endfor %}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- RECORD PAYMENT MODAL for this credit -->
+          <div class="modal fade" id="payModal{{ credit.id }}" tabindex="-1">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">
+                    Record Payment — Credit #{{ credit.id }}
+                  </h5>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                  ></button>
+                </div>
+                <form
+                  method="POST"
+                  action="{% url 'record_credit_payment' credit.id %}"
+                >
+                  {% csrf_token %}
+                  <div class="modal-body">
+                    <div class="mb-3">
+                      <label class="form-label">Amount (UGX) *</label>
+                      <input
+                        type="number"
+                        name="amount"
+                        class="form-control"
+                        min="1"
+                        max="{{ credit.balance_due }}"
+                        required
+                      />
+                      <small class="text-muted"
+                        >Balance due: UGX {{ credit.balance_due|floatformat:0
+                        }}</small
+                      >
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Payment Method *</label>
+                      <select
+                        name="payment_method"
+                        class="form-select"
+                        required
+                      >
+                        <option value="Cash">Cash</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                        <option value="Cheque">Cheque</option>
+                        <option value="Mobile Money">Mobile Money</option>
+                      </select>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Reference Number</label>
+                      <input
+                        type="text"
+                        name="reference_number"
+                        class="form-control"
+                        placeholder="e.g. cheque no. or transfer ID"
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Note</label>
+                      <textarea
+                        name="note"
+                        class="form-control"
+                        rows="2"
+                      ></textarea>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      data-bs-dismiss="modal"
+                    >
+                      Cancel
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                      Save Payment
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div class="text-center text-muted py-5">
+            <i class="fa-solid fa-file-invoice fa-2x mb-3 d-block"></i>
+            <p>No credits recorded for this supplier yet.</p>
+            <button
+              class="btn btn-success btn-sm"
+              data-bs-toggle="modal"
+              data-bs-target="#addCreditModal"
+            >
+              + Add First Credit
+            </button>
+          </div>
+          {% endfor %}
+        </main>
+      </div>
+    </div>
+
+    <!-- ADD CREDIT MODAL -->
+    <div class="modal fade" id="addCreditModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              Add Credit — {{ supplier.supplier_name }}
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <form
+            method="POST"
+            action="{% url 'add_supplier_credit' supplier.id %}"
+          >
+            {% csrf_token %}
+            <div class="modal-body">
+              <div class="mb-3">
+                <label class="form-label">Description *</label>
+                <textarea
+                  name="description"
+                  class="form-control"
+                  rows="3"
+                  placeholder="e.g. 50 iron sheets gauge 28, 10 bags cement..."
+                  required
+                ></textarea>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Total Amount (UGX) *</label>
+                <input
+                  type="number"
+                  name="total_amount"
+                  class="form-control"
+                  min="1"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Due Date *</label>
+                <input
+                  type="date"
+                  name="due_date"
+                  class="form-control"
+                  required
+                />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="btn btn-success">Save Credit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
+      integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
