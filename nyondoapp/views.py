@@ -6,7 +6,7 @@ from datetime import datetime
 from decimal import Decimal
 from django.db.models import Q, Sum, F
 from django.contrib.auth.decorators import login_required
-from .models import StockItem, Sale, SaleItem, Supplier, SupplierTransaction, SupplierCredit, SupplierCreditPayment
+from .models import StockItem, Sale, SaleItem, Supplier, SupplierTransaction, SupplierCredit, SupplierCreditPayment, Customer
 
 
 # LOGIN VIEW
@@ -654,3 +654,49 @@ def record_credit_payment_view(request, credit_id):
         return redirect('supplier_credit_detail', supplier_id=supplier.id)
 
     return redirect('supplier_credit_detail', supplier_id=credit.supplier.id)
+
+ # CUSTOMER VIEWS
+ # These views handle customer registration and listing, but are not fully implemented yet
+@login_required(login_url='login')
+def customers_view(request):
+    return redirect('register_customer')
+
+# REGISTER CUSTOMER VIEW
+@login_required(login_url='login')
+def register_customer_view(request):
+    if request.method == 'POST':
+        full_name = request.POST.get('full_name', '').strip()
+        phone_number = request.POST.get('phone_number', '').strip()
+        nin = request.POST.get('nin', '').strip().upper()
+        area = request.POST.get('area', '').strip() or None
+        notes = request.POST.get('notes', '').strip() or None
+
+        # VALIDATE NIN LENGTH
+        if len(nin) != 14:
+            messages.error(request, 'NIN must be exactly 14 characters.')
+            return render(request, 'nyondoapp/register_customer.html')
+
+        # CHECK IF NIN ALREADY EXISTS
+        if Customer.objects.filter(nin=nin).exists():
+            messages.error(request, f'A customer with NIN {nin} is already registered.')
+            return render(request, 'nyondoapp/register_customer.html')
+
+        # CHECK IF PHONE ALREADY EXISTS
+        if Customer.objects.filter(phone_number=phone_number).exists():
+            messages.error(request, 'A customer with this phone number is already registered.')
+            return render(request, 'nyondoapp/register_customer.html')
+
+        # SAVE THE CUSTOMER
+        Customer.objects.create(
+            full_name=full_name,
+            phone_number=phone_number,
+            nin=nin,
+            area=area,
+            notes=notes,
+            registered_by=request.user,
+        )
+
+        messages.success(request, f'{full_name} registered successfully!')
+        return redirect('customers')
+
+    return render(request, 'nyondoapp/register_customer.html')

@@ -252,7 +252,7 @@ class SupplierTransaction(models.Model):
         return f"{self.transaction_type} - {self.supplier.supplier_name} - UGX {self.amount:,.2f}"
     
 
-# ========== SUPPLIER CREDIT MODEL ==========
+#  SUPPLIER CREDIT MODEL 
 # Records stock taken from a supplier on credit (we owe them)
 class SupplierCredit(models.Model):
 
@@ -337,3 +337,17 @@ class SupplierCreditPayment(models.Model):
 
     def __str__(self):
         return f"Payment of UGX {self.amount:,.0f} on Credit #{self.credit.id}"
+    
+   # CUSTOMER MODEL
+# Only customers using the deposit scheme are registered here
+class Customer(models.Model):
+    full_name = models.CharField(max_length=200)
+    phone_number = models.CharField(max_length=20)
+    nin = models.CharField(max_length=14, unique=True)
+    area = models.CharField(max_length=100, blank=True, null=True)
+    notes = models.TextField(blank=True, null=True)
+    registered_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    registered_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.full_name 

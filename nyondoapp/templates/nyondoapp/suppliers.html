@@ -30,7 +30,7 @@
     <link rel="stylesheet" href="{% static 'base.css' %}" />
 
     <!-- CORE STOCK PAGE STYLES -->
-    <link rel="stylesheet" href="{% static 'STYLES/suppliers.css' %}" />
+    <link rel="stylesheet" href="{% static 'suppliers.css' %}" />
   </head>
   <body>
     <!-- TOPBAR WITH LOGO, NAME, USER INFO AND LOGOUT -->
@@ -87,6 +87,11 @@
             <li class="nav-item mb-3">
               <a href="{% url 'suppliers' %}" class="nav-link active"
                 >🏭 Suppliers</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'customers' %}" class="nav-link text-dark"
+                >👤 Customers</a
               >
             </li>
             <!-- DEPOSITS LINK -->

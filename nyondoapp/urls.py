@@ -36,6 +36,10 @@ urlpatterns = [
     path('suppliers/<int:supplier_id>/credits/add/', views.add_supplier_credit_view, name='add_supplier_credit'),
     path('credits/<int:credit_id>/pay/', views.record_credit_payment_view, name='record_credit_payment'),
 
+    # CUSTOMER URLS
+    path('customers/', views.customers_view, name='customers'),
+    path('customers/register/', views.register_customer_view, name='register_customer'),
+
     # PLACEHOLDER URLS (pages not built yet)
     path('deposits/', views.dashboard_view, name='deposits'),
     path('reports/', views.dashboard_view, name='reports'),
