@@ -6,22 +6,19 @@ from datetime import datetime
 from decimal import Decimal
 from django.db.models import Q, Sum, F
 from django.contrib.auth.decorators import login_required
-from .models import StockItem, Sale, SaleItem, Supplier, SupplierTransaction, SupplierCredit, SupplierCreditPayment, Customer
+from .models import StockItem, Sale, SaleItem, Supplier, SupplierTransaction, SupplierCredit, SupplierCreditPayment, Customer, CustomerCreditPayment
 
 
 # LOGIN VIEW
 # Handles user login with role-based redirects
 def login_view(request):
     if request.method == 'POST':
-        # Get username and password from submitted form
         username = request.POST['username']
         password = request.POST['password']
 
-        # Check if credentials match a real user
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            # Log them in and create a session
             login(request, user)
 
             # Redirect based on user role
@@ -31,10 +28,8 @@ def login_view(request):
                 return redirect('accounts_dashboard')
             return redirect('dashboard')
         else:
-            # Wrong credentials - show error
             messages.error(request, 'Invalid username or password')
 
-    # Show login form (GET request or failed login)
     return render(request, 'nyondoapp/login.html')
 
 
@@ -72,18 +67,17 @@ def admin_dashboard_view(request):
 @login_required(login_url='login')
 def stock_view(request):
 
-    # HANDLE POST REQUESTS (Create, Update, Delete)
     if request.method == 'POST':
         action = request.POST.get('action', 'create')
 
-        # DELETE ACTION - remove a stock item
+        # Delete a stock item
         if action == 'delete':
             item = get_object_or_404(StockItem, id=request.POST.get('item_id'))
             item.delete()
             messages.success(request, 'Stock item deleted successfully.')
             return redirect('stock')
 
-        # UPDATE ACTION - edit an existing stock item
+        # Edit an existing stock item
         if action == 'update':
             item = get_object_or_404(StockItem, id=request.POST.get('item_id'))
             item.item_name = request.POST.get('item_name', '').strip()
@@ -98,7 +92,7 @@ def stock_view(request):
             messages.success(request, 'Stock item updated successfully.')
             return redirect('stock')
 
-        # CREATE ACTION - add a new stock item
+        # Add a new stock item
         StockItem.objects.create(
             item_name=request.POST.get('item_name', '').strip(),
             category=request.POST.get('category', 'Building'),
@@ -112,7 +106,7 @@ def stock_view(request):
         messages.success(request, 'Stock item added successfully.')
         return redirect('stock')
 
-    # HANDLE GET REQUESTS - fetch and display all stock items
+    # GET - fetch and display all stock items
     items = StockItem.objects.all().order_by('-id')
     total_items = items.count()
     out_of_stock = items.filter(quantity=0).count()
@@ -130,14 +124,15 @@ def stock_view(request):
 
 
 # RECORD SALES PAGE VIEW
-# Displays the blank sale form with available stock items
+# Displays the blank sale form with available stock items and registered customers
 @login_required(login_url='login')
 def record_sales_view(request):
-    # Only show items that are currently in stock
     stock_items = StockItem.objects.filter(quantity__gt=0)
+    registered_customers = Customer.objects.all().order_by('full_name')
     context = {
         'now': datetime.now(),
         'stock_items': stock_items,
+        'registered_customers': registered_customers,
     }
     return render(request, 'nyondoapp/record_sales.html', context)
 
@@ -148,20 +143,20 @@ def record_sales_view(request):
 def add_sale_view(request):
     if request.method == 'POST':
 
-        # GET CUSTOMER DETAILS FROM FORM
+        # Get customer details from form
         customer_name = request.POST.get('customer_name', '').strip()
         phone_number = request.POST.get('phone_number', '').strip()
 
-        # GET ITEM DETAILS FROM FORM
+        # Get item details from form
         stock_item_id = request.POST.get('item')
         quantity = int(request.POST.get('quantity', 1))
         unit_price = Decimal(request.POST.get('unit_price') or 0)
 
-        # GET DISTANCE AND CALCULATE SUBTOTAL FIRST
+        # Get distance and calculate subtotal first
         distance = int(request.POST.get('distance') or 0)
         subtotal = quantity * unit_price
 
-        # CALCULATE TRANSPORT CHARGE BASED ON BUSINESS RULES
+        # Calculate transport charge based on business rules
         # Free delivery: within 10km AND order above UGX 500,000
         # No delivery: distance is 0
         # Otherwise: flat UGX 30,000 transport charge
@@ -172,16 +167,36 @@ def add_sale_view(request):
         else:
             transport_charge = Decimal('30000')
 
-        # GET PAYMENT DETAILS FROM FORM
+        # Get payment details from form
         payment_status = request.POST.get('payment_status', 'Pending')
         payment_method = request.POST.get('payment_method', 'Cash')
         notes = request.POST.get('notes', '').strip()
 
-        # FIX PAYMENT STATUS CAPITALISATION
+        # Validate credit sale has a registered customer
+        registered_customer = None
+        if payment_status.capitalize() == 'Credit':
+            registered_customer_id = request.POST.get('registered_customer_id')
+            if not registered_customer_id:
+                messages.error(request, 'Credit sales must be linked to a registered customer.')
+                return redirect('record_sales')
+            registered_customer = get_object_or_404(Customer, id=registered_customer_id)
+            # Validate credit sale has a registered customer
+        registered_customer = None
+        if payment_status.capitalize() == 'Credit':
+            registered_customer_id = request.POST.get('registered_customer_id')
+            if not registered_customer_id:
+                messages.error(request, 'Credit sales must be linked to a registered customer.')
+                return redirect('record_sales')
+            registered_customer = get_object_or_404(Customer, id=registered_customer_id)
+            # Override name and phone with registered customer's actual data
+            customer_name = registered_customer.full_name
+            phone_number = registered_customer.phone_number
+
+        # Fix payment status capitalisation
         # Form sends 'paid', 'pending', 'credit' - model expects 'Paid', 'Pending', 'Credit'
         payment_status = payment_status.capitalize()
 
-        # FIX PAYMENT METHOD FORMAT
+        # Fix payment method format
         # Form sends 'cash', 'mobile_money', 'bank_transfer'
         # Model expects 'Cash', 'Mobile Money', 'Bank Transfer'
         payment_method_map = {
@@ -191,20 +206,20 @@ def add_sale_view(request):
         }
         payment_method = payment_method_map.get(payment_method, 'Cash')
 
-        # VALIDATE QUANTITY
+        # Validate quantity
         if quantity <= 0:
             messages.error(request, 'Quantity must be greater than zero.')
             return redirect('record_sales')
 
-        # VALIDATE UNIT PRICE
+        # Validate unit price
         if unit_price <= 0:
             messages.error(request, 'Unit price must be greater than zero.')
             return redirect('record_sales')
 
-        # GET THE STOCK ITEM FROM DATABASE
+        # Get the stock item from database
         stock_item = get_object_or_404(StockItem, id=stock_item_id)
 
-        # CHECK IF ENOUGH STOCK IS AVAILABLE BEFORE SAVING
+        # Check if enough stock is available before saving
         if quantity > stock_item.quantity:
             messages.error(
                 request,
@@ -212,13 +227,14 @@ def add_sale_view(request):
             )
             return redirect('record_sales')
 
-        # CALCULATE FINAL TOTAL AMOUNT
+        # Calculate final total amount
         total_amount = subtotal + transport_charge
 
-        # SAVE THE SALE RECORD TO DATABASE
+        # Save the sale record to database
         sale = Sale.objects.create(
             customer_name=customer_name,
             phone_number=phone_number,
+            customer=registered_customer,
             subtotal=subtotal,
             transport_charge=transport_charge,
             total_amount=total_amount,
@@ -228,7 +244,7 @@ def add_sale_view(request):
             sold_by=request.user,
         )
 
-        # SAVE THE SALE ITEM (links sale to the stock item)
+        # Save the sale item linking the sale to the stock item
         SaleItem.objects.create(
             sale=sale,
             stock_item=stock_item,
@@ -237,20 +253,18 @@ def add_sale_view(request):
             line_total=subtotal,
         )
 
-        # REDUCE STOCK QUANTITY by the amount sold
+        # Reduce stock quantity by the amount sold
         stock_item.quantity -= quantity
         stock_item.save()
 
-        # SUCCESS MESSAGE
         messages.success(request, f'Sale #{sale.id} recorded successfully!')
 
-        # REDIRECT based on which button was clicked
+        # Redirect based on which button was clicked
         if request.POST.get('action') == 'save_print':
             return redirect('print_receipt', sale_id=sale.id)
 
         return redirect('sales_list')
 
-    # IF NOT A POST REQUEST, SEND BACK TO FORM
     return redirect('record_sales')
 
 
@@ -261,7 +275,7 @@ def delete_sale_view(request, sale_id):
     sale = get_object_or_404(Sale, id=sale_id)
 
     if request.method == 'POST':
-        # RESTORE STOCK QUANTITY before deleting
+        # Restore stock quantity before deleting
         for item in sale.items.all():
             item.stock_item.quantity += item.quantity
             item.stock_item.save()
@@ -279,14 +293,10 @@ def edit_sale_view(request, sale_id):
     sale = get_object_or_404(Sale, id=sale_id)
 
     if request.method == 'POST':
-        # UPDATE CUSTOMER DETAILS
         sale.customer_name = request.POST.get('customer_name', '').strip()
         sale.phone_number = request.POST.get('phone_number', '').strip()
-
-        # UPDATE PAYMENT STATUS
         sale.payment_status = request.POST.get('payment_status', 'Pending').capitalize()
 
-        # UPDATE PAYMENT METHOD
         payment_method_map = {
             'cash': 'Cash',
             'mobile_money': 'Mobile Money',
@@ -294,8 +304,6 @@ def edit_sale_view(request, sale_id):
         }
         payment_method = request.POST.get('payment_method', 'cash')
         sale.payment_method = payment_method_map.get(payment_method, 'Cash')
-
-        # UPDATE NOTES
         sale.notes = request.POST.get('notes', '').strip()
         sale.save()
         messages.success(request, f'Sale #{sale_id} updated successfully.')
@@ -308,7 +316,6 @@ def edit_sale_view(request, sale_id):
 @login_required(login_url='login')
 def print_receipt_view(request, sale_id):
     sale = get_object_or_404(Sale, id=sale_id)
-    # Fetch all items in this sale with their stock item details
     items = sale.items.select_related('stock_item').all()
 
     context = {
@@ -323,36 +330,33 @@ def print_receipt_view(request, sale_id):
 @login_required(login_url='login')
 def sales_list_view(request):
 
-    # PREFETCH LINE ITEMS to avoid N+1 queries on item names
+    # Prefetch line items to avoid N+1 queries on item names
     sales_list = Sale.objects.prefetch_related('items__stock_item').all()
 
-    # GET FILTER PARAMETERS FROM URL
     search = request.GET.get('search', '')
     status = request.GET.get('status', '')
     date_from = request.GET.get('date_from', '')
     date_to = request.GET.get('date_to', '')
 
-    # APPLY SEARCH FILTER - matches customer name or phone number
+    # Apply search filter - matches customer name or phone number
     if search:
         sales_list = sales_list.filter(
             Q(customer_name__icontains=search) |
             Q(phone_number__icontains=search)
         )
 
-    # APPLY STATUS FILTER
+    # Apply status filter
     if status and status != 'All Status':
         sales_list = sales_list.filter(payment_status=status)
 
-    # APPLY DATE RANGE FILTERS
+    # Apply date range filters
     if date_from:
         sales_list = sales_list.filter(sale_date__gte=date_from)
     if date_to:
         sales_list = sales_list.filter(sale_date__lte=date_to)
 
-    # ORDER BY NEWEST FIRST
     sales_list = sales_list.order_by('-sale_date', '-id')
 
-    # CALCULATE SUMMARY STATISTICS
     total_sales = sales_list.count()
     total_revenue = sales_list.aggregate(total=Sum('total_amount'))['total'] or 0
     pending_count = sales_list.filter(payment_status='Pending').count()
@@ -378,28 +382,22 @@ def sales_list_view(request):
 @login_required(login_url='login')
 def suppliers_view(request):
 
-    # START WITH ALL SUPPLIERS
     suppliers = Supplier.objects.all()
 
-    # GET FILTER PARAMETERS FROM URL
     search = request.GET.get('search', '')
     status = request.GET.get('status', '')
 
-    # APPLY SEARCH FILTER - matches supplier name or phone
     if search:
         suppliers = suppliers.filter(
             Q(supplier_name__icontains=search) |
             Q(phone__icontains=search)
         )
 
-    # APPLY STATUS FILTER
     if status and status != 'All Status':
         suppliers = suppliers.filter(status=status)
 
-    # ORDER BY ID - consistent display order
     suppliers = suppliers.order_by('id')
 
-    # CALCULATE SUMMARY STATISTICS
     total_suppliers = suppliers.count()
     credits_due = suppliers.filter(status='Credits Due').count()
     overdue = suppliers.filter(status='Overdue').count()
@@ -423,7 +421,6 @@ def suppliers_view(request):
 def add_supplier_view(request):
     if request.method == 'POST':
 
-        # GET SUPPLIER DETAILS FROM FORM
         supplier_name = request.POST.get('supplier_name', '').strip()
         phone = request.POST.get('phone', '').strip()
         tin_number = request.POST.get('tin_number', '').strip() or None
@@ -433,12 +430,10 @@ def add_supplier_view(request):
         payment_terms = int(request.POST.get('payment_terms', 30))
         notes = request.POST.get('notes', '').strip() or None
 
-        # CHECK IF PHONE NUMBER ALREADY EXISTS
         if Supplier.objects.filter(phone=phone).exists():
             messages.error(request, 'A supplier with this phone number already exists.')
             return redirect('suppliers')
 
-        # SAVE THE SUPPLIER TO DATABASE
         Supplier.objects.create(
             supplier_name=supplier_name,
             phone=phone,
@@ -454,7 +449,6 @@ def add_supplier_view(request):
         messages.success(request, f'{supplier_name} added successfully!')
         return redirect('suppliers')
 
-    # IF NOT POST, REDIRECT BACK TO SUPPLIERS PAGE
     return redirect('suppliers')
 
 
@@ -462,11 +456,9 @@ def add_supplier_view(request):
 # Updates an existing supplier's details
 @login_required(login_url='login')
 def edit_supplier_view(request, supplier_id):
-    # GET THE SUPPLIER OR RETURN 404 IF NOT FOUND
     supplier = get_object_or_404(Supplier, id=supplier_id)
 
     if request.method == 'POST':
-        # UPDATE SUPPLIER FIELDS FROM FORM
         supplier.supplier_name = request.POST.get('supplier_name', '').strip()
         supplier.phone = request.POST.get('phone', '').strip()
         supplier.tin_number = request.POST.get('tin_number', '').strip() or None
@@ -475,8 +467,6 @@ def edit_supplier_view(request, supplier_id):
         supplier.payment_terms = int(request.POST.get('payment_terms', 30))
         supplier.status = request.POST.get('status', 'Active')
         supplier.notes = request.POST.get('notes', '').strip() or None
-
-        # SAVE UPDATED SUPPLIER
         supplier.save()
         messages.success(request, f'{supplier.supplier_name} updated successfully.')
 
@@ -487,7 +477,6 @@ def edit_supplier_view(request, supplier_id):
 # Permanently removes a supplier from the database
 @login_required(login_url='login')
 def delete_supplier_view(request, supplier_id):
-    # GET THE SUPPLIER OR RETURN 404 IF NOT FOUND
     supplier = get_object_or_404(Supplier, id=supplier_id)
 
     if request.method == 'POST':
@@ -502,10 +491,7 @@ def delete_supplier_view(request, supplier_id):
 # Shows all transactions for a specific supplier
 @login_required(login_url='login')
 def supplier_transactions_view(request, supplier_id):
-    # GET THE SUPPLIER OR 404
     supplier = get_object_or_404(Supplier, id=supplier_id)
-
-    # GET ALL TRANSACTIONS FOR THIS SUPPLIER, NEWEST FIRST
     transactions = supplier.transactions.all()
 
     context = {
@@ -522,14 +508,12 @@ def record_payment_view(request, supplier_id):
     supplier = get_object_or_404(Supplier, id=supplier_id)
 
     if request.method == 'POST':
-        # GET TRANSACTION DETAILS FROM FORM
         transaction_type = request.POST.get('transaction_type', 'Payment')
         amount = Decimal(request.POST.get('amount', 0))
         payment_method = request.POST.get('payment_method', 'Cash')
         reference_number = request.POST.get('reference_number', '').strip() or None
         description = request.POST.get('description', '').strip() or None
 
-        # SAVE THE TRANSACTION
         SupplierTransaction.objects.create(
             supplier=supplier,
             transaction_type=transaction_type,
@@ -540,7 +524,7 @@ def record_payment_view(request, supplier_id):
             created_by=request.user,
         )
 
-        # UPDATE SUPPLIER BALANCE
+        # Update supplier balance
         if transaction_type == 'Credit':
             supplier.balance += amount
         elif transaction_type in ['Payment', 'Adjustment']:
@@ -559,7 +543,6 @@ def supplier_credit_detail_view(request, supplier_id):
     supplier = get_object_or_404(Supplier, id=supplier_id)
     credits = supplier.credits.all()
 
-    # CALCULATE SUMMARY STATS
     total_owed = sum(c.total_amount for c in credits)
     total_paid = sum(c.amount_paid for c in credits)
     total_outstanding = total_owed - total_paid
@@ -585,12 +568,10 @@ def add_supplier_credit_view(request, supplier_id):
     supplier = get_object_or_404(Supplier, id=supplier_id)
 
     if request.method == 'POST':
-        # GET CREDIT DETAILS FROM FORM
         description = request.POST.get('description', '').strip()
         total_amount = Decimal(request.POST.get('total_amount') or 0)
         due_date = request.POST.get('due_date')
 
-        # SAVE THE CREDIT RECORD
         SupplierCredit.objects.create(
             supplier=supplier,
             description=description,
@@ -599,7 +580,6 @@ def add_supplier_credit_view(request, supplier_id):
             created_by=request.user,
         )
 
-        # UPDATE SUPPLIER BALANCE AND STATUS
         supplier.balance += total_amount
         supplier.status = 'Credits Due'
         supplier.save()
@@ -617,13 +597,11 @@ def record_credit_payment_view(request, credit_id):
     credit = get_object_or_404(SupplierCredit, id=credit_id)
 
     if request.method == 'POST':
-        # GET PAYMENT DETAILS FROM FORM
         amount = Decimal(request.POST.get('amount') or 0)
         payment_method = request.POST.get('payment_method', 'Cash')
         reference_number = request.POST.get('reference_number', '').strip() or None
         note = request.POST.get('note', '').strip() or None
 
-        # SAVE THE PAYMENT RECORD
         SupplierCreditPayment.objects.create(
             credit=credit,
             amount=amount,
@@ -633,7 +611,6 @@ def record_credit_payment_view(request, credit_id):
             paid_by=request.user,
         )
 
-        # UPDATE CREDIT AMOUNT PAID AND STATUS
         credit.amount_paid += amount
         if credit.amount_paid >= credit.total_amount:
             credit.status = 'Cleared'
@@ -641,8 +618,7 @@ def record_credit_payment_view(request, credit_id):
             credit.status = 'Partial'
         credit.save()
 
-        # UPDATE SUPPLIER BALANCE
-        # If fully paid off, reset status to Active
+        # Update supplier balance and status
         supplier = credit.supplier
         supplier.balance -= amount
         if supplier.balance <= 0:
@@ -655,13 +631,33 @@ def record_credit_payment_view(request, credit_id):
 
     return redirect('supplier_credit_detail', supplier_id=credit.supplier.id)
 
- # CUSTOMER VIEWS
- # These views handle customer registration and listing, but are not fully implemented yet
+
+# CUSTOMERS LIST VIEW
+# Displays all registered customers with search
 @login_required(login_url='login')
 def customers_view(request):
-    return redirect('register_customer')
+    customers = Customer.objects.all().order_by('-registered_on')
+
+    search = request.GET.get('search', '')
+    if search:
+        customers = customers.filter(
+            Q(full_name__icontains=search) |
+            Q(phone_number__icontains=search) |
+            Q(nin__icontains=search)
+        )
+
+    total_customers = customers.count()
+
+    context = {
+        'customers': customers,
+        'search': search,
+        'total_customers': total_customers,
+    }
+    return render(request, 'nyondoapp/customers_list.html', context)
+
 
 # REGISTER CUSTOMER VIEW
+# Handles the customer registration form
 @login_required(login_url='login')
 def register_customer_view(request):
     if request.method == 'POST':
@@ -671,22 +667,21 @@ def register_customer_view(request):
         area = request.POST.get('area', '').strip() or None
         notes = request.POST.get('notes', '').strip() or None
 
-        # VALIDATE NIN LENGTH
+        # Validate NIN length
         if len(nin) != 14:
             messages.error(request, 'NIN must be exactly 14 characters.')
             return render(request, 'nyondoapp/register_customer.html')
 
-        # CHECK IF NIN ALREADY EXISTS
+        # Check if NIN already exists
         if Customer.objects.filter(nin=nin).exists():
             messages.error(request, f'A customer with NIN {nin} is already registered.')
             return render(request, 'nyondoapp/register_customer.html')
 
-        # CHECK IF PHONE ALREADY EXISTS
+        # Check if phone already exists
         if Customer.objects.filter(phone_number=phone_number).exists():
             messages.error(request, 'A customer with this phone number is already registered.')
             return render(request, 'nyondoapp/register_customer.html')
 
-        # SAVE THE CUSTOMER
         Customer.objects.create(
             full_name=full_name,
             phone_number=phone_number,
@@ -700,3 +695,100 @@ def register_customer_view(request):
         return redirect('customers')
 
     return render(request, 'nyondoapp/register_customer.html')
+
+
+# EDIT CUSTOMER VIEW
+# Updates an existing customer's details
+@login_required(login_url='login')
+def edit_customer_view(request, customer_id):
+    customer = get_object_or_404(Customer, id=customer_id)
+    if request.method == 'POST':
+        customer.full_name = request.POST.get('full_name', '').strip()
+        customer.phone_number = request.POST.get('phone_number', '').strip()
+        customer.nin = request.POST.get('nin', '').strip().upper()
+        customer.area = request.POST.get('area', '').strip() or None
+        customer.notes = request.POST.get('notes', '').strip() or None
+        customer.save()
+        messages.success(request, f'{customer.full_name} updated successfully.')
+    return redirect('customers')
+
+
+# DELETE CUSTOMER VIEW
+# Permanently removes a customer from the system
+@login_required(login_url='login')
+def delete_customer_view(request, customer_id):
+    customer = get_object_or_404(Customer, id=customer_id)
+    if request.method == 'POST':
+        name = customer.full_name
+        customer.delete()
+        messages.success(request, f'{name} removed successfully.')
+    return redirect('customers')
+
+
+# CUSTOMER DETAIL VIEW
+# Shows full customer info and their credit and deposit history
+@login_required(login_url='login')
+def customer_detail_view(request, customer_id):
+    customer = get_object_or_404(Customer, id=customer_id)
+
+    # Get all credit sales for this customer
+    credit_sales = Sale.objects.filter(
+        customer=customer,
+        payment_status='Credit'
+    ).prefetch_related('items__stock_item', 'credit_payments').order_by('-sale_date')
+
+     # Calculate amount paid and balance for each credit sale
+    credit_sales_data = []
+    for sale in credit_sales:
+        total_paid = sale.credit_payments.aggregate(total=Sum('amount'))['total'] or 0
+        balance_due = sale.total_amount - total_paid
+        percent_paid = int((total_paid / sale.total_amount) * 100) if sale.total_amount > 0 else 0
+        credit_sales_data.append({
+            'sale': sale,
+            'total_paid': total_paid,
+            'balance_due': balance_due,
+            'percent_paid': percent_paid,
+        })
+
+    context = {
+        'customer': customer,
+        'credit_sales': credit_sales,
+        'credit_sales_data': credit_sales_data,
+    }
+    return render(request, 'nyondoapp/customer_detail.html', context)
+
+# RECORD CUSTOMER CREDIT PAYMENT VIEW
+# Records an installment payment against a customer credit sale
+@login_required(login_url='login')
+def record_customer_credit_payment_view(request, sale_id):
+    sale = get_object_or_404(Sale, id=sale_id)
+
+    if request.method == 'POST':
+        amount = Decimal(request.POST.get('amount') or 0)
+        payment_method = request.POST.get('payment_method', 'Cash')
+        reference_number = request.POST.get('reference_number', '').strip() or None
+        note = request.POST.get('note', '').strip() or None
+
+        # Save the payment record
+        CustomerCreditPayment.objects.create(
+            sale=sale,
+            amount=amount,
+            payment_method=payment_method,
+            reference_number=reference_number,
+            note=note,
+            paid_by=request.user,
+        )
+
+        # Calculate total paid so far
+        total_paid = sale.credit_payments.aggregate(total=Sum('amount'))['total'] or 0
+
+        # If fully paid, update sale status to Paid
+        if total_paid >= sale.total_amount:
+            sale.payment_status = 'Paid'
+            sale.save()
+            messages.success(request, f'Payment recorded. Sale #{sale.id} is now fully paid!')
+        else:
+            balance = sale.total_amount - total_paid
+            messages.success(request, f'Payment of UGX {amount:,.0f} recorded. Balance remaining: UGX {balance:,.0f}.')
+
+    return redirect('customer_detail', customer_id=sale.customer.id)

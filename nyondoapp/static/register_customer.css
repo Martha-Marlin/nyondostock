@@ -201,3 +201,19 @@ body {
     color: #0f6e56;
     border-color: #9fe1cb;
 }
+/* DETAIL PAGE FIELD LABEL */
+.ns-detail-label {
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #7a907a;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+/* DETAIL PAGE FIELD VALUE */
+.ns-detail-value {
+    font-size: 14px;
+    color: #142e1a;
+    font-weight: 500;
+}

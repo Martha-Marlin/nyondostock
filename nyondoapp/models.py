@@ -82,6 +82,7 @@ class Sale(models.Model):
     # CUSTOMER INFORMATION
     customer_name = models.CharField(max_length=200)   # Full name of the customer
     phone_number = models.CharField(max_length=20)     # Customer phone number
+    customer = models.ForeignKey('Customer', on_delete=models.SET_NULL, null=True, blank=True, related_name='sales')  # Optional link to Customer model
 
     # FINANCIAL TOTALS
     subtotal = models.DecimalField(max_digits=12, decimal_places=2, default=0)        # Total before transport
@@ -351,3 +352,41 @@ class Customer(models.Model):
 
     def __str__(self):
         return self.full_name 
+    
+# CUSTOMER CREDIT PAYMENT MODEL
+# Records installment payments made by a customer against a credit sale
+class CustomerCreditPayment(models.Model):
+
+    PAYMENT_METHOD_CHOICES = [
+        ('Cash', 'Cash'),
+        ('Mobile Money', 'Mobile Money'),
+        ('Bank Transfer', 'Bank Transfer'),
+    ]
+
+    # LINK TO THE CREDIT SALE
+    sale = models.ForeignKey(
+        Sale,
+        on_delete=models.CASCADE,
+        related_name='credit_payments'
+    )
+
+    # PAYMENT DETAILS
+    amount = models.DecimalField(max_digits=15, decimal_places=2)
+    payment_method = models.CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES)
+    reference_number = models.CharField(max_length=100, blank=True, null=True)
+    note = models.TextField(blank=True, null=True)
+
+    # TIMESTAMPS AND TRACKING
+    paid_at = models.DateTimeField(auto_now_add=True)
+    paid_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='customer_credit_payments'
+    )
+
+    class Meta:
+        ordering = ['-paid_at']
+
+    def __str__(self):
+        return f"Payment of UGX {self.amount:,.0f} on Sale #{self.sale.id}"

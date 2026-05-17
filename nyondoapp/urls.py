@@ -39,6 +39,13 @@ urlpatterns = [
     # CUSTOMER URLS
     path('customers/', views.customers_view, name='customers'),
     path('customers/register/', views.register_customer_view, name='register_customer'),
+    path('customers/<int:customer_id>/edit/', views.edit_customer_view, name='edit_customer'),
+    path('customers/<int:customer_id>/delete/', views.delete_customer_view, name='delete_customer'),
+    path('customers/<int:customer_id>/', views.customer_detail_view, name='customer_detail'),
+
+    # CUSTOMER CREDIT URLS
+    path('sales/<int:sale_id>/credit-payment/', views.record_customer_credit_payment_view, name='record_customer_credit_payment'),
+
 
     # PLACEHOLDER URLS (pages not built yet)
     path('deposits/', views.dashboard_view, name='deposits'),
