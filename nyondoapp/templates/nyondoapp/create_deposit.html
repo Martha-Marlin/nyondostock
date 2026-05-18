@@ -1,0 +1,250 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Deposit - NyondoStock</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'base.css' %}" />
+    <link rel="stylesheet" href="{% static 'deposits.css' %}" />
+</head>
+<body>
+
+    <!-- TOPBAR -->
+    <nav class="topbar">
+        <div class="topbar-left">
+            <div class="logo">
+                <img src="{% static 'images/logo-edit.png' %}" alt="NyondoStock Logo" />
+            </div>
+            <div>
+                <div class="brand-name">Nyondo Stock</div>
+                <div class="brand-sub">NYONDO General Hardware LTD</div>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <span class="welcome">Welcome, {{ user.username }}</span>
+            <span class="role">{{ user.groups.first.name|default:"Sales Attendant" }}</span>
+            <a href="{% url 'logout' %}" class="logout">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+
+            <!-- SIDEBAR -->
+            <aside class="col-lg-2 col-md-3 bg-light min-vh-100 p-3 pt-4 position-relative">
+                <h6 class="text-muted">MENU</h6>
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-3">
+                        <a href="{% url 'dashboard' %}" class="nav-link text-dark">📊 Dashboard</a>
+                    </li>
+                    <li class="nav-item mb-3">
+                        <a href="{% url 'stock' %}" class="nav-link text-dark">📦 Stock</a>
+                    </li>
+                    <li class="nav-item mb-3">
+                        <a href="{% url 'sales_list' %}" class="nav-link text-dark">🛒 Sales</a>
+                    </li>
+                    <li class="nav-item mb-3">
+                        <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
+                    </li>
+                    <li class="nav-item mb-3">
+                        <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
+                    </li>
+                    <li class="nav-item mb-3">
+                        <a href="{% url 'deposits' %}" class="nav-link active">💰 Deposits</a>
+                    </li>
+                    <li class="nav-item mb-3">
+                        <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
+                    </li>
+                </ul>
+
+                <div class="ns-alert-box mt-4">
+                    <div class="ns-alert-title">⚠ Low Stock</div>
+                    <div class="ns-alert-body">{{ low_stock_count }} items need attention</div>
+                    <a href="{% url 'stock' %}" class="ns-alert-link">View →</a>
+                </div>
+
+                <div class="position-absolute bottom-0 start-0 p-3 w-100">
+                    <hr />
+                    <small class="text-muted d-block mb-1">📦 NyondoStock v1.0</small>
+                    <small class="text-muted d-block mb-1">🏪 NYONDO General Hardware</small>
+                    <small class="text-muted d-block">📅 {% now "F Y" %}</small>
+                </div>
+            </aside>
+
+            <!-- MAIN CONTENT -->
+            <main class="col-lg-10 col-md-9 p-4 p-lg-5">
+
+                <!-- BREADCRUMB -->
+                <div class="ns-breadcrumb">
+                    <a href="{% url 'deposits' %}">Deposits</a> /
+                    <span>Create Deposit</span>
+                </div>
+
+                <!-- PAGE TITLE -->
+                <div class="ns-page-title">Create New Deposit</div>
+                <div class="ns-page-sub">Register a new customer deposit order. Stock will be reserved immediately.</div>
+
+                <!-- MESSAGES -->
+                {% if messages %}
+                <div class="mb-3">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- FORM -->
+                <form method="POST" action="{% url 'create_deposit' %}">
+                    {% csrf_token %}
+
+                    <div class="ns-form-card">
+
+                        <!-- SECTION 1: CUSTOMER -->
+                        <div class="ns-section-header">
+                            <div class="ns-section-dot"></div>
+                            <div class="ns-section-title">Customer</div>
+                        </div>
+                        <div class="ns-section-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="ns-field-label" for="customer_id">
+                                        Registered Customer <span class="req">*</span>
+                                    </label>
+                                    <select id="customer_id" name="customer_id" class="ns-input" required>
+                                        <option value="" disabled selected>Select customer</option>
+                                        {% for customer in customers %}
+                                        <option value="{{ customer.id }}">{{ customer.full_name }} — {{ customer.phone_number }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="ns-hint">Only registered customers can open a deposit account.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ns-divider"></div>
+
+                        <!-- SECTION 2: ORDER DETAILS -->
+                        <div class="ns-section-header">
+                            <div class="ns-section-dot"></div>
+                            <div class="ns-section-title">Order Details</div>
+                        </div>
+                        <div class="ns-section-body">
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-4">
+                                    <label class="ns-field-label" for="item_type">
+                                        Item Type <span class="req">*</span>
+                                    </label>
+                                    <select id="item_type" name="item_type" class="ns-input" required>
+                                        <option value="" disabled selected>Select item</option>
+                                        <option value="Cement">Cement</option>
+                                        <option value="Iron Sheets">Iron Sheets</option>
+                                        <option value="Iron Bars">Iron Bars</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="ns-field-label" for="quantity_ordered">
+                                        Quantity <span class="req">*</span>
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="quantity_ordered"
+                                        name="quantity_ordered"
+                                        class="ns-input"
+                                        min="1"
+                                        placeholder="e.g. 50"
+                                        required
+                                    />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="ns-field-label" for="unit">
+                                        Unit <span class="req">*</span>
+                                    </label>
+                                    <select id="unit" name="unit" class="ns-input" required>
+                                        <option value="Bags">Bags</option>
+                                        <option value="Sheets">Sheets</option>
+                                        <option value="Pieces">Pieces</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row g-3">
+                               <div class="col-md-4">
+    <label class="ns-field-label">Total Amount (UGX)</label>
+    <div style="background: #f4f9f6; border: 1px solid #d5ede3; border-radius: 8px; padding: 10px 12px; font-size: 13.5px; color: #142e1a; font-weight: 600;">
+        Auto-calculated from current selling price
+    </div>
+    <div class="ns-hint">Total = quantity × current selling price of {{ item_type|default:"selected item" }}</div>
+</div>
+                                <div class="col-md-4">
+                                    <label class="ns-field-label" for="due_date">
+                                        Expected Collection Date <span class="req">*</span>
+                                    </label>
+                                    <input
+                                        type="date"
+                                        id="due_date"
+                                        name="due_date"
+                                        class="ns-input"
+                                        required
+                                    />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="ns-field-label" for="notes">Notes</label>
+                                    <input
+                                        type="text"
+                                        id="notes"
+                                        name="notes"
+                                        class="ns-input"
+                                        placeholder="Any special instructions"
+                                    />
+                                    <div class="ns-hint">Optional</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ns-divider"></div>
+
+                        <!-- SECTION 3: STOCK RESERVATION NOTICE -->
+                        <div class="ns-section-header" style="border-bottom: none;">
+                            <div class="ns-section-dot"></div>
+                            <div class="ns-section-title">Stock Reservation</div>
+                        </div>
+                        <div class="ns-section-body" style="padding-top: 12px;">
+                            <div class="ns-deposit-panel" style="background: #fffbe6; border: 1px solid #f5c842; border-radius: 10px; padding: 14px 18px;">
+                                <div style="font-size: 13px; color: #855000;">
+                                    <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                                    Stock will be <strong>reserved immediately</strong> when this deposit is created.
+                                    The quantity ordered will be deducted from available stock.
+                                    If the deposit is cancelled, stock will be restored automatically.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FORM ACTIONS -->
+                        <div class="ns-form-actions">
+                            <a href="{% url 'deposits' %}" class="ns-btn-cancel">
+                                <i class="fa-solid fa-arrow-left"></i> Back to Deposits
+                            </a>
+                            <button type="submit" class="ns-btn-primary">
+                                <i class="fa-solid fa-plus"></i> Create Deposit
+                            </button>
+                        </div>
+
+                    </div>
+                </form>
+
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>
+
+</body>
+</html>

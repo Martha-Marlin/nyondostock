@@ -1,0 +1,120 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Deposit Receipt #{{ payment.id }} - NyondoStock</title>
+    {% if inline_css %}
+    <style>{{ receipt_css|safe }}</style>
+    <style>.receipt-actions { display: none !important; }</style>
+    {% else %}
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'deposit_receipt.css' %}" />
+    {% endif %}
+</head>
+<body>
+
+    <div class="receipt">
+
+        <div class="receipt-header">
+            <div class="store-name">NYONDO General Hardware LTD</div>
+            <div class="store-sub">Kampala, Uganda</div>
+            <div class="receipt-type-badge">Deposit Receipt - Temporary</div>
+        </div>
+
+        <div class="receipt-body">
+            <div class="receipt-highlight">
+                <div class="paid-label">Amount Paid Today</div>
+                <div class="paid-amount">UGX {{ payment.amount|floatformat:0 }}</div>
+                <div class="paid-date">{{ payment.paid_at|date:"d M Y, H:i" }}</div>
+            </div>
+
+            <div class="receipt-progress">
+                <div class="receipt-row">
+                    <span class="label">Total Order Amount</span>
+                    <span class="value">UGX {{ payment.deposit.total_amount|floatformat:0 }}</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="label">Total Paid So Far</span>
+                    <span class="value">UGX {{ payment.deposit.amount_paid|floatformat:0 }}</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="label">Balance Remaining</span>
+                    <span class="value balance">UGX {{ payment.deposit.balance_remaining|floatformat:0 }}</span>
+                </div>
+                <div class="receipt-progress-bar-bg">
+                    <div class="receipt-progress-bar-fill" style="width: {{ payment.deposit.percent_paid }}%;"></div>
+                </div>
+                <div class="receipt-progress-label">{{ payment.deposit.percent_paid }}% paid</div>
+            </div>
+
+            <div class="receipt-section">
+                <div class="receipt-section-title">Customer</div>
+                <div class="receipt-row">
+                    <span class="label">Name</span>
+                    <span class="value">{{ payment.deposit.customer.full_name }}</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="label">Phone</span>
+                    <span class="value">{{ payment.deposit.customer.phone_number }}</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="label">NIN</span>
+                    <span class="value">{{ payment.deposit.customer.nin }}</span>
+                </div>
+            </div>
+
+            <div class="receipt-section">
+                <div class="receipt-section-title">Order</div>
+                <div class="receipt-row">
+                    <span class="label">Item</span>
+                    <span class="value">{{ payment.deposit.item_type }}</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="label">Quantity</span>
+                    <span class="value">{{ payment.deposit.quantity_ordered }} {{ payment.deposit.unit }}</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="label">Expected Collection</span>
+                    <span class="value">{{ payment.deposit.due_date|date:"d M Y" }}</span>
+                </div>
+            </div>
+
+            <div class="receipt-section">
+                <div class="receipt-section-title">Payment Details</div>
+                <div class="receipt-row">
+                    <span class="label">Method</span>
+                    <span class="value">{{ payment.payment_method }}</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="label">Reference</span>
+                    <span class="value">{{ payment.reference_number|default:"-" }}</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="label">Recorded By</span>
+                    <span class="value">{{ payment.paid_by.username|default:"-" }}</span>
+                </div>
+            </div>
+
+            <div class="receipt-notice">
+                This is a <strong>temporary deposit receipt</strong> and does not authorize
+                collection of goods. An official collection receipt will be issued
+                when the full amount has been paid.
+            </div>
+
+        </div>
+
+        <div class="receipt-footer">
+            <div class="receipt-id">Deposit #{{ payment.deposit.id }} - Payment #{{ payment.id }}</div>
+            <div class="receipt-date">Printed: {% now "d M Y, H:i" %}</div>
+            <div class="receipt-actions">
+                <button class="receipt-action-btn" onclick="window.print()">Print Receipt</button>
+                <a class="receipt-action-btn receipt-action-secondary" href="{% url 'deposit_receipt' payment.id %}?download=1">Download Receipt</a>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

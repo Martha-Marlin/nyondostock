@@ -1,0 +1,111 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Collection Receipt #{{ deposit.id }} - NyondoStock</title>
+    {% if inline_css %}
+    <style>{{ receipt_css|safe }}</style>
+    <style>.receipt-actions { display: none !important; }</style>
+    {% else %}
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'deposit_receipt.css' %}" />
+    {% endif %}
+</head>
+<body>
+
+    <div class="receipt">
+
+        <div class="receipt-header receipt-header-complete">
+            <div class="store-name">NYONDO General Hardware LTD</div>
+            <div class="store-sub">Kampala, Uganda</div>
+            <div class="receipt-type-badge receipt-type-complete">Official Collection Receipt</div>
+        </div>
+
+        <div class="receipt-body">
+            <div class="receipt-highlight receipt-highlight-complete">
+                <div class="paid-label">Total Amount Paid</div>
+                <div class="paid-amount">UGX {{ deposit.total_amount|floatformat:0 }}</div>
+                <div class="paid-date">Fully paid - cleared for collection</div>
+            </div>
+
+            <div class="receipt-section">
+                <div class="receipt-section-title">Customer</div>
+                <div class="receipt-row">
+                    <span class="label">Name</span>
+                    <span class="value">{{ deposit.customer.full_name }}</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="label">Phone</span>
+                    <span class="value">{{ deposit.customer.phone_number }}</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="label">NIN</span>
+                    <span class="value">{{ deposit.customer.nin }}</span>
+                </div>
+            </div>
+
+            <div class="receipt-section">
+                <div class="receipt-section-title">Order</div>
+                <div class="receipt-row">
+                    <span class="label">Item</span>
+                    <span class="value">{{ deposit.item_type }}</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="label">Quantity</span>
+                    <span class="value">{{ deposit.quantity_ordered }} {{ deposit.unit }}</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="label">Total Paid</span>
+                    <span class="value">UGX {{ deposit.total_amount|floatformat:0 }}</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="label">Balance</span>
+                    <span class="value receipt-cleared">Cleared</span>
+                </div>
+            </div>
+
+            <div class="receipt-section">
+                <div class="receipt-section-title">Payment Summary</div>
+                {% for payment in payments %}
+                    <div class="receipt-row">
+                        <span class="label">{{ payment.paid_at|date:"d M Y" }} - {{ payment.payment_method }}</span>
+                        <span class="value">UGX {{ payment.amount|floatformat:0 }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="receipt-stamp">
+                GOODS CLEARED FOR COLLECTION
+            </div>
+
+            <div class="receipt-signature">
+                <div class="receipt-signature-line">
+                    <div class="sig-box"></div>
+                    <div class="sig-label">Authorized By</div>
+                </div>
+                <div class="receipt-signature-line">
+                    <div class="sig-box"></div>
+                    <div class="sig-label">Customer Signature</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="receipt-footer">
+            {% if deposit.receipt_number %}
+                <div class="receipt-id">Receipt No. {{ deposit.receipt_number }}</div>
+            {% endif %}
+            <div class="receipt-id">Deposit #{{ deposit.id }}</div>
+            <div class="receipt-date">Printed: {% now "d M Y, H:i" %}</div>
+            <div class="receipt-actions">
+                <button class="receipt-action-btn" onclick="window.print()">Print Receipt</button>
+                <a class="receipt-action-btn receipt-action-secondary" href="{% url 'collection_receipt' deposit.id %}?download=1">Download Receipt</a>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

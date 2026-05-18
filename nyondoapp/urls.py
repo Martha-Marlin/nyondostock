@@ -46,8 +46,17 @@ urlpatterns = [
     # CUSTOMER CREDIT URLS
     path('sales/<int:sale_id>/credit-payment/', views.record_customer_credit_payment_view, name='record_customer_credit_payment'),
 
+    # DEPOSIT URLS
+path('deposits/', views.deposits_view, name='deposits'),
+path('deposits/create/', views.create_deposit_view, name='create_deposit'),
+path('deposits/<int:deposit_id>/', views.deposit_detail_view, name='deposit_detail'),
+path('deposits/<int:deposit_id>/pay/', views.record_deposit_payment_view, name='record_deposit_payment'),
+path('deposits/<int:deposit_id>/cancel/', views.cancel_deposit_view, name='cancel_deposit'),
+path('deposits/<int:payment_id>/receipt/', views.deposit_receipt_view, name='deposit_receipt'),
+path('deposits/<int:deposit_id>/collection-receipt/', views.collection_receipt_view, name='collection_receipt'),
+
 
     # PLACEHOLDER URLS (pages not built yet)
-    path('deposits/', views.dashboard_view, name='deposits'),
+    path('audit_log/', views.dashboard_view, name='audit_log'),
     path('reports/', views.dashboard_view, name='reports'),
 ]

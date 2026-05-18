@@ -390,3 +390,131 @@ class CustomerCreditPayment(models.Model):
 
     def __str__(self):
         return f"Payment of UGX {self.amount:,.0f} on Sale #{self.sale.id}"
+    
+
+# DEPOSIT MODEL
+# Records a customer order paid in instalments before collection
+# Only applies to cement, iron sheets, and iron bars
+# Stock is reduced immediately when deposit is created
+# Stock is restored if deposit is cancelled
+class Deposit(models.Model):
+
+    ITEM_TYPE_CHOICES = [
+        ('Cement', 'Cement'),
+        ('Iron Sheets', 'Iron Sheets'),
+        ('Iron Bars', 'Iron Bars'),
+    ]
+
+    UNIT_CHOICES = [
+        ('Bags', 'Bags'),
+        ('Sheets', 'Sheets'),
+        ('Pieces', 'Pieces'),
+    ]
+
+    STATUS_CHOICES = [
+        ('Active', 'Active'),       # Customer is still paying in instalments
+        ('Completed', 'Completed'), # Fully paid, customer can collect goods
+        ('Cancelled', 'Cancelled'), # Cancelled, stock has been restored
+    ]
+
+    # LINK TO CUSTOMER
+    # PROTECT means you cannot delete a customer who has an active deposit
+    customer = models.ForeignKey(
+        Customer,
+        on_delete=models.PROTECT,
+        related_name='deposits'
+    )
+
+    # ORDER DETAILS
+    item_type = models.CharField(max_length=20, choices=ITEM_TYPE_CHOICES)      # What the customer is ordering
+    quantity_ordered = models.PositiveIntegerField()                             # How many units ordered
+    unit = models.CharField(max_length=20, choices=UNIT_CHOICES)                # Unit of measurement
+    total_amount = models.DecimalField(max_digits=15, decimal_places=2)         # Fixed total price agreed at creation
+    amount_paid = models.DecimalField(max_digits=15, decimal_places=2, default=0)  # Running total of all instalments paid
+
+    # STATUS
+    # Starts as Active, moves to Completed when fully paid, Cancelled if order is dropped
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Active')
+
+    # RECEIPT NUMBER
+    # Only assigned when status moves to Completed (official collection receipt)
+    # Deposit receipts (temporary) use the Deposit ID instead
+    receipt_number = models.CharField(max_length=20, blank=True, null=True, unique=True)
+
+    # DATES
+    due_date = models.DateField()                          # When the customer expects to collect
+    created_at = models.DateTimeField(auto_now_add=True)  # When the deposit was created
+
+    # EXTRA
+    notes = models.TextField(blank=True, null=True)  # Any special notes about this order
+
+    # STAFF TRACKING
+    # Who created this deposit record
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='deposits_created'
+    )
+
+    # BALANCE REMAINING PROPERTY
+    # Automatically calculates how much the customer still owes
+    @property
+    def balance_remaining(self):
+        return self.total_amount - self.amount_paid
+
+    # PERCENT PAID PROPERTY
+    # Used to render the progress bar on the deposits page
+    @property
+    def percent_paid(self):
+        if self.total_amount > 0:
+            return int((self.amount_paid / self.total_amount) * 100)
+        return 0
+
+    class Meta:
+        ordering = ['-created_at']  # Newest deposits shown first
+
+    def __str__(self):
+        return f"Deposit #{self.id} - {self.customer.full_name} - {self.item_type}"
+
+
+# DEPOSIT PAYMENT MODEL
+# Records one instalment payment made against a deposit
+# A deposit can have many payments over time
+# Each payment triggers a temporary deposit receipt
+class DepositPayment(models.Model):
+
+    PAYMENT_METHOD_CHOICES = [
+        ('Cash', 'Cash'),
+        ('Mobile Money', 'Mobile Money'),
+        ('Bank Transfer', 'Bank Transfer'),
+    ]
+
+    # LINK TO DEPOSIT
+    # If the deposit is deleted, all its payments are deleted too (CASCADE)
+    deposit = models.ForeignKey(
+        Deposit,
+        on_delete=models.CASCADE,
+        related_name='payments'
+    )
+
+    # PAYMENT DETAILS
+    amount = models.DecimalField(max_digits=15, decimal_places=2)               # Amount paid in this instalment
+    payment_method = models.CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES)
+    reference_number = models.CharField(max_length=100, blank=True, null=True)  # e.g. MTN transaction ID
+    note = models.TextField(blank=True, null=True)                              # Optional note about this payment
+
+    # TIMESTAMPS AND TRACKING
+    paid_at = models.DateTimeField(auto_now_add=True)  # When this payment was recorded
+    paid_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='deposit_payments_made'  # Who recorded this payment
+    )
+
+    class Meta:
+        ordering = ['-paid_at']  # Newest payments shown first
+
+    def __str__(self):
+        return f"Payment of UGX {self.amount:,.0f} on Deposit #{self.deposit.id}"
