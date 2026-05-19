@@ -3,7 +3,8 @@ from . import views
 
 urlpatterns = [
     # AUTHENTICATION URLS
-    path('', views.login_view, name='login'),
+    path('', views.landing_view, name='landing'),
+    path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
 
     # DASHBOARD URLS

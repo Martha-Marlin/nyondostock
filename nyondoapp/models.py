@@ -99,6 +99,12 @@ class Sale(models.Model):
     # STAFF TRACKING - who recorded this sale
     sold_by = models.ForeignKey('auth.User', on_delete=models.SET_NULL, null=True)
 
+    # DATE AND TIME
+    sale_date = models.DateTimeField(auto_now_add=True)
+
+    # Delivery distance (for transport charge calculation)
+    wants_delivery = models.BooleanField(default=False)  # Whether customer wants delivery
+
     # TIMESTAMP - automatically set when sale is created
     sale_date = models.DateTimeField(auto_now_add=True)
 

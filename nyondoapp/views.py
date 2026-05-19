@@ -18,6 +18,14 @@ def _get_receipt_css():
         return css_file.read()
 
 
+# LANDING PAGE VIEW
+def landing_view(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    return render(request, 'nyondoapp/landing.html')
+
+
+
 def render_receipt_response(request, template_name, context, download_filename):
     is_download = request.GET.get('download') == '1'
     if is_download:
@@ -151,9 +159,8 @@ def record_sales_view(request):
     }
     return render(request, 'nyondoapp/record_sales.html', context)
 
-
 # ADD SALE VIEW
-# Processes the sale form and saves everything to the database
+# Processes the sale form with multiple items and delivery checkbox
 @login_required(login_url='login')
 def add_sale_view(request):
     if request.method == 'POST':
@@ -161,10 +168,13 @@ def add_sale_view(request):
         customer_name = request.POST.get('customer_name', '').strip()
         phone_number = request.POST.get('phone_number', '').strip()
 
-        stock_item_id = request.POST.get('item')
-        quantity = int(request.POST.get('quantity', 1))
+        # Get multiple item lists from form
+        item_ids = request.POST.getlist('item[]')
+        quantities = request.POST.getlist('quantity[]')
 
-        distance = int(request.POST.get('distance') or 0)
+        # Check delivery checkbox
+        wants_delivery = request.POST.get('wants_delivery', '') == 'yes'
+        distance = int(request.POST.get('distance') or 0) if wants_delivery else 0
 
         payment_status = request.POST.get('payment_status', 'Pending')
         payment_method = request.POST.get('payment_method', 'Cash')
@@ -178,14 +188,11 @@ def add_sale_view(request):
                 messages.error(request, 'Credit sales must be linked to a registered customer.')
                 return redirect('record_sales')
             registered_customer = get_object_or_404(Customer, id=registered_customer_id)
-            # Override name and phone with registered customer's actual data
             customer_name = registered_customer.full_name
             phone_number = registered_customer.phone_number
 
-        # Fix payment status capitalisation
+        # Fix payment status and method
         payment_status = payment_status.capitalize()
-
-        # Fix payment method format
         payment_method_map = {
             'cash': 'Cash',
             'mobile_money': 'Mobile Money',
@@ -193,34 +200,57 @@ def add_sale_view(request):
         }
         payment_method = payment_method_map.get(payment_method, 'Cash')
 
-        if quantity <= 0:
-            messages.error(request, 'Quantity must be greater than zero.')
+        # Validate at least one item selected
+        if not item_ids:
+            messages.error(request, 'Please add at least one item.')
             return redirect('record_sales')
 
-        # Get stock item and auto-fill unit price from selling price
-        stock_item = get_object_or_404(StockItem, id=stock_item_id)
-        unit_price = stock_item.selling_price
+        # Validate and fetch all stock items
+        sale_items = []
+        subtotal = Decimal('0')
 
-        # Check if enough stock is available
-        if quantity > stock_item.quantity:
-            messages.error(
-                request,
-                f'Not enough stock. Only {stock_item.quantity} {stock_item.unit} available.'
-            )
-            return redirect('record_sales')
+        for i, item_id in enumerate(item_ids):
+            if not item_id:
+                continue
 
-        subtotal = quantity * unit_price
+            quantity = int(quantities[i]) if i < len(quantities) else 1
+            if quantity <= 0:
+                messages.error(request, 'Quantity must be greater than zero for all items.')
+                return redirect('record_sales')
 
-        # Calculate transport charge based on business rules
-        if distance == 0:
+            stock_item = get_object_or_404(StockItem, id=item_id)
+            unit_price = stock_item.selling_price
+
+            if quantity > stock_item.quantity:
+                messages.error(
+                    request,
+                    f'Not enough stock for {stock_item.item_name}. Only {stock_item.quantity} {stock_item.unit} available.'
+                )
+                return redirect('record_sales')
+
+            line_total = unit_price * quantity
+            subtotal += line_total
+            sale_items.append({
+                'stock_item': stock_item,
+                'quantity': quantity,
+                'unit_price': unit_price,
+                'line_total': line_total,
+            })
+
+        # Calculate transport charge
+        if not wants_delivery:
+            # Walk-in customer - no transport charge
             transport_charge = Decimal('0')
         elif distance <= 10 and subtotal >= 500000:
+            # Free delivery: within 10km and order above UGX 500,000
             transport_charge = Decimal('0')
         else:
+            # Flat transport charge
             transport_charge = Decimal('30000')
 
         total_amount = subtotal + transport_charge
 
+        # Save the sale record
         sale = Sale.objects.create(
             customer_name=customer_name,
             phone_number=phone_number,
@@ -234,16 +264,18 @@ def add_sale_view(request):
             sold_by=request.user,
         )
 
-        SaleItem.objects.create(
-            sale=sale,
-            stock_item=stock_item,
-            quantity=quantity,
-            unit_price=unit_price,
-            line_total=subtotal,
-        )
-
-        stock_item.quantity -= quantity
-        stock_item.save()
+        # Save all sale items and reduce stock
+        for item_data in sale_items:
+            SaleItem.objects.create(
+                sale=sale,
+                stock_item=item_data['stock_item'],
+                quantity=item_data['quantity'],
+                unit_price=item_data['unit_price'],
+                line_total=item_data['line_total'],
+            )
+            # Reduce stock quantity
+            item_data['stock_item'].quantity -= item_data['quantity']
+            item_data['stock_item'].save()
 
         messages.success(request, f'Sale #{sale.id} recorded successfully!')
 
