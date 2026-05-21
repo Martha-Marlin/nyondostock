@@ -1,0 +1,81 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Page Not Found - NyondoStock</title>
+
+    <!-- BOOTSTRAP CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+
+    <!-- FONT AWESOME -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+
+    <!-- GOOGLE FONTS -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- BASE CSS -->
+    <link rel="stylesheet" href="{% static 'base.css' %}" />
+
+    <!-- ERROR CSS -->
+    <link rel="stylesheet" href="{% static 'error.css' %}" />
+  </head>
+  <body>
+
+    <!-- TOP NAVIGATION BAR -->
+    <nav class="topbar">
+      <div class="topbar-left">
+        <div class="logo">
+          <img src="{% static 'images/logo-edit.png' %}" alt="NyondoStock Logo" />
+        </div>
+        <div>
+          <div class="brand-name">Nyondo Stock</div>
+          <div class="brand-sub">NYONDO General Hardware LTD</div>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        {% if user.is_authenticated %}
+          <span class="welcome">Welcome, {{ user.username }}</span>
+          <span class="role">{{ user.groups.first.name|default:"Staff" }}</span>
+          <a href="{% url 'logout' %}" class="logout">Logout</a>
+        {% endif %}
+      </div>
+    </nav>
+
+    <!-- ERROR PAGE CONTENT -->
+    <div class="error-page-wrapper">
+      <div class="error-card">
+        <div class="error-icon">📦</div>
+        <div class="error-code">404</div>
+        <div class="error-title">Page Not Found</div>
+        <div class="error-message">
+          Looks like this page got lost in the warehouse.<br />
+          It may have been moved, deleted, or never existed.
+        </div>
+        {% if user.is_authenticated %}
+          <a href="{% url 'dashboard' %}" class="ns-btn-primary">
+            <i class="fa-solid fa-house"></i> Go to Dashboard
+          </a>
+        {% else %}
+          <a href="{% url 'login' %}" class="ns-btn-primary">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i> Go to Login
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+  </body>
+</html>

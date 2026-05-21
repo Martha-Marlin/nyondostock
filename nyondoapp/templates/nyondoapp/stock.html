@@ -69,46 +69,59 @@
           <h6 class="text-muted">MENU</h6>
 
           <ul class="nav flex-column">
-            <!-- DASHBOARD LINK -->
-            <li class="nav-item mb-3">
-              <a href="{% url 'dashboard' %}" class="nav-link text-dark"
-                >📊 Dashboard</a
-              >
-            </li>
-            <!-- STOCK LINK (ACTIVE PAGE) -->
-            <li class="nav-item mb-3">
-              <a href="{% url 'stock' %}" class="nav-link active">📦 Stock</a>
-            </li>
-            <!-- SALES LINK -->
-            <li class="nav-item mb-3">
-              <a href="{% url 'sales_list' %}" class="nav-link text-dark"
-                >🛒 Sales</a
-              >
-            </li>
-            <!-- SUPPLIERS LINK -->
-            <li class="nav-item mb-3">
-              <a href="{% url 'suppliers' %}" class="nav-link text-dark"
-                >🏭 Suppliers</a
-              >
-            </li>
-            <!-- CUSTOMERS LINK -->
-            <li class="nav-item mb-3">
-              <a href="{% url 'customers' %}" class="nav-link text-dark"
-                >👤 Customers</a
-              >
-            </li>
-            <!-- DEPOSITS LINK -->
-            <li class="nav-item mb-3">
-              <a href="{% url 'deposits' %}" class="nav-link text-dark"
-                >💰 Deposits</a
-              >
-            </li>
-            <!-- REPORTS LINK -->
-            <li class="nav-item mb-3">
-              <a href="{% url 'reports' %}" class="nav-link text-dark"
-                >📈 Reports</a
-              >
-            </li>
+            <!-- STOCK MANAGER: Stock and Sales only -->
+            {% if user.groups.all.0.name == 'Stock Manager' %}
+              <li class="nav-item mb-3">
+                <a href="{% url 'stock' %}" class="nav-link active">📦 Stock</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'sales_list' %}" class="nav-link text-dark"
+                  >🛒 Sales</a
+                >
+              </li>
+            {% else %}
+              <!-- OTHER ROLES: Full menu access -->
+              <!-- DASHBOARD LINK -->
+              <li class="nav-item mb-3">
+                <a href="{% url 'dashboard' %}" class="nav-link text-dark"
+                  >📊 Dashboard</a
+                >
+              </li>
+              <!-- STOCK LINK (ACTIVE PAGE) -->
+              <li class="nav-item mb-3">
+                <a href="{% url 'stock' %}" class="nav-link active">📦 Stock</a>
+              </li>
+              <!-- SALES LINK -->
+              <li class="nav-item mb-3">
+                <a href="{% url 'sales_list' %}" class="nav-link text-dark"
+                  >🛒 Sales</a
+                >
+              </li>
+              <!-- SUPPLIERS LINK -->
+              <li class="nav-item mb-3">
+                <a href="{% url 'suppliers' %}" class="nav-link text-dark"
+                  >🏭 Suppliers</a
+                >
+              </li>
+              <!-- CUSTOMERS LINK -->
+              <li class="nav-item mb-3">
+                <a href="{% url 'customers' %}" class="nav-link text-dark"
+                  >👤 Customers</a
+                >
+              </li>
+              <!-- DEPOSITS LINK -->
+              <li class="nav-item mb-3">
+                <a href="{% url 'deposits' %}" class="nav-link text-dark"
+                  >💰 Deposits</a
+                >
+              </li>
+              <!-- REPORTS LINK -->
+              <li class="nav-item mb-3">
+                <a href="{% url 'reports' %}" class="nav-link text-dark"
+                  >📈 Reports</a
+                >
+              </li>
+            {% endif %}
           </ul>
 
           <!-- LOW STOCK WARNING ALERT -->
@@ -220,13 +233,13 @@
                 >
                 <select id="stockCategoryFilter" class="form-select">
                   <option selected>All Categories</option>
+                  <option>Cement</option>
+                  <option>Iron Bars</option>
+                  <option>Iron Sheets</option>
                   <option>Nails</option>
-                  <option>Building</option>
-                  <option>Plumbing</option>
-                  <option>Paint</option>
-                  <option>Steel</option>
-                  <option>Roofing</option>
-                  <option>Equipment</option>
+                  <option>Wheelbarrows</option>
+                  <option>Wire Mesh</option>
+                  <option>Barbed Wire</option>
                 </select>
               </div>
               <!-- STATUS FILTER DROPDOWN -->
@@ -400,7 +413,7 @@
                     class="form-control"
                     id="itemName"
                     name="item_name"
-                    placeholder="e.g. Roofing Nails 5mm"
+                    placeholder="e.g. CEM II N Cement, 10mm Iron Bars, Roofing Nails 5kg"
                     required
                   />
                 </div>
@@ -412,13 +425,13 @@
                   >
                   <select class="form-select" id="itemCategory" name="category" required>
                     <option value="" selected>Select category...</option>
+                    <option>Cement</option>
+                    <option>Iron Bars</option>
+                    <option>Iron Sheets</option>
                     <option>Nails</option>
-                    <option>Building</option>
-                    <option>Plumbing</option>
-                    <option>Paint</option>
-                    <option>Steel</option>
-                    <option>Roofing</option>
-                    <option>Equipment</option>
+                    <option>Wheelbarrows</option>
+                    <option>Wire Mesh</option>
+                    <option>Barbed Wire</option>
                   </select>
                 </div>
 
@@ -446,8 +459,10 @@
                   <select class="form-select" id="unitMeasure" name="unit" required>
                     <option selected>Pieces</option>
                     <option>Bags</option>
+                    <option>Sheets</option>
+                    <option>Packs</option>
+                    <option>Rolls</option>
                     <option>Bundles</option>
-                    <option>Litres</option>
                     <option>Kilograms</option>
                     <option>Metres</option>
                   </select>
@@ -568,13 +583,13 @@
                 <div class="col-md-6">
                   <label for="editItemCategory" class="form-label">Category *</label>
                   <select class="form-select" id="editItemCategory" name="category" required>
+                    <option>Cement</option>
+                    <option>Iron Bars</option>
+                    <option>Iron Sheets</option>
                     <option>Nails</option>
-                    <option>Building</option>
-                    <option>Plumbing</option>
-                    <option>Paint</option>
-                    <option>Steel</option>
-                    <option>Roofing</option>
-                    <option>Equipment</option>
+                    <option>Wheelbarrows</option>
+                    <option>Wire Mesh</option>
+                    <option>Barbed Wire</option>
                   </select>
                 </div>
                 <div class="col-md-4">
@@ -586,8 +601,10 @@
                   <select class="form-select" id="editUnitMeasure" name="unit" required>
                     <option>Pieces</option>
                     <option>Bags</option>
+                    <option>Sheets</option>
+                    <option>Packs</option>
+                    <option>Rolls</option>
                     <option>Bundles</option>
-                    <option>Litres</option>
                     <option>Kilograms</option>
                     <option>Metres</option>
                   </select>
@@ -641,7 +658,7 @@
 
           document.getElementById("editItemId").value = button.getAttribute("data-item-id") || "";
           document.getElementById("editItemName").value = button.getAttribute("data-item-name") || "";
-          document.getElementById("editItemCategory").value = button.getAttribute("data-category") || "Building";
+          document.getElementById("editItemCategory").value = button.getAttribute("data-category") || "Cement";
           document.getElementById("editItemQuantity").value = button.getAttribute("data-quantity") || 0;
           document.getElementById("editUnitMeasure").value = button.getAttribute("data-unit") || "Pieces";
           document.getElementById("editMinimumStock").value = button.getAttribute("data-minimum-stock") || 0;

@@ -25,9 +25,9 @@
 
         <div class="receipt-body">
             <div class="receipt-highlight receipt-highlight-complete">
-                <div class="paid-label">Total Amount Paid</div>
-                <div class="paid-amount">UGX {{ deposit.total_amount|floatformat:0 }}</div>
-                <div class="paid-date">Fully paid - cleared for collection</div>
+                <div class="paid-label">Total Deposited</div>
+                <div class="paid-amount">UGX {{ deposit.amount_paid|floatformat:0 }}</div>
+                <div class="paid-date">Goods calculated using pickup-day selling price</div>
             </div>
 
             <div class="receipt-section">
@@ -57,12 +57,12 @@
                     <span class="value">{{ deposit.quantity_ordered }} {{ deposit.unit }}</span>
                 </div>
                 <div class="receipt-row">
-                    <span class="label">Total Paid</span>
+                    <span class="label">Goods Value</span>
                     <span class="value">UGX {{ deposit.total_amount|floatformat:0 }}</span>
                 </div>
                 <div class="receipt-row">
-                    <span class="label">Balance</span>
-                    <span class="value receipt-cleared">Cleared</span>
+                    <span class="label">Total Deposited</span>
+                    <span class="value">UGX {{ deposit.amount_paid|floatformat:0 }}</span>
                 </div>
             </div>
 
@@ -100,7 +100,14 @@
             <div class="receipt-id">Deposit #{{ deposit.id }}</div>
             <div class="receipt-date">Printed: {% now "d M Y, H:i" %}</div>
             <div class="receipt-actions">
-                <button class="receipt-action-btn" onclick="window.print()">Print Receipt</button>
+                  <button class="receipt-action-btn" onclick="printReceipt()">Print Receipt</button>
+
+<script>
+function printReceipt() {
+    window.print();
+    return false;
+}
+</script>
                 <a class="receipt-action-btn receipt-action-secondary" href="{% url 'collection_receipt' deposit.id %}?download=1">Download Receipt</a>
             </div>
         </div>

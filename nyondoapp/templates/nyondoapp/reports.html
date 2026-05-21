@@ -1,0 +1,485 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reports — NyondoStock</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'base.css' %}" />
+    <link rel="stylesheet" href="{% static 'reports.css' %}" />
+  </head>
+  <body>
+
+    <!-- TOPBAR -->
+    <nav class="topbar">
+      <div class="topbar-left">
+        <div class="logo">
+          <img src="{% static 'images/logo-edit.png' %}" alt="NyondoStock Logo" />
+        </div>
+        <div>
+          <div class="brand-name">Nyondo Stock</div>
+          <div class="brand-sub">NYONDO General Hardware LTD</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span class="welcome">Welcome, {{ user.username }}</span>
+        <span class="role">{{ user.groups.first.name|default:"Accounts/Admin" }}</span>
+        <a href="{% url 'logout' %}" class="logout">Logout</a>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+
+        <!-- SIDEBAR -->
+        <div class="col-2 bg-light min-vh-100 p-3 pt-4 d-flex flex-column">
+          <h6 class="text-muted">MENU</h6>
+          <ul class="nav flex-column">
+            <li class="nav-item mb-3">
+              <a href="{% url 'dashboard' %}" class="nav-link text-dark">📊 Dashboard</a>
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'stock' %}" class="nav-link text-dark">📦 Stock</a>
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'sales_list' %}" class="nav-link text-dark">🛒 Sales</a>
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'deposits' %}" class="nav-link text-dark">💰 Deposits</a>
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'reports' %}" class="nav-link active">📈 Reports</a>
+            </li>
+          </ul>
+
+          <div class="sidebar-footer mt-auto pt-3">
+            <hr />
+            <small class="text-muted d-block mb-1">📦 NyondoStock v1.0</small>
+            <small class="text-muted d-block mb-1">🏪 NYONDO General Hardware</small>
+            <small class="text-muted d-block">📅 {{ now|date:"F Y" }}</small>
+          </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="col-10 reports-page">
+
+          <!-- PAGE HEADER -->
+          <div class="reports-header">
+            <div>
+              <h4>Reports</h4>
+              <small>{{ now|date:"l, d F Y" }}</small>
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-outline-success btn-sm px-3" onclick="window.print()">
+                <i class="fa fa-print me-1"></i> Print
+              </button>
+            </div>
+          </div>
+
+          <!-- SUMMARY STAT CARDS -->
+          <div class="row mb-4 g-3">
+            <div class="col-12 col-sm-6 col-md-3">
+              <div class="report-stat-card soft">
+                <div class="report-stat-label">💰 Total Revenue</div>
+                <div class="report-stat-value">UGX {{ total_revenue|floatformat:0 }}</div>
+                <div class="report-stat-sub">all paid sales</div>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-3">
+              <div class="report-stat-card warn">
+                <div class="report-stat-label">🚚 Transport Absorbed</div>
+                <div class="report-stat-value">UGX {{ total_transport|floatformat:0 }}</div>
+                <div class="report-stat-sub">company paid deliveries</div>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-3">
+              <div class="report-stat-card">
+                <div class="report-stat-label">🏦 Total Deposits</div>
+                <div class="report-stat-value">UGX {{ total_deposits|floatformat:0 }}</div>
+                <div class="report-stat-sub">customer deposits held</div>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-3">
+              <div class="report-stat-card danger">
+                <div class="report-stat-label">⚠️ Supplier Credit Owed</div>
+                <div class="report-stat-value">UGX {{ total_supplier_credit|floatformat:0 }}</div>
+                <div class="report-stat-sub">outstanding balance</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- REPORT TYPE TABS + FILTERS -->
+          <div class="report-filter-card">
+            <!-- TABS -->
+            <div class="report-tabs mb-3">
+             <a href="?report_type=sales&date_from={{ date_from|date:'Y-m-d' }}&date_to={{ date_to|date:'Y-m-d' }}"
+  class="report-tab {% if report_type == 'sales' %}active{% endif %}">
+  🛒 Sales
+</a>
+<a href="?report_type=transport&date_from={{ date_from|date:'Y-m-d' }}&date_to={{ date_to|date:'Y-m-d' }}"
+  class="report-tab {% if report_type == 'transport' %}active{% endif %}">
+  🚚 Transport Costs
+</a>
+<a href="?report_type=deposits&date_from={{ date_from|date:'Y-m-d' }}&date_to={{ date_to|date:'Y-m-d' }}"
+  class="report-tab {% if report_type == 'deposits' %}active{% endif %}">
+  🏦 Deposits
+</a>
+<a href="?report_type=supplier_credits&date_from={{ date_from|date:'Y-m-d' }}&date_to={{ date_to|date:'Y-m-d' }}"
+  class="report-tab {% if report_type == 'supplier_credits' %}active{% endif %}">
+  🏭 Supplier Credits
+</a>
+            </div>
+
+            <!-- FILTERS -->
+            <form method="GET" action="{% url 'reports' %}">
+              <input type="hidden" name="report_type" value="{{ report_type }}" />
+              <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                  <label class="form-label">Date From</label>
+                  <input type="date" name="date_from" class="form-control" value="{{ date_from }}" />
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Date To</label>
+                  <input type="date" name="date_to" class="form-control" value="{{ date_to }}" />
+                </div>
+                {% if report_type == 'sales' %}
+                <div class="col-md-3">
+                  <label class="form-label">Status</label>
+                  <select name="status" class="form-select">
+                    <option value="">All Status</option>
+                    <option value="Paid" {% if request.GET.status == 'Paid' %}selected{% endif %}>Paid</option>
+                    <option value="Pending" {% if request.GET.status == 'Pending' %}selected{% endif %}>Pending</option>
+                    <option value="Credit" {% if request.GET.status == 'Credit' %}selected{% endif %}>Credit</option>
+                  </select>
+                </div>
+                {% endif %}
+                <div class="col-md-3">
+                  <button type="submit" class="btn btn-success w-100">Apply Filters</button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <!-- SALES REPORT TABLE -->
+          {% if report_type == 'sales' %}
+          <div class="report-list-card">
+            <div class="report-list-header">
+              <h5>Sales Report</h5>
+              <span>{{ date_from }} — {{ date_to }} &nbsp;|&nbsp; {{ sales.count }} records</span>
+            </div>
+            <div class="table-responsive">
+              <table class="table report-table mb-0">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Customer</th>
+                    <th>Phone</th>
+                    <th>Amount (UGX)</th>
+                    <th>Transport</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                    <th>Recorded By</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for sale in sales %}
+                  <tr>
+                    <td>{{ sale.sale_date|date:"d M Y" }}</td>
+                    <td>{{ sale.customer_name }}</td>
+                    <td>{{ sale.phone_number }}</td>
+                    <td class="fw-semibold">{{ sale.total_amount|floatformat:0 }}</td>
+                    <td>
+                      {% if sale.transport_charge > 0 %}
+                        <span class="text-warning fw-semibold">{{ sale.transport_charge|floatformat:0 }}</span>
+                      {% else %}
+                        <span class="text-success fw-semibold">Free</span>
+                      {% endif %}
+                    </td>
+                    <td>{{ sale.payment_method }}</td>
+                    <td>
+                      {% if sale.payment_status == 'Paid' %}
+                        <span class="status-badge b-green">Paid</span>
+                      {% elif sale.payment_status == 'Pending' %}
+                        <span class="status-badge b-yellow">Pending</span>
+                      {% else %}
+                        <span class="status-badge b-red">Credit</span>
+                      {% endif %}
+                    </td>
+                    <td>{{ sale.sold_by.username|default:"—" }}</td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                    <td colspan="8" class="text-muted text-center py-4">No sales found for this period.</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- SALES TOTALS -->
+          <div class="row g-3 mt-1 mb-4">
+            <div class="col-md-4">
+              <div class="report-total-card soft">
+                <span>Total Sales</span>
+                <strong>UGX {{ sales_total|floatformat:0 }}</strong>
+                <small>{{ sales.count }} transactions</small>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="report-total-card warn">
+                <span>Transport Charged</span>
+                <strong>UGX {{ sales_transport|floatformat:0 }}</strong>
+                <small>charged to customers</small>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="report-total-card danger">
+                <span>Outstanding</span>
+                <strong>UGX {{ sales_outstanding|floatformat:0 }}</strong>
+                <small>pending + credit</small>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+          <!-- TRANSPORT COSTS REPORT TABLE -->
+          {% if report_type == 'transport' %}
+          <div class="report-list-card">
+            <div class="report-list-header">
+              <h5>Transport Costs Report</h5>
+              <span>{{ date_from }} — {{ date_to }} &nbsp;|&nbsp; {{ transport_sales.count }} records</span>
+            </div>
+            <div class="table-responsive">
+              <table class="table report-table mb-0">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Customer</th>
+                    <th>Phone</th>
+                    <th>Sale Amount (UGX)</th>
+                    <th>Transport Cost Absorbed</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for sale in transport_sales %}
+                  <tr>
+                    <td>{{ sale.sale_date|date:"d M Y" }}</td>
+                    <td>{{ sale.customer_name }}</td>
+                    <td>{{ sale.phone_number }}</td>
+                    <td class="fw-semibold">{{ sale.total_amount|floatformat:0 }}</td>
+                    <td class="text-danger fw-semibold">30,000</td>
+                    <td>
+                      {% if sale.payment_status == 'Paid' %}
+                        <span class="status-badge b-green">Paid</span>
+                      {% elif sale.payment_status == 'Pending' %}
+                        <span class="status-badge b-yellow">Pending</span>
+                      {% else %}
+                        <span class="status-badge b-red">Credit</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                    <td colspan="6" class="text-muted text-center py-4">No free delivery sales found for this period.</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- TRANSPORT TOTALS -->
+          <div class="row g-3 mt-1 mb-4">
+            <div class="col-md-6">
+              <div class="report-total-card warn">
+                <span>Total Deliveries Made</span>
+                <strong>{{ transport_sales.count }}</strong>
+                <small>free delivery orders</small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="report-total-card danger">
+                <span>Total Transport Absorbed</span>
+                <strong>UGX {{ transport_total_absorbed|floatformat:0 }}</strong>
+                <small>company paid (UGX 30,000 each)</small>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+          <!-- DEPOSITS REPORT TABLE -->
+          {% if report_type == 'deposits' %}
+          <div class="report-list-card">
+            <div class="report-list-header">
+              <h5>Deposits Report</h5>
+              <span>{{ date_from }} — {{ date_to }} &nbsp;|&nbsp; {{ deposits.count }} records</span>
+            </div>
+            <div class="table-responsive">
+              <table class="table report-table mb-0">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Customer</th>
+                    <th>Item</th>
+                    <th>Qty</th>
+                    <th>Total (UGX)</th>
+                    <th>Paid (UGX)</th>
+                    <th>Balance (UGX)</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for deposit in deposits %}
+                  <tr>
+                    <td>{{ deposit.created_at|date:"d M Y" }}</td>
+                    <td>{{ deposit.customer.full_name }}</td>
+                    <td>{{ deposit.item_type }}</td>
+                    <td>
+                      {% if deposit.quantity_ordered > 0 %}
+                        {{ deposit.quantity_ordered }} {{ deposit.unit }}
+                      {% else %}
+                        Pending collection
+                      {% endif %}
+                    </td>
+                    <td class="fw-semibold">
+                      {% if deposit.total_amount > 0 %}
+                        {{ deposit.total_amount|floatformat:0 }}
+                      {% else %}
+                        Not fixed
+                      {% endif %}
+                    </td>
+                    <td class="text-success fw-semibold">{{ deposit.amount_paid|floatformat:0 }}</td>
+                    <td class="text-warning fw-semibold">
+                      {% if deposit.status == 'Completed' %}Collected{% else %}At pickup{% endif %}
+                    </td>
+                    <td>
+                      {% if deposit.status == 'Completed' %}
+                        <span class="status-badge b-green">Completed</span>
+                      {% elif deposit.status == 'Active' %}
+                        <span class="status-badge b-yellow">Active</span>
+                      {% else %}
+                        <span class="status-badge b-red">Cancelled</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                    <td colspan="8" class="text-muted text-center py-4">No deposits found for this period.</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- DEPOSITS TOTALS -->
+          <div class="row g-3 mt-1 mb-4">
+            <div class="col-md-6">
+              <div class="report-total-card soft">
+                <span>Total Deposited</span>
+                <strong>UGX {{ deposits_total|floatformat:0 }}</strong>
+                <small>{{ deposits.count }} deposit orders</small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="report-total-card warn">
+                <span>Active Deposits</span>
+                <strong>{{ deposits.filter.count }}</strong>
+                <small>still in progress</small>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+          <!-- SUPPLIER CREDITS REPORT TABLE -->
+          {% if report_type == 'supplier_credits' %}
+          <div class="report-list-card">
+            <div class="report-list-header">
+              <h5>Supplier Credits Report</h5>
+              <span>{{ date_from }} — {{ date_to }} &nbsp;|&nbsp; {{ supplier_credits.count }} records</span>
+            </div>
+            <div class="table-responsive">
+              <table class="table report-table mb-0">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Supplier</th>
+                    <th>Description</th>
+                    <th>Total (UGX)</th>
+                    <th>Paid (UGX)</th>
+                    <th>Balance (UGX)</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for credit in supplier_credits %}
+                  <tr>
+                    <td>{{ credit.created_at|date:"d M Y" }}</td>
+                    <td>{{ credit.supplier.supplier_name }}</td>
+                    <td>{{ credit.description }}</td>
+                    <td class="fw-semibold">{{ credit.total_amount|floatformat:0 }}</td>
+                    <td class="text-success fw-semibold">{{ credit.amount_paid|floatformat:0 }}</td>
+                    <td class="text-danger fw-semibold">{{ credit.balance_due|floatformat:0 }}</td>
+                    <td>{{ credit.due_date|date:"d M Y" }}</td>
+                    <td>
+                      {% if credit.status == 'Cleared' %}
+                        <span class="status-badge b-green">Cleared</span>
+                      {% elif credit.status == 'Partial' %}
+                        <span class="status-badge b-yellow">Partial</span>
+                      {% else %}
+                        <span class="status-badge b-red">Unpaid</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                    <td colspan="8" class="text-muted text-center py-4">No supplier credits found for this period.</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- SUPPLIER CREDITS TOTALS -->
+          <div class="row g-3 mt-1 mb-4">
+            <div class="col-md-4">
+              <div class="report-total-card">
+                <span>Total Credit Taken</span>
+                <strong>UGX {{ credits_total|floatformat:0 }}</strong>
+                <small>{{ supplier_credits.count }} credit records</small>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="report-total-card danger">
+                <span>Outstanding Balance</span>
+                <strong>UGX {{ credits_outstanding|floatformat:0 }}</strong>
+                <small>unpaid + partial</small>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="report-total-card soft">
+                <span>Cleared Credits</span>
+                <strong>{{ credits_cleared }}</strong>
+                <small>fully paid off</small>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"></script>
+  </body>
+</html>

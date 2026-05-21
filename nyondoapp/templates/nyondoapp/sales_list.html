@@ -64,41 +64,56 @@
         >
           <h6 class="text-muted">MENU</h6>
           <ul class="nav flex-column">
-            <li class="nav-item mb-3">
-              <a href="{% url 'dashboard' %}" class="nav-link text-dark"
-                >📊 Dashboard</a
-              >
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'stock' %}" class="nav-link text-dark"
-                >📦 Stock</a
-              >
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'sales_list' %}" class="nav-link active"
-                >🛒 Sales</a
-              >
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'suppliers' %}" class="nav-link text-dark"
-                >🏭 Suppliers</a
-              >
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'customers' %}" class="nav-link text-dark"
-                >👤 Customers</a
-              >
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'deposits' %}" class="nav-link text-dark"
-                >💰 Deposits</a
-              >
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'reports' %}" class="nav-link text-dark"
-                >📈 Reports</a
-              >
-            </li>
+            <!-- STOCK MANAGER: Stock and Sales only -->
+            {% if user.groups.all.0.name == 'Stock Manager' %}
+              <li class="nav-item mb-3">
+                <a href="{% url 'stock' %}" class="nav-link text-dark"
+                  >📦 Stock</a
+                >
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'sales_list' %}" class="nav-link active"
+                  >🛒 Sales</a
+                >
+              </li>
+            {% else %}
+              <!-- OTHER ROLES: Full menu access -->
+              <li class="nav-item mb-3">
+                <a href="{% url 'dashboard' %}" class="nav-link text-dark"
+                  >📊 Dashboard</a
+                >
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'stock' %}" class="nav-link text-dark"
+                  >📦 Stock</a
+                >
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'sales_list' %}" class="nav-link active"
+                  >🛒 Sales</a
+                >
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'suppliers' %}" class="nav-link text-dark"
+                  >🏭 Suppliers</a
+                >
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'customers' %}" class="nav-link text-dark"
+                  >👤 Customers</a
+                >
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'deposits' %}" class="nav-link text-dark"
+                  >💰 Deposits</a
+                >
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'reports' %}" class="nav-link text-dark"
+                  >📈 Reports</a
+                >
+              </li>
+            {% endif %}
           </ul>
 
           <!-- LOW STOCK ALERT -->
@@ -270,7 +285,11 @@
                     <td>
                       {% with line=sale.items.first %}
                         {% if line %}
-                          {{ line.stock_item.item_name|truncatechars:30 }}
+                          {% if line.stock_item %}
+                            {{ line.stock_item.item_name }}
+                          {% else %}
+                            [Product Discontinued]
+                          {% endif %}
                           {% if sale.items.count > 1 %}
                           <small class="text-muted d-block mt-1"
                             >+{{ sale.items.count|add:"-1" }} more item{{ sale.items.count|add:"-1"|pluralize }}</small

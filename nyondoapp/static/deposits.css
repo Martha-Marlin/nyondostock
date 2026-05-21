@@ -3,6 +3,31 @@ body {
     background: #f4f6f3;
 }
 
+/* CREATE DEPOSIT PAGE HEADER */
+.ns-back-link {
+    color: #1d9e75;
+    display: block;
+    font-size: 15px;
+    margin-bottom: 12px;
+    text-decoration: none;
+}
+.ns-back-link:hover {
+    color: #0f6e56;
+}
+.ns-page-heading {
+    margin-bottom: 18px;
+}
+.ns-page-heading h4 {
+    color: #142e1a;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+.ns-page-heading small {
+    color: #6c757d;
+    font-size: 15px;
+}
+
 /* DEPOSITS TABLE - item cell with name and phone stacked */
 .item-cell {
     display: flex;
@@ -233,4 +258,37 @@ body {
     font-size: 15px;
     color: #142e1a;
     font-weight: 700;
+}
+
+/* Print styles */
+@media print {
+    /* Hide buttons and navigation when printing */
+    .receipt-actions {
+        display: none !important;
+    }
+    
+    /* Ensure receipt looks good on paper */
+    body {
+        background: white;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .receipt {
+        box-shadow: none;
+        margin: 0;
+        padding: 20px;
+        width: 100%;
+    }
+    
+    /* Force colors for printing */
+    .receipt-highlight-complete {
+        background-color: #f0f9f0 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    .balance {
+        font-weight: bold !important;
+    }
 }

@@ -7,11 +7,13 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
 
+
     # DASHBOARD URLS
-    path('dashboard/', views.dashboard_view, name='dashboard'),
-    path('sales-dashboard/', views.sales_dashboard_view, name='sales_dashboard'),
-    path('admin-dashboard/', views.admin_dashboard_view, name='admin_dashboard'),
-    path('accounts-dashboard/', views.admin_dashboard_view, name='accounts_dashboard'),
+path('dashboard/', views.dashboard_view, name='dashboard'),  # smart redirect
+path('store-manager-dashboard/', views.store_manager_dashboard_view, name='store_manager_dashboard'),
+path('sales-dashboard/', views.sales_dashboard_view, name='sales_dashboard'),
+path('accounts-dashboard/', views.admin_dashboard_view, name='accounts_dashboard'),
+
 
     # STOCK URLS
     path('stock/', views.stock_view, name='stock'),
@@ -51,13 +53,17 @@ urlpatterns = [
 path('deposits/', views.deposits_view, name='deposits'),
 path('deposits/create/', views.create_deposit_view, name='create_deposit'),
 path('deposits/<int:deposit_id>/', views.deposit_detail_view, name='deposit_detail'),
+path('deposits/<int:deposit_id>/edit/', views.edit_deposit_view, name='edit_deposit'),
 path('deposits/<int:deposit_id>/pay/', views.record_deposit_payment_view, name='record_deposit_payment'),
 path('deposits/<int:deposit_id>/cancel/', views.cancel_deposit_view, name='cancel_deposit'),
+path('deposits/<int:deposit_id>/collect/', views.collect_deposit_view, name='collect_deposit'),
 path('deposits/<int:payment_id>/receipt/', views.deposit_receipt_view, name='deposit_receipt'),
 path('deposits/<int:deposit_id>/collection-receipt/', views.collection_receipt_view, name='collection_receipt'),
 
+#REPORTS URLS
+path('reports/', views.reports_view, name='reports'),
 
     # PLACEHOLDER URLS (pages not built yet)
     path('audit_log/', views.dashboard_view, name='audit_log'),
-    path('reports/', views.dashboard_view, name='reports'),
+    
 ]

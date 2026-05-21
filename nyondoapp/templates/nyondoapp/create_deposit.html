@@ -79,15 +79,12 @@
             <!-- MAIN CONTENT -->
             <main class="col-lg-10 col-md-9 p-4 p-lg-5">
 
-                <!-- BREADCRUMB -->
-                <div class="ns-breadcrumb">
-                    <a href="{% url 'deposits' %}">Deposits</a> /
-                    <span>Create Deposit</span>
-                </div>
+                <a href="{% url 'deposits' %}" class="ns-back-link">&lt; Back to Deposits</a>
 
-                <!-- PAGE TITLE -->
-                <div class="ns-page-title">Create New Deposit</div>
-                <div class="ns-page-sub">Register a new customer deposit order. Stock will be reserved immediately.</div>
+                <div class="ns-page-heading">
+                    <h4>Create New Deposit</h4>
+                    <small>Open a salary-earner deposit account. Goods are calculated from total paid on collection day.</small>
+                </div>
 
                 <!-- MESSAGES -->
                 {% if messages %}
@@ -100,6 +97,13 @@
                     {% endfor %}
                 </div>
                 {% endif %}
+
+                <div class="lock-note mt-3 mb-4">
+    The deposit scheme is only available for <strong>Cement CEM II N</strong>, 
+    <strong>Cement CEM III N</strong>, <strong>Iron Sheets</strong>, and 
+    <strong>Iron Bars 10mm, 12mm, and 16mm</strong>. 
+    These are the only products eligible for instalment payments at NYONDO General Hardware.
+</div>
 
                 <!-- FORM -->
                 <form method="POST" action="{% url 'create_deposit' %}">
@@ -144,24 +148,27 @@
                                     </label>
                                     <select id="item_type" name="item_type" class="ns-input" required>
                                         <option value="" disabled selected>Select item</option>
-                                        <option value="Cement">Cement</option>
+                                        <option value="Cement CEM II N">Cement CEM II N</option>
+                                        <option value="Cement CEM III N">Cement CEM III N</option>
                                         <option value="Iron Sheets">Iron Sheets</option>
-                                        <option value="Iron Bars">Iron Bars</option>
+                                        <option value="Iron Bars 10mm">Iron Bars 10mm</option>
+                                        <option value="Iron Bars 12mm">Iron Bars 12mm</option>
+                                        <option value="Iron Bars 16mm">Iron Bars 16mm</option>
                                     </select>
                                 </div>
                                 <div class="col-md-4">
                                     <label class="ns-field-label" for="quantity_ordered">
-                                        Quantity <span class="req">*</span>
+                                        Estimated Quantity
                                     </label>
                                     <input
                                         type="number"
                                         id="quantity_ordered"
                                         name="quantity_ordered"
                                         class="ns-input"
-                                        min="1"
+                                        min="0"
                                         placeholder="e.g. 50"
-                                        required
                                     />
+                                    <div class="ns-hint">Optional estimate only. Final quantity is based on amount paid at pickup.</div>
                                 </div>
                                 <div class="col-md-4">
                                     <label class="ns-field-label" for="unit">
@@ -178,9 +185,9 @@
                                <div class="col-md-4">
     <label class="ns-field-label">Total Amount (UGX)</label>
     <div style="background: #f4f9f6; border: 1px solid #d5ede3; border-radius: 8px; padding: 10px 12px; font-size: 13.5px; color: #142e1a; font-weight: 600;">
-        Auto-calculated from current selling price
+        Not fixed until collection day
     </div>
-    <div class="ns-hint">Total = quantity × current selling price of {{ item_type|default:"selected item" }}</div>
+    <div class="ns-hint">Temporary receipts are issued for each payment. Goods are calculated using the selling price on pickup day.</div>
 </div>
                                 <div class="col-md-4">
                                     <label class="ns-field-label" for="due_date">
@@ -210,18 +217,17 @@
 
                         <div class="ns-divider"></div>
 
-                        <!-- SECTION 3: STOCK RESERVATION NOTICE -->
+                        <!-- SECTION 3: COLLECTION NOTICE -->
                         <div class="ns-section-header" style="border-bottom: none;">
                             <div class="ns-section-dot"></div>
-                            <div class="ns-section-title">Stock Reservation</div>
+                            <div class="ns-section-title">Collection Rule</div>
                         </div>
                         <div class="ns-section-body" style="padding-top: 12px;">
                             <div class="ns-deposit-panel" style="background: #fffbe6; border: 1px solid #f5c842; border-radius: 10px; padding: 14px 18px;">
                                 <div style="font-size: 13px; color: #855000;">
                                     <i class="fa-solid fa-triangle-exclamation me-2"></i>
-                                    Stock will be <strong>reserved immediately</strong> when this deposit is created.
-                                    The quantity ordered will be deducted from available stock.
-                                    If the deposit is cancelled, stock will be restored automatically.
+                                    Stock is <strong>not reserved</strong> when this deposit is created.
+                                    When the customer collects, the system uses the total amount paid and the current selling price to determine the goods to issue.
                                 </div>
                             </div>
                         </div>

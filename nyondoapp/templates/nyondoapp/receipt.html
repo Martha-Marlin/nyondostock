@@ -54,7 +54,13 @@
                 <div class="receipt-section-title">Items</div>
                 {% for item in items %}
                     <div class="receipt-row">
-                        <span class="label">{{ item.stock_item.item_name }}</span>
+                        <span class="label">
+    {% if item.stock_item %}
+        {{ item.stock_item.item_name }}
+    {% else %}
+        [Product Discontinued]
+    {% endif %}
+</span>
                         <span class="value">{{ item.quantity }} x UGX {{ item.unit_price|floatformat:0 }}</span>
                     </div>
                     <div class="receipt-row">
@@ -89,7 +95,14 @@
             <div class="receipt-id">Sale #{{ sale.id }}</div>
             <div class="receipt-date">Printed: {% now "d M Y, H:i" %}</div>
             <div class="receipt-actions">
-                <button class="receipt-action-btn" onclick="window.print()">Print Receipt</button>
+                <button class="receipt-action-btn" onclick="printReceipt()">Print Receipt</button>
+
+<script>
+function printReceipt() {
+    window.print();
+    return false;
+}
+</script>
                 <a class="receipt-action-btn receipt-action-secondary" href="{% url 'print_receipt' sale.id %}?download=1">Download Receipt</a>
             </div>
         </div>

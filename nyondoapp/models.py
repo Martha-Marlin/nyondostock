@@ -9,21 +9,23 @@ class StockItem(models.Model):
 
     # CATEGORY CHOICES - types of hardware items sold
     CATEGORY_CHOICES = [
+        ("Cement", "Cement"),
+        ("Iron Bars", "Iron Bars"),
+        ("Iron Sheets", "Iron Sheets"),
         ("Nails", "Nails"),
-        ("Building", "Building"),
-        ("Plumbing", "Plumbing"),
-        ("Paint", "Paint"),
-        ("Steel", "Steel"),
-        ("Roofing", "Roofing"),
-        ("Equipment", "Equipment"),
+        ("Wheelbarrows", "Wheelbarrows"),
+        ("Wire Mesh", "Wire Mesh"),
+        ("Barbed Wire", "Barbed Wire"),
     ]
 
     # UNIT CHOICES - how each item is measured/sold
     UNIT_CHOICES = [
         ("Pieces", "Pieces"),
         ("Bags", "Bags"),
+        ("Sheets", "Sheets"),
+        ("Packs", "Packs"),
+        ("Rolls", "Rolls"),
         ("Bundles", "Bundles"),
-        ("Litres", "Litres"),
         ("Kilograms", "Kilograms"),
         ("Metres", "Metres"),
     ]
@@ -128,7 +130,7 @@ class SaleItem(models.Model):
 
     # LINK TO STOCK ITEM
     # PROTECT means you cannot delete a stock item that has been sold
-    stock_item = models.ForeignKey(StockItem, on_delete=models.PROTECT)
+    stock_item = models.ForeignKey(StockItem, on_delete=models.SET_NULL, null=True, blank=True)
 
     # QUANTITY AND PRICING FOR THIS LINE
     quantity = models.PositiveIntegerField()                                    # How many units sold
@@ -143,8 +145,11 @@ class SaleItem(models.Model):
 
     # STRING REPRESENTATION
     def __str__(self):
-        return f"{self.stock_item.item_name} x {self.quantity}"
+        if self.stock_item:          # If this sale item is linked to a stock item
+          return f"{self.stock_item.item_name} x {self.quantity}"
 
+        else:                        # If this sale item is not linked to a stock item
+            return f"Deleted Item x {self.quantity}"
 
 #  SUPPLIER MODEL 
 # Represents a supplier/vendor that provides stock to the hardware shop
@@ -399,16 +404,24 @@ class CustomerCreditPayment(models.Model):
     
 
 # DEPOSIT MODEL
-# Records a customer order paid in instalments before collection
+# Records money deposited by salary earners before goods are collected
 # Only applies to cement, iron sheets, and iron bars
-# Stock is reduced immediately when deposit is created
-# Stock is restored if deposit is cancelled
+# Stock is reduced only on collection day, based on amount paid and current price
 class Deposit(models.Model):
 
     ITEM_TYPE_CHOICES = [
-        ('Cement', 'Cement'),
+        # Only these 5 items are allowed for deposit orders
+        #CEMENT TYPES
+        ('Cement CEM II N', 'Cement CEM II N'),
+        ('Cement CEM III N', 'Cement CEM III N'),
+
+         # IRON SHEETS
         ('Iron Sheets', 'Iron Sheets'),
-        ('Iron Bars', 'Iron Bars'),
+
+         # IRON BARS
+        ('Iron Bars 10mm', 'Iron Bars 10mm'),
+        ('Iron Bars 12mm', 'Iron Bars 12mm'),
+        ('Iron Bars 16mm', 'Iron Bars 16mm'),
     ]
 
     UNIT_CHOICES = [
@@ -435,11 +448,11 @@ class Deposit(models.Model):
     item_type = models.CharField(max_length=20, choices=ITEM_TYPE_CHOICES)      # What the customer is ordering
     quantity_ordered = models.PositiveIntegerField()                             # How many units ordered
     unit = models.CharField(max_length=20, choices=UNIT_CHOICES)                # Unit of measurement
-    total_amount = models.DecimalField(max_digits=15, decimal_places=2)         # Fixed total price agreed at creation
+    total_amount = models.DecimalField(max_digits=15, decimal_places=2)         # Estimate before collection, final goods value after collection
     amount_paid = models.DecimalField(max_digits=15, decimal_places=2, default=0)  # Running total of all instalments paid
 
     # STATUS
-    # Starts as Active, moves to Completed when fully paid, Cancelled if order is dropped
+    # Starts as Active, moves to Completed when goods are collected, Cancelled if order is dropped
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Active')
 
     # RECEIPT NUMBER

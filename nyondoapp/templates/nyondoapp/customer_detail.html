@@ -229,7 +229,11 @@
                     <td>{{ forloop.counter|stringformat:"03d" }}</td>
                   <td>
   {% for item in entry.sale.items.all %}
+   {% if item.stock_item %}
     {{ item.stock_item.item_name }}{% if not forloop.last %}, {% endif %}
+{% else %}
+    [Product Discontinued]{% if not forloop.last %}, {% endif %}
+{% endif %}
   {% endfor %}
 </td>
                     <td>UGX {{ entry.sale.total_amount|floatformat:0 }}</td>

@@ -85,7 +85,7 @@
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
                         <h4 class="mb-0">Deposits</h4>
-                        <small class="text-muted">Customer deposit orders and payment tracking</small>
+                        <small class="text-muted">Salary-earner deposit scheme and temporary payment receipts</small>
                     </div>
                     {% if user.groups.first.name == 'Accounts Admin' or user.groups.first.name == 'Store Manager' %}
                     <a href="{% url 'create_deposit' %}" class="ns-btn-primary">
@@ -131,9 +131,9 @@
                     </div>
                     <div class="col-12 col-sm-6 col-md-3">
                         <div class="stat-card warn">
-                            <div class="stat-label">📊 TOTAL BALANCE DUE</div>
-                            <div class="stat-value" style="font-size: 24px;">UGX {{ total_balance_due|floatformat:0 }}</div>
-                            <div class="stat-sub">across active deposits</div>
+                            <div class="stat-label">TOTAL PAID ACTIVE</div>
+                            <div class="stat-value" style="font-size: 24px;">UGX {{ total_active_paid|floatformat:0 }}</div>
+                            <div class="stat-sub">goods pending collection</div>
                         </div>
                     </div>
                 </div>
@@ -164,9 +164,12 @@
                             <label class="form-label small text-muted mb-1">Item type</label>
                             <select name="item_type" class="form-select form-select-sm">
                                 <option value="">All Items</option>
-                                <option value="Cement" {% if item_type == 'Cement' %}selected{% endif %}>Cement</option>
+                                <option value="Cement CEM II N" {% if item_type == 'Cement CEM II N' %}selected{% endif %}>Cement CEM II N</option>
+                                <option value="Cement CEM III N" {% if item_type == 'Cement CEM III N' %}selected{% endif %}>Cement CEM III N</option>
                                 <option value="Iron Sheets" {% if item_type == 'Iron Sheets' %}selected{% endif %}>Iron Sheets</option>
-                                <option value="Iron Bars" {% if item_type == 'Iron Bars' %}selected{% endif %}>Iron Bars</option>
+                                <option value="Iron Bars 10mm" {% if item_type == 'Iron Bars 10mm' %}selected{% endif %}>Iron Bars 10mm</option>
+                                <option value="Iron Bars 12mm" {% if item_type == 'Iron Bars 12mm' %}selected{% endif %}>Iron Bars 12mm</option>
+                                <option value="Iron Bars 16mm" {% if item_type == 'Iron Bars 16mm' %}selected{% endif %}>Iron Bars 16mm</option>
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -191,9 +194,9 @@
                                     <th>Customer</th>
                                     <th>Item</th>
                                     <th>Qty</th>
-                                    <th>Total</th>
+                                    <th>Estimated / Goods Value</th>
                                     <th>Paid</th>
-                                    <th>Balance</th>
+                                    <th>Collection Rule</th>
                                     <th>Progress</th>
                                     <th>Due Date</th>
                                     <th>Status</th>
@@ -211,21 +214,33 @@
                                         </div>
                                     </td>
                                     <td>{{ deposit.item_type }}</td>
-                                    <td>{{ deposit.quantity_ordered }} {{ deposit.unit }}</td>
-                                    <td><strong>UGX {{ deposit.total_amount|floatformat:0 }}</strong></td>
+                                    <td>
+                                        {% if deposit.quantity_ordered > 0 %}
+                                            {{ deposit.quantity_ordered }} {{ deposit.unit }}
+                                        {% else %}
+                                            Pending
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if deposit.total_amount > 0 %}
+                                            <strong>UGX {{ deposit.total_amount|floatformat:0 }}</strong>
+                                        {% else %}
+                                            Not fixed
+                                        {% endif %}
+                                    </td>
                                     <td>UGX {{ deposit.amount_paid|floatformat:0 }}</td>
                                     <td>
-                                        {% if deposit.balance_remaining > 0 %}
-                                            <span style="color: #e24b4a; font-weight: 600;">UGX {{ deposit.balance_remaining|floatformat:0 }}</span>
+                                        {% if deposit.status == 'Completed' %}
+                                            <span style="color: #0f6e56; font-weight: 600;">Collected</span>
                                         {% else %}
-                                            <span style="color: #0f6e56; font-weight: 600;">Cleared</span>
+                                            <span style="color: #855000; font-weight: 600;">At pickup</span>
                                         {% endif %}
                                     </td>
                                     <td style="min-width: 120px;">
                                         <div style="background: #e0e8e0; border-radius: 999px; height: 8px; overflow: hidden;">
-                                            <div style="width: {{ deposit.percent_paid }}%; background: {% if deposit.percent_paid == 100 %}#1d9e75{% elif deposit.percent_paid >= 50 %}#ef9f27{% else %}#e24b4a{% endif %}; height: 100%; border-radius: 999px;"></div>
+                                            <div style="width: {% if deposit.amount_paid > 0 %}100{% else %}0{% endif %}%; background: #1d9e75; height: 100%; border-radius: 999px;"></div>
                                         </div>
-                                        <small class="text-muted">{{ deposit.percent_paid }}% paid</small>
+                                        <small class="text-muted">UGX {{ deposit.amount_paid|floatformat:0 }} paid</small>
                                     </td>
                                     <td>
                                         {% if deposit.due_date < today and deposit.status == 'Active' %}

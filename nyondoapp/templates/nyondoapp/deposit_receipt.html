@@ -32,21 +32,27 @@
 
             <div class="receipt-progress">
                 <div class="receipt-row">
-                    <span class="label">Total Order Amount</span>
-                    <span class="value">UGX {{ payment.deposit.total_amount|floatformat:0 }}</span>
+                    <span class="label">Estimated Order Value</span>
+                    <span class="value">
+                        {% if payment.deposit.total_amount > 0 %}
+                            UGX {{ payment.deposit.total_amount|floatformat:0 }}
+                        {% else %}
+                            Not fixed
+                        {% endif %}
+                    </span>
                 </div>
                 <div class="receipt-row">
                     <span class="label">Total Paid So Far</span>
                     <span class="value">UGX {{ payment.deposit.amount_paid|floatformat:0 }}</span>
                 </div>
                 <div class="receipt-row">
-                    <span class="label">Balance Remaining</span>
-                    <span class="value balance">UGX {{ payment.deposit.balance_remaining|floatformat:0 }}</span>
+                    <span class="label">Goods Calculation</span>
+                    <span class="value balance">At collection day price</span>
                 </div>
                 <div class="receipt-progress-bar-bg">
-                    <div class="receipt-progress-bar-fill" style="width: {{ payment.deposit.percent_paid }}%;"></div>
+                    <div class="receipt-progress-bar-fill" style="width: {% if payment.deposit.amount_paid > 0 %}100{% else %}0{% endif %}%;"></div>
                 </div>
-                <div class="receipt-progress-label">{{ payment.deposit.percent_paid }}% paid</div>
+                <div class="receipt-progress-label">Temporary payment received</div>
             </div>
 
             <div class="receipt-section">
@@ -72,8 +78,14 @@
                     <span class="value">{{ payment.deposit.item_type }}</span>
                 </div>
                 <div class="receipt-row">
-                    <span class="label">Quantity</span>
-                    <span class="value">{{ payment.deposit.quantity_ordered }} {{ payment.deposit.unit }}</span>
+                    <span class="label">Estimated Quantity</span>
+                    <span class="value">
+                        {% if payment.deposit.quantity_ordered > 0 %}
+                            {{ payment.deposit.quantity_ordered }} {{ payment.deposit.unit }}
+                        {% else %}
+                            Pending collection
+                        {% endif %}
+                    </span>
                 </div>
                 <div class="receipt-row">
                     <span class="label">Expected Collection</span>
@@ -99,8 +111,8 @@
 
             <div class="receipt-notice">
                 This is a <strong>temporary deposit receipt</strong> and does not authorize
-                collection of goods. An official collection receipt will be issued
-                when the full amount has been paid.
+                collection of goods. Goods will be determined by the total amount
+                paid and the selling price on the day of collection.
             </div>
 
         </div>
@@ -109,7 +121,14 @@
             <div class="receipt-id">Deposit #{{ payment.deposit.id }} - Payment #{{ payment.id }}</div>
             <div class="receipt-date">Printed: {% now "d M Y, H:i" %}</div>
             <div class="receipt-actions">
-                <button class="receipt-action-btn" onclick="window.print()">Print Receipt</button>
+                  <button class="receipt-action-btn" onclick="printReceipt()">Print Receipt</button>
+
+<script>
+function printReceipt() {
+    window.print();
+    return false;
+}
+</script>
                 <a class="receipt-action-btn receipt-action-secondary" href="{% url 'deposit_receipt' payment.id %}?download=1">Download Receipt</a>
             </div>
         </div>

@@ -90,21 +90,93 @@
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
                         <h4 class="mb-0">Deposit #{{ deposit.id }} — {{ deposit.customer.full_name }}</h4>
-                        <small class="text-muted">{{ deposit.item_type }} · {{ deposit.quantity_ordered }} {{ deposit.unit }}</small>
+                        <small class="text-muted">{{ deposit.item_type }} · salary-earner deposit scheme</small>
                     </div>
                     <div class="d-flex gap-2">
+                        {% if deposit.status == 'Active' %}
+{% if user.groups.first.name == 'Accounts Admin' or user.groups.first.name == 'Store Manager' %}
+<div class="modal fade" id="editDepositModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Deposit #{{ deposit.id }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{% url 'edit_deposit' deposit.id %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-2 p-2" style="background:#fffbe6; border:1px solid #f5c842; border-radius:8px; font-size:12px; color:#855000;">
+                        <i class="fa-solid fa-triangle-exclamation me-1"></i>
+                        Changing item or estimate does not reserve stock. Goods are calculated on collection day.
+                    </div>
+                    <div class="mb-3 mt-3">
+                        <label class="form-label">Item Type</label>
+                        <select name="item_type" class="form-select form-select-sm">
+                            <option value="Cement CEM II N" {% if deposit.item_type == 'Cement CEM II N' %}selected{% endif %}>Cement CEM II N</option>
+                            <option value="Cement CEM III N" {% if deposit.item_type == 'Cement CEM III N' %}selected{% endif %}>Cement CEM III N</option>
+                            <option value="Iron Sheets" {% if deposit.item_type == 'Iron Sheets' %}selected{% endif %}>Iron Sheets</option>
+                            <option value="Iron Bars 10mm" {% if deposit.item_type == 'Iron Bars 10mm' %}selected{% endif %}>Iron Bars 10mm</option>
+                            <option value="Iron Bars 12mm" {% if deposit.item_type == 'Iron Bars 12mm' %}selected{% endif %}>Iron Bars 12mm</option>
+                            <option value="Iron Bars 16mm" {% if deposit.item_type == 'Iron Bars 16mm' %}selected{% endif %}>Iron Bars 16mm</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Estimated Quantity</label>
+                        <input type="number" name="quantity_ordered" class="form-control form-control-sm" value="{{ deposit.quantity_ordered }}" min="0" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Unit</label>
+                        <select name="unit" class="form-select form-select-sm">
+                            <option value="Bags" {% if deposit.unit == 'Bags' %}selected{% endif %}>Bags</option>
+                            <option value="Sheets" {% if deposit.unit == 'Sheets' %}selected{% endif %}>Sheets</option>
+                            <option value="Pieces" {% if deposit.unit == 'Pieces' %}selected{% endif %}>Pieces</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Expected Collection Date</label>
+                        <input type="date" name="due_date" class="form-control form-control-sm" value="{{ deposit.due_date|date:'Y-m-d' }}" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Notes</label>
+                        <textarea name="notes" class="form-control form-control-sm" rows="2">{{ deposit.notes|default:'' }}</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endif %}
                         {% if deposit.status == 'Active' %}
                             {% if user.groups.first.name == 'Accounts Admin' or user.groups.first.name == 'Store Manager' %}
                             <button class="ns-btn-primary" data-bs-toggle="modal" data-bs-target="#paymentModal">
                                 <i class="fa-solid fa-money-bill"></i> Record Payment
                             </button>
+                             <button class="btn btn-outline-success"
+            data-bs-toggle="modal" data-bs-target="#editDepositModal"
+            style="padding:8px 18px; border-radius:8px; font-size:13.5px; font-weight:500;">
+            <i class="fa-solid fa-pen"></i> Edit Deposit
+        </button>
                             <form method="POST" action="{% url 'cancel_deposit' deposit.id %}" class="d-inline">
                                 {% csrf_token %}
                                 <button type="submit" class="ns-btn-cancel"
-                                    onclick="return confirm('Cancel this deposit? Stock will be restored.')">
+                                    onclick="return confirm('Cancel this deposit?')">
                                     <i class="fa-solid fa-xmark"></i> Cancel Deposit
                                 </button>
                             </form>
+                            {% if deposit.amount_paid > 0 %}
+                            <form method="POST" action="{% url 'collect_deposit' deposit.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success"
+                                    onclick="return confirm('Collect goods now? Stock will be deducted based on amount paid and current selling price.')">
+                                    <i class="fa-solid fa-box-open"></i> Collect Goods
+                                </button>
+                            </form>
+                            {% endif %}
                             {% endif %}
                         {% elif deposit.status == 'Completed' %}
                             <a href="{% url 'collection_receipt' deposit.id %}" class="ns-btn-primary">
@@ -149,33 +221,33 @@
                         <!-- PROGRESS BAR -->
                         <div class="mb-4">
                             <div class="d-flex justify-content-between mb-1">
-                                <small class="text-muted">Payment progress</small>
-                                <small class="text-muted">{{ deposit.percent_paid }}% paid</small>
+                                <small class="text-muted">Deposit amount paid</small>
+                                <small class="text-muted">Goods not fixed until collection</small>
                             </div>
                             <div style="background: #e0e8e0; border-radius: 999px; height: 12px; overflow: hidden;">
-                                <div style="width: {{ deposit.percent_paid }}%; height: 100%; border-radius: 999px; background: {% if deposit.percent_paid == 100 %}#1d9e75{% elif deposit.percent_paid >= 50 %}#ef9f27{% else %}#e24b4a{% endif %}; transition: width 0.3s;"></div>
+                                <div style="width: {% if deposit.amount_paid > 0 %}100{% else %}0{% endif %}%; height: 100%; border-radius: 999px; background: #1d9e75; transition: width 0.3s;"></div>
                             </div>
                         </div>
 
                         <!-- SUMMARY PANEL -->
                         <div class="ns-summary-panel mb-4">
                             <div class="ns-summary-col">
-                                <div class="ns-summary-key">Total Amount</div>
-                                <div class="ns-summary-val">UGX {{ deposit.total_amount|floatformat:0 }}</div>
+                                <div class="ns-summary-key">{% if deposit.status == 'Completed' %}Goods Value{% else %}Estimated Value{% endif %}</div>
+                                <div class="ns-summary-val">
+                                    {% if deposit.total_amount > 0 %}
+                                        UGX {{ deposit.total_amount|floatformat:0 }}
+                                    {% else %}
+                                        Not fixed
+                                    {% endif %}
+                                </div>
                             </div>
                             <div class="ns-summary-col">
                                 <div class="ns-summary-key">Amount Paid</div>
                                 <div class="ns-summary-val" style="color: #0f6e56;">UGX {{ deposit.amount_paid|floatformat:0 }}</div>
                             </div>
                             <div class="ns-summary-col">
-                                <div class="ns-summary-key">Balance Remaining</div>
-                                <div class="ns-summary-val" style="color: {% if deposit.balance_remaining > 0 %}#e24b4a{% else %}#0f6e56{% endif %};">
-                                    {% if deposit.balance_remaining > 0 %}
-                                        UGX {{ deposit.balance_remaining|floatformat:0 }}
-                                    {% else %}
-                                        Cleared
-                                    {% endif %}
-                                </div>
+                                <div class="ns-summary-key">Collection Rule</div>
+                                <div class="ns-summary-val" style="font-size: 13px; color: #855000;">Calculated at pickup</div>
                             </div>
                         </div>
 
@@ -196,8 +268,15 @@
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <div class="ns-detail-label">Item Ordered</div>
-                                <div class="ns-detail-value">{{ deposit.item_type }} — {{ deposit.quantity_ordered }} {{ deposit.unit }}</div>
+                                <div class="ns-detail-label">{% if deposit.status == 'Completed' %}Goods Collected{% else %}Preferred Item{% endif %}</div>
+                                <div class="ns-detail-value">
+                                    {{ deposit.item_type }}
+                                    {% if deposit.quantity_ordered > 0 %}
+                                        — {{ deposit.quantity_ordered }} {{ deposit.unit }}
+                                    {% else %}
+                                        — quantity pending collection
+                                    {% endif %}
+                                </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="ns-detail-label">Expected Collection</div>
@@ -297,7 +376,7 @@
                     {% csrf_token %}
                     <div class="modal-body">
                         <div class="mb-2 p-2" style="background: #f4f9f6; border-radius: 8px; font-size: 13px;">
-                            <strong>Balance remaining: UGX {{ deposit.balance_remaining|floatformat:0 }}</strong>
+                            <strong>Temporary payment receipt. Goods will be calculated on collection day.</strong>
                         </div>
                         <div class="mb-3 mt-3">
                             <label class="form-label">Amount (UGX) *</label>
@@ -306,7 +385,6 @@
                                 name="amount"
                                 class="form-control form-control-sm"
                                 min="1"
-                                max="{{ deposit.balance_remaining }}"
                                 required
                             />
                         </div>
