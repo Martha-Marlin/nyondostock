@@ -353,9 +353,15 @@ class SupplierCreditPayment(models.Model):
    # CUSTOMER MODEL
 # Only customers using the deposit scheme are registered here
 class Customer(models.Model):
+    GENDER_CHOICES = [
+        ('M', 'Male'),
+        ('F', 'Female'),
+    ]
+
     full_name = models.CharField(max_length=200)
     phone_number = models.CharField(max_length=20)
     nin = models.CharField(max_length=14, unique=True)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True, null=True)  
     area = models.CharField(max_length=100, blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
     registered_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
@@ -363,6 +369,16 @@ class Customer(models.Model):
 
     def __str__(self):
         return self.full_name 
+    
+    def get_gender_from_nin(self):
+        """Extract gender from NIN prefix"""
+        if self.nin and len(self.nin) >= 2:
+            prefix = self.nin[:2].upper()
+            if prefix == 'CM':
+                return 'M'
+            elif prefix == 'CF':
+                return 'F'
+        return None
     
 # CUSTOMER CREDIT PAYMENT MODEL
 # Records installment payments made by a customer against a credit sale

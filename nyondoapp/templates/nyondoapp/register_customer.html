@@ -187,28 +187,50 @@
                 </div>
 
                 <!-- ROW 2: NIN full width -->
-                <div class="row g-3 mb-3">
-                  <div class="col-12">
-                    <label class="ns-field-label" for="nin">
-                      National Identification Number (NIN)
-                      <span class="req">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="nin"
-                      name="nin"
-                      class="ns-input"
-                      placeholder="e.g. CM90000XXXXXX"
-                      maxlength="14"
-                      required
-                    />
-                    <div class="ns-char-row">
-                      <div class="ns-hint">Must be exactly 14 characters</div>
-                      <div class="ns-hint" id="nin-counter">0 / 14</div>
-                    </div>
-                  </div>
-                </div>
+<div class="row g-3 mb-3">
+  <div class="col-12">
+    <label class="ns-field-label" for="nin">
+      National Identification Number (NIN)
+      <span class="req">*</span>
+    </label>
+    <input
+      type="text"
+      id="nin"
+      name="nin"
+      class="ns-input"
+      placeholder="e.g. CM123456789012 or CF123456789012"
+      maxlength="14"
+      pattern="[C][MF][0-9]{12}"
+      title="NIN must start with CM (Male) or CF (Female) followed by 12 digits"
+      required
+    />
+    <div class="ns-char-row">
+      <div class="ns-hint">Must start with CM (Male) or CF (Female) + 12 digits (14 total)</div>
+      <div class="ns-hint" id="nin-counter">0 / 14</div>
+    </div>
+    <!-- Gender preview -->
+    <div id="genderPreview" style="display: none; margin-top: 8px; padding: 6px 12px; border-radius: 6px; font-size: 13px;">
+      <i class="fa-solid fa-venus-mars"></i> Detected gender: <span id="detectedGender"></span>
+    </div>
+  </div>
+</div>
 
+<!-- ROW 2.5: Gender (Auto-detected) -->
+<div class="row g-3 mb-3">
+  <div class="col-12">
+    <label class="ns-field-label">Gender</label>
+    <input
+      type="text"
+      id="genderDisplay"
+      class="ns-input"
+      value="Auto-detected from NIN"
+      readonly
+      disabled
+      style="background-color: #f0f4f0; cursor: not-allowed;"
+    />
+    <div class="ns-hint">Gender is automatically detected from NIN prefix (CM = Male, CF = Female)</div>
+  </div>
+</div>
                 <!-- ROW 3: Area + Notes -->
                 <div class="row g-3">
                   <div class="col-md-6">
@@ -290,28 +312,83 @@
     ></script>
 
     <script>
-      // NIN CHARACTER COUNTER
-      const ninInput = document.getElementById("nin");
-      const ninCounter = document.getElementById("nin-counter");
+  // NIN CHARACTER COUNTER AND GENDER DETECTION
+  const ninInput = document.getElementById("nin");
+  const ninCounter = document.getElementById("nin-counter");
+  const genderPreview = document.getElementById("genderPreview");
+  const detectedGenderSpan = document.getElementById("detectedGender");
+  const genderDisplay = document.getElementById("genderDisplay");
 
-      ninInput.addEventListener("input", function () {
-        const len = this.value.length;
-        ninCounter.textContent = len + " / 14";
-        if (len === 14) {
-          ninCounter.style.color = "#0f6e56";
-        } else if (len > 0) {
-          ninCounter.style.color = "#e24b4a";
-        } else {
-          ninCounter.style.color = "#a0b8a0";
+  function validateNIN() {
+    const nin = ninInput.value.toUpperCase();
+    const len = nin.length;
+    const prefix = nin.substring(0, 2);
+    
+    // Update counter
+    ninCounter.textContent = len + " / 14";
+    if (len === 14) {
+      ninCounter.style.color = "#0f6e56";
+    } else if (len > 0) {
+      ninCounter.style.color = "#e24b4a";
+    } else {
+      ninCounter.style.color = "#a0b8a0";
+    }
+    
+    // Gender detection
+    if (len >= 2) {
+      if (prefix === 'CM') {
+        detectedGenderSpan.innerHTML = '<strong style="color: #0f6e56;">Male</strong> (CM prefix)';
+        genderPreview.style.display = 'block';
+        genderPreview.style.backgroundColor = '#e8f5e9';
+        genderPreview.style.color = '#2e7d32';
+        if (genderDisplay) {
+          genderDisplay.value = 'Male (Auto-detected from NIN)';
+          genderDisplay.style.backgroundColor = '#e8f5e9';
         }
-      });
+      } else if (prefix === 'CF') {
+        detectedGenderSpan.innerHTML = '<strong style="color: #0f6e56;">Female</strong> (CF prefix)';
+        genderPreview.style.display = 'block';
+        genderPreview.style.backgroundColor = '#e8f5e9';
+        genderPreview.style.color = '#2e7d32';
+        if (genderDisplay) {
+          genderDisplay.value = 'Female (Auto-detected from NIN)';
+          genderDisplay.style.backgroundColor = '#e8f5e9';
+        }
+      } else if (len >= 2) {
+        detectedGenderSpan.innerHTML = '<strong style="color: #d32f2f;">Invalid</strong> - Must start with CM or CF';
+        genderPreview.style.display = 'block';
+        genderPreview.style.backgroundColor = '#ffebee';
+        genderPreview.style.color = '#c62828';
+        if (genderDisplay) {
+          genderDisplay.value = 'Invalid NIN Format';
+          genderDisplay.style.backgroundColor = '#ffebee';
+        }
+      }
+    } else {
+      genderPreview.style.display = 'none';
+      if (genderDisplay) {
+        genderDisplay.value = 'Auto-detected from NIN';
+        genderDisplay.style.backgroundColor = '#f0f4f0';
+      }
+    }
+    
+    // Auto-uppercase NIN
+    ninInput.value = nin;
+  }
 
-      // PHONE: digits and spaces only
-      document
-        .getElementById("phone_number")
-        .addEventListener("input", function () {
-          this.value = this.value.replace(/[^0-9 ]/g, "");
-        });
-    </script>
+  ninInput.addEventListener("input", validateNIN);
+  ninInput.addEventListener("blur", validateNIN);
+
+  // PHONE: digits and spaces only
+  const phoneInput = document.getElementById("phone_number");
+  if (phoneInput) {
+    phoneInput.addEventListener("input", function () {
+      this.value = this.value.replace(/[^0-9 ]/g, "");
+    });
+  }
+  
+  // Initial validation
+  validateNIN();
+</script>
   </body>
 </html>

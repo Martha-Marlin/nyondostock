@@ -27,7 +27,7 @@
     />
 
     <!-- EXTERNAL CSS -->
-     <link rel="stylesheet" href="{% static 'base.css' %}">
+    <link rel="stylesheet" href="{% static 'base.css' %}" />
     <link rel="stylesheet" href="{% static 'stock.css' %}" />
   </head>
   <body>
@@ -69,58 +69,107 @@
           <h6 class="text-muted">MENU</h6>
 
           <ul class="nav flex-column">
-            <!-- STOCK MANAGER: Stock and Sales only -->
-            {% if user.groups.all.0.name == 'Stock Manager' %}
-              <li class="nav-item mb-3">
-                <a href="{% url 'stock' %}" class="nav-link active">📦 Stock</a>
-              </li>
-              <li class="nav-item mb-3">
-                <a href="{% url 'sales_list' %}" class="nav-link text-dark"
-                  >🛒 Sales</a
-                >
-              </li>
+            {% if user.groups.all.0.name == 'Sales Attendant' %}
+            <li class="nav-item mb-3">
+              <a href="{% url 'sales_dashboard' %}" class="nav-link text-dark"
+                >📊 Sales Dashboard</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'stock' %}" class="nav-link active">📦 Stock</a>
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'sales_list' %}" class="nav-link text-dark"
+                >🛒 Sales</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'customers' %}" class="nav-link text-dark"
+                >👤 Customers</a
+              >
+            </li>
+
+            {% elif user.groups.all.0.name == 'Store Manager' %}
+            <li class="nav-item mb-3">
+              <a
+                href="{% url 'store_manager_dashboard' %}"
+                class="nav-link text-dark"
+                >📊 Dashboard</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'stock' %}" class="nav-link active">📦 Stock</a>
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'suppliers' %}" class="nav-link text-dark"
+                >🏭 Suppliers</a
+              >
+            </li>
+
+            {% elif user.groups.all.0.name == 'Accounts Admin' %}
+            <li class="nav-item mb-3">
+              <a
+                href="{% url 'accounts_dashboard' %}"
+                class="nav-link text-dark"
+                >📊 Accounts Dashboard</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'suppliers' %}" class="nav-link text-dark"
+                >🏭 Suppliers</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'customers' %}" class="nav-link text-dark"
+                >👤 Customers</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'deposits' %}" class="nav-link text-dark"
+                >💰 Deposits</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'reports' %}" class="nav-link text-dark"
+                >📈 Reports</a
+              >
+            </li>
+
             {% else %}
-              <!-- OTHER ROLES: Full menu access -->
-              <!-- DASHBOARD LINK -->
-              <li class="nav-item mb-3">
-                <a href="{% url 'dashboard' %}" class="nav-link text-dark"
-                  >📊 Dashboard</a
-                >
-              </li>
-              <!-- STOCK LINK (ACTIVE PAGE) -->
-              <li class="nav-item mb-3">
-                <a href="{% url 'stock' %}" class="nav-link active">📦 Stock</a>
-              </li>
-              <!-- SALES LINK -->
-              <li class="nav-item mb-3">
-                <a href="{% url 'sales_list' %}" class="nav-link text-dark"
-                  >🛒 Sales</a
-                >
-              </li>
-              <!-- SUPPLIERS LINK -->
-              <li class="nav-item mb-3">
-                <a href="{% url 'suppliers' %}" class="nav-link text-dark"
-                  >🏭 Suppliers</a
-                >
-              </li>
-              <!-- CUSTOMERS LINK -->
-              <li class="nav-item mb-3">
-                <a href="{% url 'customers' %}" class="nav-link text-dark"
-                  >👤 Customers</a
-                >
-              </li>
-              <!-- DEPOSITS LINK -->
-              <li class="nav-item mb-3">
-                <a href="{% url 'deposits' %}" class="nav-link text-dark"
-                  >💰 Deposits</a
-                >
-              </li>
-              <!-- REPORTS LINK -->
-              <li class="nav-item mb-3">
-                <a href="{% url 'reports' %}" class="nav-link text-dark"
-                  >📈 Reports</a
-                >
-              </li>
+            <!-- SUPERUSER / FALLBACK: full access -->
+            <li class="nav-item mb-3">
+              <a href="{% url 'dashboard' %}" class="nav-link text-dark"
+                >📊 Dashboard</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'stock' %}" class="nav-link active">📦 Stock</a>
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'sales_list' %}" class="nav-link text-dark"
+                >🛒 Sales</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'suppliers' %}" class="nav-link text-dark"
+                >🏭 Suppliers</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'customers' %}" class="nav-link text-dark"
+                >👤 Customers</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'deposits' %}" class="nav-link text-dark"
+                >💰 Deposits</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'reports' %}" class="nav-link text-dark"
+                >📈 Reports</a
+              >
+            </li>
             {% endif %}
           </ul>
 
@@ -147,9 +196,17 @@
           {% if messages %}
           <div class="mb-3">
             {% for message in messages %}
-            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+            <div
+              class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show"
+              role="alert"
+            >
               {{ message }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"
+              ></button>
             </div>
             {% endfor %}
           </div>
@@ -331,11 +388,22 @@
                       >
                         <i class="fa-solid fa-pen"></i>
                       </button>
-                      <form method="POST" action="{% url 'stock' %}" class="d-inline">
+                      <form
+                        method="POST"
+                        action="{% url 'stock' %}"
+                        class="d-inline"
+                      >
                         {% csrf_token %}
                         <input type="hidden" name="action" value="delete" />
-                        <input type="hidden" name="item_id" value="{{ item.id }}" />
-                        <button class="btn btn-sm btn-outline-danger" type="submit">
+                        <input
+                          type="hidden"
+                          name="item_id"
+                          value="{{ item.id }}"
+                        />
+                        <button
+                          class="btn btn-sm btn-outline-danger"
+                          type="submit"
+                        >
                           <i class="fa-solid fa-trash"></i>
                         </button>
                       </form>
@@ -423,7 +491,12 @@
                   <label for="itemCategory" class="form-label"
                     >Category *</label
                   >
-                  <select class="form-select" id="itemCategory" name="category" required>
+                  <select
+                    class="form-select"
+                    id="itemCategory"
+                    name="category"
+                    required
+                  >
                     <option value="" selected>Select category...</option>
                     <option>Cement</option>
                     <option>Iron Bars</option>
@@ -456,7 +529,12 @@
                   <label for="unitMeasure" class="form-label"
                     >Unit of Measure *</label
                   >
-                  <select class="form-select" id="unitMeasure" name="unit" required>
+                  <select
+                    class="form-select"
+                    id="unitMeasure"
+                    name="unit"
+                    required
+                  >
                     <option selected>Pieces</option>
                     <option>Bags</option>
                     <option>Sheets</option>
@@ -561,7 +639,9 @@
       <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="editStockModalLabel">✏ Edit Stock Item</h5>
+            <h5 class="modal-title" id="editStockModalLabel">
+              ✏ Edit Stock Item
+            </h5>
             <button
               type="button"
               class="btn-close"
@@ -577,12 +657,27 @@
             <div class="modal-body">
               <div class="row g-3">
                 <div class="col-md-6">
-                  <label for="editItemName" class="form-label">Item Name *</label>
-                  <input type="text" class="form-control" id="editItemName" name="item_name" required />
+                  <label for="editItemName" class="form-label"
+                    >Item Name *</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="editItemName"
+                    name="item_name"
+                    required
+                  />
                 </div>
                 <div class="col-md-6">
-                  <label for="editItemCategory" class="form-label">Category *</label>
-                  <select class="form-select" id="editItemCategory" name="category" required>
+                  <label for="editItemCategory" class="form-label"
+                    >Category *</label
+                  >
+                  <select
+                    class="form-select"
+                    id="editItemCategory"
+                    name="category"
+                    required
+                  >
                     <option>Cement</option>
                     <option>Iron Bars</option>
                     <option>Iron Sheets</option>
@@ -593,12 +688,28 @@
                   </select>
                 </div>
                 <div class="col-md-4">
-                  <label for="editItemQuantity" class="form-label">Quantity *</label>
-                  <input type="number" class="form-control" id="editItemQuantity" name="quantity" min="0" required />
+                  <label for="editItemQuantity" class="form-label"
+                    >Quantity *</label
+                  >
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="editItemQuantity"
+                    name="quantity"
+                    min="0"
+                    required
+                  />
                 </div>
                 <div class="col-md-4">
-                  <label for="editUnitMeasure" class="form-label">Unit of Measure *</label>
-                  <select class="form-select" id="editUnitMeasure" name="unit" required>
+                  <label for="editUnitMeasure" class="form-label"
+                    >Unit of Measure *</label
+                  >
+                  <select
+                    class="form-select"
+                    id="editUnitMeasure"
+                    name="unit"
+                    required
+                  >
                     <option>Pieces</option>
                     <option>Bags</option>
                     <option>Sheets</option>
@@ -610,28 +721,67 @@
                   </select>
                 </div>
                 <div class="col-md-4">
-                  <label for="editMinimumStock" class="form-label">Minimum Stock Level</label>
-                  <input type="number" class="form-control" id="editMinimumStock" name="minimum_stock" min="0" />
+                  <label for="editMinimumStock" class="form-label"
+                    >Minimum Stock Level</label
+                  >
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="editMinimumStock"
+                    name="minimum_stock"
+                    min="0"
+                  />
                 </div>
                 <div class="col-md-6">
-                  <label for="editBuyingPrice" class="form-label">Buying Price (UGX) *</label>
-                  <input type="number" class="form-control" id="editBuyingPrice" name="buying_price" min="0" required />
+                  <label for="editBuyingPrice" class="form-label"
+                    >Buying Price (UGX) *</label
+                  >
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="editBuyingPrice"
+                    name="buying_price"
+                    min="0"
+                    required
+                  />
                 </div>
                 <div class="col-md-6">
-                  <label for="editSellingPrice" class="form-label">Selling Price (UGX) *</label>
-                  <input type="number" class="form-control" id="editSellingPrice" name="selling_price" min="0" required />
+                  <label for="editSellingPrice" class="form-label"
+                    >Selling Price (UGX) *</label
+                  >
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="editSellingPrice"
+                    name="selling_price"
+                    min="0"
+                    required
+                  />
                 </div>
                 <div class="col-12">
-                  <label for="editSupplierName" class="form-label">Supplier (optional)</label>
-                  <input type="text" class="form-control" id="editSupplierName" name="supplier" />
+                  <label for="editSupplierName" class="form-label"
+                    >Supplier (optional)</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="editSupplierName"
+                    name="supplier"
+                  />
                 </div>
               </div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-bs-dismiss="modal"
+              >
                 Cancel
               </button>
-              <button type="submit" class="btn btn-success">Update Stock Item</button>
+              <button type="submit" class="btn btn-success">
+                Update Stock Item
+              </button>
             </div>
           </form>
         </div>
@@ -656,15 +806,24 @@
           const button = event.relatedTarget;
           if (!button) return;
 
-          document.getElementById("editItemId").value = button.getAttribute("data-item-id") || "";
-          document.getElementById("editItemName").value = button.getAttribute("data-item-name") || "";
-          document.getElementById("editItemCategory").value = button.getAttribute("data-category") || "Cement";
-          document.getElementById("editItemQuantity").value = button.getAttribute("data-quantity") || 0;
-          document.getElementById("editUnitMeasure").value = button.getAttribute("data-unit") || "Pieces";
-          document.getElementById("editMinimumStock").value = button.getAttribute("data-minimum-stock") || 0;
-          document.getElementById("editBuyingPrice").value = button.getAttribute("data-buying-price") || 0;
-          document.getElementById("editSellingPrice").value = button.getAttribute("data-selling-price") || 0;
-          document.getElementById("editSupplierName").value = button.getAttribute("data-supplier") || "";
+          document.getElementById("editItemId").value =
+            button.getAttribute("data-item-id") || "";
+          document.getElementById("editItemName").value =
+            button.getAttribute("data-item-name") || "";
+          document.getElementById("editItemCategory").value =
+            button.getAttribute("data-category") || "Cement";
+          document.getElementById("editItemQuantity").value =
+            button.getAttribute("data-quantity") || 0;
+          document.getElementById("editUnitMeasure").value =
+            button.getAttribute("data-unit") || "Pieces";
+          document.getElementById("editMinimumStock").value =
+            button.getAttribute("data-minimum-stock") || 0;
+          document.getElementById("editBuyingPrice").value =
+            button.getAttribute("data-buying-price") || 0;
+          document.getElementById("editSellingPrice").value =
+            button.getAttribute("data-selling-price") || 0;
+          document.getElementById("editSupplierName").value =
+            button.getAttribute("data-supplier") || "";
         });
       }
     </script>

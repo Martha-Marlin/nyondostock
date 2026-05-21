@@ -41,28 +41,22 @@
         <aside class="col-2 bg-light min-vh-100 p-3 pt-4 position-relative">
           <h6 class="text-muted">MENU</h6>
           <ul class="nav flex-column">
-            <li class="nav-item mb-3">
-              <a href="{% url 'accounts_dashboard' %}" class="nav-link active">Accounts Dashboard</a>
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'stock' %}" class="nav-link nav-locked">Stock</a>
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'sales_list' %}" class="nav-link nav-locked">Sales</a>
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'suppliers' %}" class="nav-link text-dark">Suppliers</a>
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'customers' %}" class="nav-link nav-locked">Customers</a>
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'deposits' %}" class="nav-link text-dark">Deposits</a>
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'reports' %}" class="nav-link text-dark">Reports</a>
-            </li>
-          </ul>
+  <li class="nav-item mb-3">
+    <a href="{% url 'accounts_dashboard' %}" class="nav-link active">📊 Accounts Dashboard</a>
+  </li>
+  <li class="nav-item mb-3">
+    <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
+  </li>
+  <li class="nav-item mb-3">
+    <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
+  </li>
+  <li class="nav-item mb-3">
+    <a href="{% url 'deposits' %}" class="nav-link text-dark">💰 Deposits</a>
+  </li>
+  <li class="nav-item mb-3">
+    <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
+  </li>
+</ul>
         </aside>
 
         <!-- MAIN CONTENT -->
@@ -75,7 +69,6 @@
               <small class="text-muted">{{ now|date:"l, d F Y" }}</small>
             </div>
             <div class="d-flex align-items-center gap-3">
-              <span class="role text-success bg-success-subtle border-0">Accounts/Admin</span>
               <a href="{% url 'reports' %}" class="btn btn-success btn-sm px-3">+ Generate Report</a>
             </div>
           </div>
@@ -308,10 +301,6 @@
                 <a href="{% url 'deposits' %}" class="ns-qa-btn">View Deposits</a>
               </div>
             </div>
-          </div>
-
-          <div class="lock-note mt-3">
-            Stock, Sales and Customers are locked for Accounts/Admin. Accounts/Admin can manage supplier credit, deposits and reports.
           </div>
 
         </main>

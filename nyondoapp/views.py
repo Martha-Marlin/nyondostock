@@ -870,15 +870,19 @@ def record_credit_payment_view(request, credit_id):
 def customers_view(request):
     customers = Customer.objects.all().order_by('-registered_on')
     search = request.GET.get('search', '')
+    gender = request.GET.get('gender', '')
     if search:
         customers = customers.filter(
             Q(full_name__icontains=search) |
             Q(phone_number__icontains=search) |
             Q(nin__icontains=search)
         )
+    if gender:
+        customers = customers.filter(gender=gender)
     context = {
         'customers': customers,
         'search': search,
+        'gender': gender,
         'total_customers': customers.count(),
     }
     return render(request, 'nyondoapp/customers_list.html', context)
@@ -894,9 +898,20 @@ def register_customer_view(request):
         area = request.POST.get('area', '').strip() or None
         notes = request.POST.get('notes', '').strip() or None
 
+        # VALIDATION FOR NIN
         if len(nin) != 14:
             messages.error(request, 'NIN must be exactly 14 characters.')
             return render(request, 'nyondoapp/register_customer.html')
+         # VALIDATE NIN PREFIX FOR GENDER
+        nin_prefix = nin[:2]
+        if nin_prefix not in ['CM', 'CF']:
+            messages.error(request, 'Invalid NIN format. Must start with CM (Male) or CF (Female).')
+            return render(request, 'nyondoapp/register_customer.html')
+        
+        # DETERMINE GENDER FROM NIN
+        gender = 'M' if nin_prefix == 'CM' else 'F'
+
+        # VALIDATION FOR PHONE NUMBER
         if Customer.objects.filter(nin=nin).exists():
             messages.error(request, f'A customer with NIN {nin} is already registered.')
             return render(request, 'nyondoapp/register_customer.html')
@@ -908,6 +923,7 @@ def register_customer_view(request):
             full_name=full_name,
             phone_number=phone_number,
             nin=nin,
+            gender=gender,
             area=area,
             notes=notes,
             registered_by=request.user,
@@ -928,6 +944,32 @@ def edit_customer_view(request, customer_id):
         customer.nin = request.POST.get('nin', '').strip().upper()
         customer.area = request.POST.get('area', '').strip() or None
         customer.notes = request.POST.get('notes', '').strip() or None
+
+        # VALIDATE NIN LENGTH
+        if len(nin) != 14:
+            messages.error(request, 'NIN must be exactly 14 characters.')
+            return redirect('customers')
+        
+        # VALIDATE NIN PREFIX FOR GENDER
+        nin_prefix = nin[:2]
+        if nin_prefix not in ['CM', 'CF']:
+            messages.error(request, 'Invalid NIN format. Must start with CM (Male) or CF (Female).')
+            return redirect('customers')
+        
+        # CHECK FOR DUPLICATE NIN (excluding current customer)
+        if Customer.objects.filter(nin=nin).exclude(id=customer.id).exists():
+            messages.error(request, f'A customer with NIN {nin} is already registered.')
+            return redirect('customers')
+        
+        # UPDATE GENDER BASED ON NIN
+        gender = 'M' if nin_prefix == 'CM' else 'F'
+        
+        customer.full_name = full_name
+        customer.phone_number = phone_number
+        customer.nin = nin
+        customer.gender = gender  # Update gender
+        customer.area = area
+        customer.notes = notes
         customer.save()
         messages.success(request, f'{customer.full_name} updated successfully.')
     return redirect('customers')
