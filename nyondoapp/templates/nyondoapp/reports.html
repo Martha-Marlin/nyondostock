@@ -410,12 +410,12 @@
               </div>
             </div>
             <div class="col-md-6">
-              <div class="report-total-card warn">
-                <span>Active Deposits</span>
-                <strong>{{ deposits.filter.count }}</strong>
-                <small>still in progress</small>
-              </div>
-            </div>
+    <div class="report-total-card">
+        <span>Total Records</span>
+        <strong>{{ deposits.count }}</strong>
+        <small>in selected period</small>
+    </div>
+</div>
           </div>
           {% endif %}
 
