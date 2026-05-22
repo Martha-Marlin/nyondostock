@@ -60,7 +60,7 @@
     <!-- MAIN LAYOUT: SIDEBAR + CONTENT -->
     <div class="container-fluid">
       <div class="row">
-        <!-- ========== SIDEBAR SECTION ========== -->
+        <!--  SIDEBAR SECTION  -->
         <aside class="col-2 bg-light min-vh-100 p-3 pt-4 position-relative">
           <h6 class="text-muted">MENU</h6>
 
@@ -222,48 +222,6 @@
                 <div class="stat-label">💰 TOTAL OWED</div>
                 <div class="stat-value">UGX {{ total_owed|floatformat:0 }}</div>
                 <div class="stat-sub">UGX outstanding</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- SUPPLIERS FILTER BAR -->
-          <div class="stock-filter bg-body-tertiary p-3 rounded mb-4">
-            <div class="row g-2 align-items-center">
-              <!-- SEARCH INPUT -->
-              <div class="col-lg-5">
-                <div class="search-control">
-                  <label for="supplierSearch" class="visually-hidden"
-                    >Search suppliers</label
-                  >
-                  <i class="fa-solid fa-magnifying-glass"></i>
-                  <input
-                    id="supplierSearch"
-                    type="text"
-                    class="form-control"
-                    placeholder="Search by supplier name or phone..."
-                  />
-                </div>
-              </div>
-              <!-- STATUS FILTER DROPDOWN -->
-              <div class="col-lg-3">
-                <label for="supplierStatusFilter" class="visually-hidden"
-                  >Filter by status</label
-                >
-                <select id="supplierStatusFilter" class="form-select">
-                  <option selected>All Status</option>
-                  <option>Active</option>
-                  <option>Credits Due</option>
-                  <option>Overdue</option>
-                </select>
-              </div>
-              <!-- CLEAR FILTERS BUTTON -->
-              <div class="col-lg-2">
-                <button
-                  id="clearSupplierFilters"
-                  class="btn btn-outline-secondary w-100"
-                >
-                  Clear
-                </button>
               </div>
             </div>
           </div>

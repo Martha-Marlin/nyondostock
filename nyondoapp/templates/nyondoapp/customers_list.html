@@ -175,46 +175,6 @@
             </div>
           </div>
 
-          <!-- SEARCH BAR -->
-          <form
-            method="GET"
-            action="{% url 'customers' %}"
-            class="stock-filter bg-body-tertiary p-3 rounded mb-4"
-          >
-            <div class="row g-2 align-items-end">
-              <div class="col-md-4">
-                <label class="form-label small text-muted mb-1"
-                  >Search customer</label
-                >
-                <input
-                  type="text"
-                  name="search"
-                  class="form-control form-control-sm"
-                  value="{{ search }}"
-                  placeholder="Name, phone or NIN"
-                />
-              </div>
-               <div class="col-md-2">
-      <label class="form-label small text-muted mb-1">Gender</label>
-      <select name="gender" class="form-select form-select-sm">
-        <option value="">All</option>
-        <option value="M" {% if request.GET.gender == 'M' %}selected{% endif %}>Male</option>
-        <option value="F" {% if request.GET.gender == 'F' %}selected{% endif %}>Female</option>
-      </select>
-    </div>
-              <div class="col-md-2">
-                <button type="submit" class="btn btn-success btn-sm w-100">
-                  Search
-                </button>
-                <a
-                  href="{% url 'customers' %}"
-                  class="btn btn-outline-secondary btn-sm w-100 mt-2"
-                  >Clear</a
-                >
-              </div>
-            </div>
-          </form>
-
           <!-- CUSTOMERS TABLE -->
           <section class="stock-list-card mt-4">
             <div class="stock-list-header">

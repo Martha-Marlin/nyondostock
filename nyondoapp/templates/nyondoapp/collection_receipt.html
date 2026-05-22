@@ -93,24 +93,23 @@
 
         </div>
 
-        <div class="receipt-footer">
-            {% if deposit.receipt_number %}
-                <div class="receipt-id">Receipt No. {{ deposit.receipt_number }}</div>
-            {% endif %}
-            <div class="receipt-id">Deposit #{{ deposit.id }}</div>
-            <div class="receipt-date">Printed: {% now "d M Y, H:i" %}</div>
-            <div class="receipt-actions">
-                  <button class="receipt-action-btn" onclick="printReceipt()">Print Receipt</button>
-
-<script>
-function printReceipt() {
-    window.print();
-    return false;
-}
-</script>
-                <a class="receipt-action-btn receipt-action-secondary" href="{% url 'collection_receipt' deposit.id %}?download=1">Download Receipt</a>
-            </div>
-        </div>
+       <div class="receipt-footer">
+    {% if deposit.receipt_number %}
+        <div class="receipt-id">Receipt No. {{ deposit.receipt_number }}</div>
+    {% endif %}
+    <div class="receipt-id">Deposit #{{ deposit.id }}</div>
+    <div class="receipt-date">Printed: {% now "d M Y, H:i" %}</div>
+    <div class="receipt-actions">
+        <button class="receipt-action-btn" onclick="printReceipt()">Print Receipt</button>
+        <a class="receipt-action-btn receipt-action-secondary" href="{% url 'deposits' %}">← Back to Deposits</a>
+    </div>
+    <script>
+        function printReceipt() {
+            window.print();
+            return false;
+        }
+    </script>
+</div>
 
     </div>
 

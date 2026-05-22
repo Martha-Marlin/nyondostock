@@ -6,8 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Deposit Receipt #{{ payment.id }} - NyondoStock</title>
     {% if inline_css %}
-    <style>{{ receipt_css|safe }}</style>
-    <style>.receipt-actions { display: none !important; }</style>
+        {% if receipt_css %}
+        <style type="text/css">
+            {{ receipt_css|safe }}
+        </style>
+        {% endif %}
+        <style type="text/css">
+            .receipt-actions { display: none !important; }
+        </style>
     {% else %}
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="{% static 'deposit_receipt.css' %}" />
@@ -18,6 +24,7 @@
     <div class="receipt">
 
         <div class="receipt-header">
+   
             <div class="store-name">NYONDO General Hardware LTD</div>
             <div class="store-sub">Kampala, Uganda</div>
             <div class="receipt-type-badge">Deposit Receipt - Temporary</div>
@@ -120,17 +127,10 @@
         <div class="receipt-footer">
             <div class="receipt-id">Deposit #{{ payment.deposit.id }} - Payment #{{ payment.id }}</div>
             <div class="receipt-date">Printed: {% now "d M Y, H:i" %}</div>
-            <div class="receipt-actions">
-                  <button class="receipt-action-btn" onclick="printReceipt()">Print Receipt</button>
-
-<script>
-function printReceipt() {
-    window.print();
-    return false;
-}
-</script>
-                <a class="receipt-action-btn receipt-action-secondary" href="{% url 'deposit_receipt' payment.id %}?download=1">Download Receipt</a>
-            </div>
+          <div class="receipt-actions">
+    <button class="receipt-action-btn" onclick="printReceipt()">Print Receipt</button>
+    <a class="receipt-action-btn receipt-action-secondary" href="{% url 'deposits' %}">← Back to Deposits</a>
+</div> 
         </div>
 
     </div>

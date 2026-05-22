@@ -1,113 +1,138 @@
 {% load static %}
 <!doctype html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sales Receipt #{{ sale.id }} - NyondoStock</title>
-    {% if inline_css %}
-    <style>{{ receipt_css|safe }}</style>
-    <style>.receipt-actions { display: none !important; }</style>
-    {% else %}
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="{% static 'deposit_receipt.css' %}" />
-    {% endif %}
-</head>
-<body>
-
+  </head>
+  <body>
     <div class="receipt">
+      <div class="receipt-header receipt-header-complete">
+        <div class="store-name">NYONDO General Hardware LTD</div>
+        <div class="store-sub">Kampala, Uganda</div>
+        <div class="receipt-type-badge receipt-type-complete">
+          Sales Receipt
+        </div>
+      </div>
 
-        <div class="receipt-header receipt-header-complete">
-            <div class="store-name">NYONDO General Hardware LTD</div>
-            <div class="store-sub">Kampala, Uganda</div>
-            <div class="receipt-type-badge receipt-type-complete">Sales Receipt</div>
+      <div class="receipt-body">
+        <div class="receipt-highlight receipt-highlight-complete">
+          <div class="paid-label">Total Amount</div>
+          <span
+            class="value {% if sale.payment_status == 'Credit' %}balance{% else %}receipt-cleared{% endif %}"
+          >
+            UGX {{ sale.total_amount|floatformat:0 }}
+          </span>
+          <div class="paid-date">{{ sale.sale_date|date:"d M Y, H:i" }}</div>
         </div>
 
-        <div class="receipt-body">
-            <div class="receipt-highlight receipt-highlight-complete">
-                <div class="paid-label">Total Amount</div>
-                <div class="paid-amount">UGX {{ sale.total_amount|floatformat:0 }}</div>
-                <div class="paid-date">{{ sale.sale_date|date:"d M Y, H:i" }}</div>
-            </div>
-
-            <div class="receipt-section">
-                <div class="receipt-section-title">Customer</div>
-                <div class="receipt-row">
-                    <span class="label">Name</span>
-                    <span class="value">{{ sale.customer_name }}</span>
-                </div>
-                <div class="receipt-row">
-                    <span class="label">Phone</span>
-                    <span class="value">{{ sale.phone_number }}</span>
-                </div>
-                <div class="receipt-row">
-                    <span class="label">Payment Status</span>
-                    <span class="value">{{ sale.payment_status }}</span>
-                </div>
-                <div class="receipt-row">
-                    <span class="label">Payment Method</span>
-                    <span class="value">{{ sale.payment_method }}</span>
-                </div>
-            </div>
-
-            <div class="receipt-section">
-                <div class="receipt-section-title">Items</div>
-                {% for item in items %}
-                    <div class="receipt-row">
-                        <span class="label">
-    {% if item.stock_item %}
-        {{ item.stock_item.item_name }}
-    {% else %}
-        [Product Discontinued]
-    {% endif %}
-</span>
-                        <span class="value">{{ item.quantity }} x UGX {{ item.unit_price|floatformat:0 }}</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="label">Line Total</span>
-                        <span class="value">UGX {{ item.line_total|floatformat:0 }}</span>
-                    </div>
-                {% endfor %}
-            </div>
-
-            <div class="receipt-section">
-                <div class="receipt-section-title">Totals</div>
-                <div class="receipt-row">
-                    <span class="label">Subtotal</span>
-                    <span class="value">UGX {{ sale.subtotal|floatformat:0 }}</span>
-                </div>
-                <div class="receipt-row">
-                    <span class="label">Transport</span>
-                    <span class="value">UGX {{ sale.transport_charge|floatformat:0 }}</span>
-                </div>
-                <div class="receipt-row">
-                    <span class="label">Grand Total</span>
-                    <span class="value balance">UGX {{ sale.total_amount|floatformat:0 }}</span>
-                </div>
-            </div>
-
-            {% if sale.notes %}
-                <div class="receipt-notice">{{ sale.notes }}</div>
-            {% endif %}
+        <div class="receipt-section">
+          <div class="receipt-section-title">Customer</div>
+          <div class="receipt-row">
+            <span class="label">Name</span>
+            <span class="value">{{ sale.customer_name }}</span>
+          </div>
+          <div class="receipt-row">
+            <span class="label">Phone</span>
+            <span class="value">{{ sale.phone_number }}</span>
+          </div>
+          <div class="receipt-row">
+            <span class="label">Payment Status</span>
+            <span class="value">{{ sale.payment_status }}</span>
+          </div>
+          <div class="receipt-row">
+            <span class="label">Payment Method</span>
+            <span class="value">{{ sale.payment_method }}</span>
+          </div>
+          <!-- STAFF ACCOUNTABILITY - who recorded this sale -->
+          <div class="receipt-row">
+            <span class="label">Served By</span>
+            <span class="value">{{ sale.sold_by.username|default:"-" }}</span>
+          </div>
         </div>
 
-        <div class="receipt-footer">
-            <div class="receipt-id">Sale #{{ sale.id }}</div>
-            <div class="receipt-date">Printed: {% now "d M Y, H:i" %}</div>
-            <div class="receipt-actions">
-                <button class="receipt-action-btn" onclick="printReceipt()">Print Receipt</button>
-
-<script>
-function printReceipt() {
-    window.print();
-    return false;
-}
-</script>
-                <a class="receipt-action-btn receipt-action-secondary" href="{% url 'print_receipt' sale.id %}?download=1">Download Receipt</a>
-            </div>
+        <div class="receipt-section">
+          <div class="receipt-section-title">Items</div>
+          {% for item in items %}
+          <div class="receipt-row">
+            <span class="label">
+              {% if item.stock_item %} {{ item.stock_item.item_name }} {% else
+              %} [Product Discontinued] {% endif %}
+            </span>
+            <span class="value"
+              >{{ item.quantity }} x UGX {{ item.unit_price|floatformat:0
+              }}</span
+            >
+          </div>
+          <div class="receipt-row">
+            <span class="label">Line Total</span>
+            <span class="value">UGX {{ item.line_total|floatformat:0 }}</span>
+          </div>
+          {% endfor %}
         </div>
 
+        <div class="receipt-section">
+          <div class="receipt-section-title">Totals</div>
+          <div class="receipt-row">
+            <span class="label">Subtotal</span>
+            <span class="value">UGX {{ sale.subtotal|floatformat:0 }}</span>
+          </div>
+          <div class="receipt-row">
+            <span class="label">Transport</span>
+            <span class="value"
+              >UGX {{ sale.transport_charge|floatformat:0 }}</span
+            >
+          </div>
+          <div class="receipt-row">
+            <span
+              class="value {% if sale.payment_status == 'Credit' %}balance{% else %}receipt-cleared{% endif %}"
+            >
+              UGX {{ sale.total_amount|floatformat:0 }}
+            </span>
+            <span class="label">Grand Total</span>
+          </div>
+        </div>
+
+        {% if sale.notes %}
+        <div class="receipt-notice">{{ sale.notes }}</div>
+        {% endif %}
+      </div>
+
+      <div class="receipt-footer">
+        <div class="receipt-id">Sale #{{ sale.id }}</div>
+        <div class="receipt-date">Printed: {% now "d M Y, H:i" %}</div>
+        <div class="receipt-actions">
+          <button class="receipt-action-btn" onclick="printReceipt()">
+            Print Receipt
+          </button>
+          {% if request.GET.from == 'sales_list' %}
+          <a
+            class="receipt-action-btn receipt-action-secondary"
+            href="{% url 'sales_list' %}"
+            >← Back to Sales</a
+          >
+          {% else %}
+          <a
+            class="receipt-action-btn receipt-action-secondary"
+            href="{% url 'record_sales' %}"
+            >← New Sale</a
+          >
+          {% endif %}
+        </div>
+
+        <script>
+          function printReceipt() {
+            window.print();
+            return false;
+          }
+        </script>
+      </div>
     </div>
-
-</body>
+  </body>
 </html>

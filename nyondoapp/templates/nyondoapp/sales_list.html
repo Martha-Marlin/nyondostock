@@ -186,65 +186,6 @@
             </div>
           </div>
 
-          <!-- FILTER BAR WITH FORM -->
-          <form
-            method="GET"
-            action="{% url 'sales_list' %}"
-            class="filter-bar bg-white p-3 rounded mb-4 border"
-          >
-            <div class="row g-2 align-items-end">
-              <div class="col-md-3">
-                <label class="form-label small text-muted mb-1"
-                  >Search customer</label
-                >
-                <input
-                  type="text"
-                  name="search"
-                  class="form-control form-control-sm"
-                  value="{{ search }}"
-                  placeholder="e.g. John Katongole"
-                />
-              </div>
-              <div class="col-md-2">
-                <label class="form-label small text-muted mb-1">Date from</label>
-                <input
-                  type="date"
-                  name="date_from"
-                  class="form-control form-control-sm"
-                  value="{{ date_from }}"
-                />
-              </div>
-              <div class="col-md-2">
-                <label class="form-label small text-muted mb-1">Date to</label>
-                <input
-                  type="date"
-                  name="date_to"
-                  class="form-control form-control-sm"
-                  value="{{ date_to }}"
-                />
-              </div>
-              <div class="col-md-2">
-                <label class="form-label small text-muted mb-1">Status</label>
-                <select name="status" class="form-select form-select-sm">
-                  <option value="">All status</option>
-                  <option value="Paid" {% if status == 'Paid' %}selected{% endif %}>Paid</option>
-                  <option value="Pending" {% if status == 'Pending' %}selected{% endif %}>Pending</option>
-                  <option value="Credit" {% if status == 'Credit' %}selected{% endif %}>Credit</option>
-                </select>
-              </div>
-              <div class="col-md-3">
-                <button type="submit" class="btn btn-success btn-sm w-100">
-                  Apply filters
-                </button>
-                <a
-                  href="{% url 'sales_list' %}"
-                  class="btn btn-outline-secondary btn-sm w-100 mt-2"
-                  >Clear filters</a
-                >
-              </div>
-            </div>
-          </form>
-
           <!-- SALES TABLE -->
           <section class="sales-list-card mt-4">
             <div class="sales-list-header">
@@ -340,13 +281,9 @@
                           <i class="fa-solid fa-trash"></i>
                         </button>
                       </form>
-                      <a
-                        href="{% url 'print_receipt' sale.id %}"
-                        class="btn btn-sm btn-outline-secondary"
-                        title="Print receipt"
-                      >
-                        <i class="fa-solid fa-print"></i>
-                      </a>
+                      <a href="{% url 'print_receipt' sale.id %}?from=sales_list" class="btn btn-sm btn-outline-secondary" title="Print receipt">
+    <i class="fa-solid fa-print"></i>
+</a>
                     </td>
                   </tr>
                   {% empty %}

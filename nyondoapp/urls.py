@@ -9,10 +9,10 @@ urlpatterns = [
 
 
     # DASHBOARD URLS
-path('dashboard/', views.dashboard_view, name='dashboard'),  # smart redirect
-path('store-manager-dashboard/', views.store_manager_dashboard_view, name='store_manager_dashboard'),
-path('sales-dashboard/', views.sales_dashboard_view, name='sales_dashboard'),
-path('accounts-dashboard/', views.admin_dashboard_view, name='accounts_dashboard'),
+    path('dashboard/', views.dashboard_view, name='dashboard'),  # smart redirect
+    path('store-manager-dashboard/', views.store_manager_dashboard_view, name='store_manager_dashboard'),
+    path('sales-dashboard/', views.sales_dashboard_view, name='sales_dashboard'),
+    path('accounts-dashboard/', views.admin_dashboard_view, name='accounts_dashboard'),
 
 
     # STOCK URLS

@@ -34,13 +34,14 @@
       <!-- content on the login form the username, password, role and submit button -->
       <form method="POST" action="{% url 'login' %}">
         {% csrf_token %}
-        {% if messages %}
-          {% for message in messages %}
-            {% if 'error' in message.tags %}
-            <div class="alert alert-danger mt-2">{{ message }}</div>
-            {% endif %}
-          {% endfor %}
-        {% endif %}
+{% if messages %}
+  {% for message in messages %}
+    {% if 'error' in message.tags %}
+      <div class="alert alert-danger mt-2">{{ message }}</div>
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
         <div class="mb-3">
           <label for="username" class="form-label">Username</label>
           <input
@@ -48,7 +49,7 @@
             class="form-control"
             id="username"
             name="username"
-            placeholder="Enter Your Username"
+            placeholder="Enter your username"
             required
           />
         </div>
@@ -59,14 +60,54 @@
             class="form-control"
             id="password"
             name="password"
-            placeholder="Enter your Password"
+            placeholder="Enter your password"
             required
           />
         </div>
         <button type="submit" class="btn btn-success w-100">Login</button>
-        <p class="text-center mt-3 mb-1">Forgot password? Contact admin</p>
+        <a href="#" class="d-block text-center mt-2" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">
+  Forgot password? Contact admin
+</a>
         <p class="text-center">No account? Contact your administrator.</p>
       </form>
+    </div>
+    <!-- Forgot Password Modal -->
+    <div
+      class="modal fade"
+      id="forgotPasswordModal"
+      tabindex="-1"
+      aria-labelledby="forgotPasswordModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="forgotPasswordModalLabel">
+              Forgot Password?
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body text-center">
+            <p>
+              Please contact your system administrator to reset your password.
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-success"
+              data-bs-dismiss="modal"
+            >
+              Okay, Got it
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
     <!-- Bootstrap JS bundle for interactive components -->
     <script

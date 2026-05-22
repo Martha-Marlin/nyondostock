@@ -1,5 +1,4 @@
 # IMPORT DJANGO CORE FUNCTIONS
-import re
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
@@ -89,12 +88,11 @@ def render_receipt_response(request, template_name, context, download_filename):
 def landing_view(request):
     if request.user.is_authenticated:
         return redirect('dashboard')
-    return render(request, 'nyondoapp/landing.html')
+    return render(request, 'nyondoapp/index.html')
 
 
 # LOGIN VIEW
 # Handles user login with role-based redirects
-# LOGIN VIEW
 def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -295,7 +293,6 @@ def admin_dashboard_view(request):
     }
     return render(request, 'nyondoapp/accounts_dashboard.html', context)
 
-
 # STOCK LIST VIEW
 # Handles viewing, adding, updating, and deleting stock items
 @login_required(login_url='login')
@@ -373,9 +370,18 @@ def stock_view(request):
             messages.success(request, 'Stock item updated successfully.')
             return redirect('stock')
 
-        # No further POST actions; fall through to listing
+    # GET request - handle filtering
+    stock_filter = request.GET.get('filter', '')
+    items = StockItem.objects.all()
 
-    items = StockItem.objects.all().order_by('-id')
+    if stock_filter == 'in_stock':
+        items = items.filter(quantity__gt=F('minimum_stock'))
+    elif stock_filter == 'low':
+        items = items.filter(quantity__gt=0, quantity__lte=F('minimum_stock'))
+    elif stock_filter == 'out':
+        items = items.filter(quantity=0)
+
+    items = items.order_by('-id')
     total_items = items.count()
     out_of_stock = items.filter(quantity=0).count()
     low_stock = items.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count()
@@ -387,9 +393,9 @@ def stock_view(request):
         'in_stock': in_stock,
         'low_stock': low_stock,
         'out_of_stock': out_of_stock,
+        'stock_filter': stock_filter,
     }
     return render(request, 'nyondoapp/stock.html', context)
-
 
 # RECORD SALES PAGE VIEW
 # Displays the blank sale form with available stock items and registered customers
@@ -882,7 +888,7 @@ def customers_view(request):
     context = {
         'customers': customers,
         'search': search,
-        'gender': gender,
+        'gender': request.GET.get('gender', ''),
         'total_customers': customers.count(),
     }
     return render(request, 'nyondoapp/customers_list.html', context)
@@ -939,40 +945,37 @@ def register_customer_view(request):
 def edit_customer_view(request, customer_id):
     customer = get_object_or_404(Customer, id=customer_id)
     if request.method == 'POST':
-        customer.full_name = request.POST.get('full_name', '').strip()
-        customer.phone_number = request.POST.get('phone_number', '').strip()
-        customer.nin = request.POST.get('nin', '').strip().upper()
-        customer.area = request.POST.get('area', '').strip() or None
-        customer.notes = request.POST.get('notes', '').strip() or None
+        full_name = request.POST.get('full_name', '').strip()
+        phone_number = request.POST.get('phone_number', '').strip()
+        nin = request.POST.get('nin', '').strip().upper()
+        area = request.POST.get('area', '').strip() or None
+        notes = request.POST.get('notes', '').strip() or None
 
-        # VALIDATE NIN LENGTH
         if len(nin) != 14:
             messages.error(request, 'NIN must be exactly 14 characters.')
             return redirect('customers')
-        
-        # VALIDATE NIN PREFIX FOR GENDER
+
         nin_prefix = nin[:2]
         if nin_prefix not in ['CM', 'CF']:
             messages.error(request, 'Invalid NIN format. Must start with CM (Male) or CF (Female).')
             return redirect('customers')
-        
-        # CHECK FOR DUPLICATE NIN (excluding current customer)
+
         if Customer.objects.filter(nin=nin).exclude(id=customer.id).exists():
             messages.error(request, f'A customer with NIN {nin} is already registered.')
             return redirect('customers')
-        
-        # UPDATE GENDER BASED ON NIN
+
         gender = 'M' if nin_prefix == 'CM' else 'F'
-        
+
         customer.full_name = full_name
         customer.phone_number = phone_number
         customer.nin = nin
-        customer.gender = gender  # Update gender
+        customer.gender = gender
         customer.area = area
         customer.notes = notes
         customer.save()
         messages.success(request, f'{customer.full_name} updated successfully.')
     return redirect('customers')
+
 
 
 # DELETE CUSTOMER VIEW
