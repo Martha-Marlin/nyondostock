@@ -644,7 +644,7 @@ def sales_list_view(request):
 # Displays all suppliers with search and filter options
 @login_required(login_url='login')
 def suppliers_view(request):
-    denied = require_roles(request, ACCOUNTS_ROLE)
+    denied = require_roles(request, ACCOUNTS_ROLE, MANAGER_ROLE)
     if denied:
         return denied
 
@@ -678,7 +678,7 @@ def suppliers_view(request):
 # ADD SUPPLIER VIEW
 @login_required(login_url='login')
 def add_supplier_view(request):
-    denied = require_roles(request, ACCOUNTS_ROLE)
+    denied = require_roles(request, ACCOUNTS_ROLE, MANAGER_ROLE)
     if denied:
         return denied
 
@@ -706,7 +706,7 @@ def add_supplier_view(request):
 # EDIT SUPPLIER VIEW
 @login_required(login_url='login')
 def edit_supplier_view(request, supplier_id):
-    denied = require_roles(request, ACCOUNTS_ROLE)
+    denied = require_roles(request, ACCOUNTS_ROLE, MANAGER_ROLE)
     if denied:
         return denied
 
@@ -728,7 +728,7 @@ def edit_supplier_view(request, supplier_id):
 # DELETE SUPPLIER VIEW
 @login_required(login_url='login')
 def delete_supplier_view(request, supplier_id):
-    denied = require_roles(request, ACCOUNTS_ROLE)
+    denied = require_roles(request, ACCOUNTS_ROLE, MANAGER_ROLE)
     if denied:
         return denied
 
@@ -743,7 +743,7 @@ def delete_supplier_view(request, supplier_id):
 # SUPPLIER TRANSACTIONS VIEW
 @login_required(login_url='login')
 def supplier_transactions_view(request, supplier_id):
-    denied = require_roles(request, ACCOUNTS_ROLE)
+    denied = require_roles(request, ACCOUNTS_ROLE, MANAGER_ROLE)
     if denied:
         return denied
 
@@ -759,7 +759,7 @@ def supplier_transactions_view(request, supplier_id):
 # Records a transaction for a supplier
 @login_required(login_url='login')
 def record_payment_view(request, supplier_id):
-    denied = require_roles(request, ACCOUNTS_ROLE)
+    denied = require_roles(request, ACCOUNTS_ROLE, MANAGER_ROLE)
     if denied:
         return denied
 
@@ -791,7 +791,7 @@ def record_payment_view(request, supplier_id):
 # SUPPLIER CREDIT DETAIL VIEW
 @login_required(login_url='login')
 def supplier_credit_detail_view(request, supplier_id):
-    denied = require_roles(request, ACCOUNTS_ROLE)
+    denied = require_roles(request, ACCOUNTS_ROLE, MANAGER_ROLE)
     if denied:
         return denied
 
@@ -815,7 +815,7 @@ def supplier_credit_detail_view(request, supplier_id):
 # ADD SUPPLIER CREDIT VIEW
 @login_required(login_url='login')
 def add_supplier_credit_view(request, supplier_id):
-    denied = require_roles(request, ACCOUNTS_ROLE)
+    denied = require_roles(request, ACCOUNTS_ROLE, MANAGER_ROLE)
     if denied:
         return denied
 
@@ -839,7 +839,7 @@ def add_supplier_credit_view(request, supplier_id):
 # RECORD CREDIT PAYMENT VIEW
 @login_required(login_url='login')
 def record_credit_payment_view(request, credit_id):
-    denied = require_roles(request, ACCOUNTS_ROLE)
+    denied = require_roles(request, ACCOUNTS_ROLE, MANAGER_ROLE)
     if denied:
         return denied
 

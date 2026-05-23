@@ -47,31 +47,61 @@
       <div class="row">
 
         <!-- SIDEBAR -->
-        <aside class="col-2 bg-light min-vh-100 p-3 pt-4 position-relative">
-          <h6 class="text-muted">MENU</h6>
-          <ul class="nav flex-column">
-            <li class="nav-item mb-3">
-              <a href="{% url 'dashboard' %}" class="nav-link text-dark">📊 Dashboard</a>
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'stock' %}" class="nav-link text-dark">📦 Stock</a>
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'sales_list' %}" class="nav-link text-dark">🛒 Sales</a>
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'suppliers' %}" class="nav-link active">🏭 Suppliers</a>
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'deposits' %}" class="nav-link text-dark">💰 Deposits</a>
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
-            </li>
-          </ul>
+<aside class="col-2 bg-light min-vh-100 p-3 pt-4 position-relative">
+  <h6 class="text-muted">MENU</h6>
+  <ul class="nav flex-column">
+    {% if user.groups.all.0.name == 'Store Manager' %}
+      <li class="nav-item mb-3">
+        <a href="{% url 'store_manager_dashboard' %}" class="nav-link text-dark">📊 Dashboard</a>
+      </li>
+      <li class="nav-item mb-3">
+        <a href="{% url 'stock' %}" class="nav-link text-dark">📦 Stock</a>
+      </li>
+      <li class="nav-item mb-3">
+        <a href="{% url 'suppliers' %}" class="nav-link active">🏭 Suppliers</a>
+      </li>
+
+    {% elif user.groups.all.0.name == 'Accounts Admin' %}
+      <li class="nav-item mb-3">
+        <a href="{% url 'accounts_dashboard' %}" class="nav-link text-dark">📊 Accounts Dashboard</a>
+      </li>
+      <li class="nav-item mb-3">
+        <a href="{% url 'suppliers' %}" class="nav-link active">🏭 Suppliers</a>
+      </li>
+      <li class="nav-item mb-3">
+        <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
+      </li>
+      <li class="nav-item mb-3">
+        <a href="{% url 'deposits' %}" class="nav-link text-dark">💰 Deposits</a>
+      </li>
+      <li class="nav-item mb-3">
+        <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
+      </li>
+
+    {% else %}
+      <li class="nav-item mb-3">
+        <a href="{% url 'dashboard' %}" class="nav-link text-dark">📊 Dashboard</a>
+      </li>
+      <li class="nav-item mb-3">
+        <a href="{% url 'stock' %}" class="nav-link text-dark">📦 Stock</a>
+      </li>
+      <li class="nav-item mb-3">
+        <a href="{% url 'sales_list' %}" class="nav-link text-dark">🛒 Sales</a>
+      </li>
+      <li class="nav-item mb-3">
+        <a href="{% url 'suppliers' %}" class="nav-link active">🏭 Suppliers</a>
+      </li>
+      <li class="nav-item mb-3">
+        <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
+      </li>
+      <li class="nav-item mb-3">
+        <a href="{% url 'deposits' %}" class="nav-link text-dark">💰 Deposits</a>
+      </li>
+      <li class="nav-item mb-3">
+        <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
+      </li>
+    {% endif %}
+  </ul>
 
           <!-- LOW STOCK ALERT -->
           <div class="ns-alert-box mt-4">
@@ -85,7 +115,7 @@
             <hr />
             <small class="text-muted d-block mb-1">📦 NyondoStock v1.0</small>
             <small class="text-muted d-block mb-1">🏪 NYONDO General Hardware</small>
-            <small class="text-muted d-block">📅 April 2026</small>
+            <small class="text-muted d-block">📅 {% now "F Y" %}</small>
           </div>
         </aside>
 
