@@ -897,6 +897,10 @@ def customers_view(request):
 # REGISTER CUSTOMER VIEW
 @login_required(login_url='login')
 def register_customer_view(request):
+    denied = require_roles(request, ACCOUNTS_ROLE)
+    if denied:
+        return denied
+
     if request.method == 'POST':
         full_name = request.POST.get('full_name', '').strip()
         phone_number = request.POST.get('phone_number', '').strip()

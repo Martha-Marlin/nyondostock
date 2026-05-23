@@ -140,9 +140,11 @@
                 >Deposit scheme registered customers</small
               >
             </div>
-            <a href="{% url 'register_customer' %}" class="ns-btn-primary">
-              <i class="fa-solid fa-user-plus"></i> Register Customer
-            </a>
+           {% if user.groups.all.0.name == 'Accounts Admin' %}
+<a href="{% url 'register_customer' %}" class="ns-btn-primary">
+    <i class="fa-solid fa-user-plus"></i> Register Customer
+</a>
+{% endif %}
           </div>
 
           <!-- MESSAGES -->
@@ -232,10 +234,9 @@
                     <td>{{ customer.registered_on|date:"d M Y" }}</td>
                     <td>{{ customer.registered_by.username|default:"—" }}</td>
                     <td class="actions d-flex gap-1">
-                      <a
-                        href="#"
-                        class="btn btn-sm btn-outline-success"
-                        title="Edit"
+                      
+    {% if user.groups.all.0.name == 'Accounts Admin' %}
+    <a href="#" class="btn btn-sm btn-outline-success" title="Edit"
                         data-bs-toggle="modal"
                         data-bs-target="#editCustomerModal{{ customer.id }}"
                       >
@@ -256,6 +257,7 @@
                           <i class="fa-solid fa-trash"></i>
                         </button>
                       </form>
+                      {% endif %}
                       <a
                         href="{% url 'customer_detail' customer.id %}"
                         class="btn btn-sm btn-success"
@@ -269,9 +271,7 @@
                   <tr>
                     <td colspan="9" class="text-center text-muted py-4">
                       No customers registered yet.
-                      <a href="{% url 'register_customer' %}"
-                        >Register one now</a
-                      >
+                      {% if user.groups.all.0.name == 'Accounts Admin' %}<a href="{% url 'register_customer' %}">Register one now</a>{% endif %}
                     </td>
                   </tr>
                   {% endfor %}
