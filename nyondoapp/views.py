@@ -15,7 +15,23 @@ from .models import (
     Customer, CustomerCreditPayment,
     Deposit, DepositPayment,
 )
+# MIDDLEWARE TO PREVENT BROWSER CACHING OF PROTECTED PAGES
+# This runs after every response and adds no-cache headers
+# so the browser back button cannot show protected pages after logout
+from django.utils.decorators import decorator_from_middleware
+from django.middleware.cache import CacheMiddleware
 
+
+class NoCacheMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response['Pragma'] = 'no-cache'
+        response['Expires'] = '0'
+        return response
 
 SALES_ROLE = 'Sales Attendant'
 MANAGER_ROLE = 'Store Manager'
@@ -115,11 +131,16 @@ def login_view(request):
 
 
 # LOGOUT VIEW
-# Clears the session and redirects to login
+# Clears the session, prevents browser caching, and redirects to login
 def logout_view(request):
     logout(request)
     messages.success(request, 'Logged out successfully')
-    return redirect('login')
+    response = redirect('login')
+    # PREVENT BROWSER BACK BUTTON FROM SHOWING PROTECTED PAGES AFTER LOGOUT
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = '0'
+    return response
 
 
 # DASHBOARD REDIRECT VIEW

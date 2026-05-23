@@ -49,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'nyondoapp.views.NoCacheMiddleware', 
 ]
 
 ROOT_URLCONF = 'nyondoproject.urls'
@@ -119,3 +120,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'nyondoapp/static')]
+
+# PREVENT BROWSER CACHING OF PROTECTED PAGES
+SESSION_COOKIE_SECURE = False  # Set True in production with HTTPS
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
