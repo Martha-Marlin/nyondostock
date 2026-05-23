@@ -56,42 +56,61 @@
         >
           <h6 class="text-muted">MENU</h6>
           <ul class="nav flex-column">
-            <li class="nav-item mb-3">
-              <a href="{% url 'dashboard' %}" class="nav-link text-dark"
-                >📊 Dashboard</a
-              >
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'stock' %}" class="nav-link text-dark"
-                >📦 Stock</a
-              >
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'sales_list' %}" class="nav-link text-dark"
-                >🛒 Sales</a
-              >
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'suppliers' %}" class="nav-link text-dark"
-                >🏭 Suppliers</a
-              >
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'customers' %}" class="nav-link active"
-                >👤 Customers</a
-              >
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'deposits' %}" class="nav-link text-dark"
-                >💰 Deposits</a
-              >
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'reports' %}" class="nav-link text-dark"
-                >📈 Reports</a
-              >
-            </li>
-          </ul>
+  {% if user.groups.all.0.name == 'Sales Attendant' %}
+    <li class="nav-item mb-3">
+      <a href="{% url 'sales_dashboard' %}" class="nav-link text-dark">📊 Sales Dashboard</a>
+    </li>
+    <li class="nav-item mb-3">
+      <a href="{% url 'stock' %}" class="nav-link text-dark">📦 Stock</a>
+    </li>
+    <li class="nav-item mb-3">
+      <a href="{% url 'sales_list' %}" class="nav-link text-dark">🛒 Sales</a>
+    </li>
+    <li class="nav-item mb-3">
+      <a href="{% url 'customers' %}" class="nav-link active">👤 Customers</a>
+    </li>
+
+  {% elif user.groups.all.0.name == 'Accounts Admin' %}
+    <li class="nav-item mb-3">
+      <a href="{% url 'accounts_dashboard' %}" class="nav-link text-dark">📊 Accounts Dashboard</a>
+    </li>
+    <li class="nav-item mb-3">
+      <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
+    </li>
+    <li class="nav-item mb-3">
+      <a href="{% url 'customers' %}" class="nav-link active">👤 Customers</a>
+    </li>
+    <li class="nav-item mb-3">
+      <a href="{% url 'deposits' %}" class="nav-link text-dark">💰 Deposits</a>
+    </li>
+    <li class="nav-item mb-3">
+      <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
+    </li>
+
+  {% else %}
+    <li class="nav-item mb-3">
+      <a href="{% url 'dashboard' %}" class="nav-link text-dark">📊 Dashboard</a>
+    </li>
+    <li class="nav-item mb-3">
+      <a href="{% url 'stock' %}" class="nav-link text-dark">📦 Stock</a>
+    </li>
+    <li class="nav-item mb-3">
+      <a href="{% url 'sales_list' %}" class="nav-link text-dark">🛒 Sales</a>
+    </li>
+    <li class="nav-item mb-3">
+      <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
+    </li>
+    <li class="nav-item mb-3">
+      <a href="{% url 'customers' %}" class="nav-link active">👤 Customers</a>
+    </li>
+    <li class="nav-item mb-3">
+      <a href="{% url 'deposits' %}" class="nav-link text-dark">💰 Deposits</a>
+    </li>
+    <li class="nav-item mb-3">
+      <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
+    </li>
+  {% endif %}
+</ul>
 
           <div class="ns-alert-box mt-4">
             <div class="ns-alert-title">⚠ Low Stock</div>
@@ -258,19 +277,23 @@
                       <span class="badge bg-warning text-dark">Owing</span>
                       {% endif %}
                     </td>
-                    <td>
-                      {% if entry.balance_due > 0 %}
-                      <button
-                        class="btn btn-sm btn-success"
-                        data-bs-toggle="modal"
-                        data-bs-target="#paymentModal{{ entry.sale.id }}"
-                      >
-                        Record Payment
-                      </button>
-                      {% else %}
-                      <span class="text-muted">—</span>
-                      {% endif %}
-                    </td>
+                   <td>
+    {% if entry.balance_due > 0 %}
+        {% if user.groups.all.0.name == 'Accounts Admin' %}
+        <button
+            class="btn btn-sm btn-success"
+            data-bs-toggle="modal"
+            data-bs-target="#paymentModal{{ entry.sale.id }}"
+        >
+            Record Payment
+        </button>
+        {% else %}
+        <span class="text-muted">—</span>
+        {% endif %}
+    {% else %}
+    <span class="text-muted">—</span>
+    {% endif %}
+</td>
                   </tr>
                   {% empty %}
                   <tr>
