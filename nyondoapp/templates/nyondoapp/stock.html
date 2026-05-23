@@ -64,7 +64,7 @@
     <!-- MAIN LAYOUT: SIDEBAR + CONTENT -->
     <div class="container-fluid">
       <div class="row">
-        <!-- ========== SIDEBAR SECTION ========== -->
+        <!--  SIDEBAR SECTION  -->
         <aside class="col-2 bg-light min-vh-100 p-3 pt-4 position-relative">
           <h6 class="text-muted">MENU</h6>
 
@@ -176,7 +176,7 @@
           <!-- LOW STOCK WARNING ALERT -->
           <div class="ns-alert-box mt-4">
             <div class="ns-alert-title">⚠ Low Stock</div>
-            <div class="ns-alert-body">15 items need attention</div>
+            <div class="ns-alert-body">{{ low_stock_count }} items need attention</div>
             <a href="{% url 'stock' %}" class="ns-alert-link">View →</a>
           </div>
 
@@ -216,7 +216,7 @@
           <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
               <h4 class="mb-0">Stock</h4>
-              <small class="text-muted">Wednesday, 09 April 2026</small>
+              <small class="text-muted">{% now "l, d F Y" %}</small>
             </div>
             <!-- ADD STOCK BUTTON (TRIGGERS MODAL) -->
             <button
@@ -367,21 +367,21 @@
             <!-- TABLE PAGINATION -->
             <div class="stock-list-footer">
               <span>Showing {{ total_items }} items</span>
-              <nav aria-label="Stock table pagination">
-                <ul class="pagination pagination-sm mb-0">
-                  <li class="page-item disabled">
-                    <a class="page-link" href="#">Prev</a>
-                  </li>
-                  <li class="page-item active">
-                    <a class="page-link" href="#">1</a>
-                  </li>
-                  <li class="page-item"><a class="page-link" href="#">2</a></li>
-                  <li class="page-item"><a class="page-link" href="#">3</a></li>
-                  <li class="page-item">
-                    <a class="page-link" href="#">Next</a>
-                  </li>
-                </ul>
-              </nav>
+             <nav aria-label="...">
+    <ul class="pagination pagination-sm mb-0">
+        <li class="page-item disabled">
+            <a class="page-link" href="#">Prev</a>
+        </li>
+        <li class="page-item active">
+            <a class="page-link" href="#">1</a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item">
+            <a class="page-link" href="#">Next</a>
+        </li>
+    </ul>
+</nav> 
             </div>
           </section>
         </main>

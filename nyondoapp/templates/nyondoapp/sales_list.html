@@ -116,7 +116,7 @@
           <!-- LOW STOCK ALERT -->
           <div class="ns-alert-box mt-4">
             <div class="ns-alert-title">⚠ Low Stock</div>
-            <div class="ns-alert-body">15 items need attention</div>
+            <div class="ns-alert-body">{{ low_stock_count }} items need attention</div>
             <a href="{% url 'stock' %}" class="ns-alert-link">View →</a>
           </div>
 
@@ -385,21 +385,21 @@
 
             <div class="sales-list-footer">
               <span>Showing {{ total_sales }} sale{{ total_sales|pluralize }}</span>
-              <nav aria-label="Sales table pagination">
-                <ul class="pagination pagination-sm mb-0">
-                  <li class="page-item disabled">
-                    <a class="page-link" href="#">Prev</a>
-                  </li>
-                  <li class="page-item active">
-                    <a class="page-link" href="#">1</a>
-                  </li>
-                  <li class="page-item"><a class="page-link" href="#">2</a></li>
-                  <li class="page-item"><a class="page-link" href="#">3</a></li>
-                  <li class="page-item">
-                    <a class="page-link" href="#">Next</a>
-                  </li>
-                </ul>
-              </nav>
+             <nav aria-label="...">
+    <ul class="pagination pagination-sm mb-0">
+        <li class="page-item disabled">
+            <a class="page-link" href="#">Prev</a>
+        </li>
+        <li class="page-item active">
+            <a class="page-link" href="#">1</a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item">
+            <a class="page-link" href="#">Next</a>
+        </li>
+    </ul>
+</nav>
             </div>
           </section>
         </div>

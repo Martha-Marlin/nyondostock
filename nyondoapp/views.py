@@ -415,6 +415,7 @@ def stock_view(request):
         'low_stock': low_stock,
         'out_of_stock': out_of_stock,
         'stock_filter': stock_filter,
+        'low_stock_count': StockItem.objects.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count(),
     }
     return render(request, 'nyondoapp/stock.html', context)
 
@@ -653,6 +654,7 @@ def sales_list_view(request):
         'date_from': date_from,
         'date_to': date_to,
         'total_sales': sales_list.count(),
+        'low_stock_count': StockItem.objects.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count(),
         'total_revenue': sales_list.aggregate(total=Sum('total_amount'))['total'] or 0,
         'pending_count': sales_list.filter(payment_status='Pending').count(),
         'credit_count': sales_list.filter(payment_status='Credit').count(),
@@ -772,6 +774,7 @@ def supplier_transactions_view(request, supplier_id):
     context = {
         'supplier': supplier,
         'transactions': supplier.transactions.all(),
+        'low_stock_count': StockItem.objects.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count(),
     }
     return render(request, 'nyondoapp/supplier_transactions.html', context)
 
@@ -911,6 +914,7 @@ def customers_view(request):
         'search': search,
         'gender': request.GET.get('gender', ''),
         'total_customers': customers.count(),
+        'low_stock_count': StockItem.objects.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count(),
     }
     return render(request, 'nyondoapp/customers_list.html', context)
 
@@ -1041,6 +1045,7 @@ def customer_detail_view(request, customer_id):
     context = {
         'customer': customer,
         'credit_sales_data': credit_sales_data,
+        'low_stock_count': StockItem.objects.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count(),
     }
     return render(request, 'nyondoapp/customer_detail.html', context)
 
