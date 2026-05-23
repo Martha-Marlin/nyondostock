@@ -6,16 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Deposits - NyondoStock</title>
 
+    <!-- BOOTSTRAP CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
+
+    <!-- FONT AWESOME ICONS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <!-- GOOGLE FONTS - DM SANS -->
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- BASE AND PAGE CSS -->
     <link rel="stylesheet" href="{% static 'base.css' %}" />
     <link rel="stylesheet" href="{% static 'stock.css' %}" />
     <link rel="stylesheet" href="{% static 'deposits.css' %}" />
 </head>
 <body>
 
-    <!-- TOPBAR -->
+    <!-- TOPBAR WITH LOGO, NAME, USER INFO AND LOGOUT -->
     <nav class="topbar">
         <div class="topbar-left">
             <div class="logo">
@@ -28,7 +35,7 @@
         </div>
         <div class="topbar-right">
             <span class="welcome">Welcome, {{ user.username }}</span>
-            <span class="role">{{ user.groups.first.name|default:"Sales Attendant" }}</span>
+            <span class="role">{{ user.groups.first.name|default:"Superuser" }}</span>
             <a href="{% url 'logout' %}" class="logout">Logout</a>
         </div>
     </nav>
@@ -36,51 +43,54 @@
     <div class="container-fluid">
         <div class="row">
 
-            <!-- SIDEBAR -->
+            <!-- SIDEBAR - role-based navigation -->
             <aside class="col-lg-2 col-md-3 bg-light min-vh-100 p-3 pt-4 position-relative">
                 <h6 class="text-muted">MENU</h6>
-               <ul class="nav flex-column">
-  {% if user.groups.all.0.name == 'Accounts Admin' %}
-    <li class="nav-item mb-3">
-      <a href="{% url 'accounts_dashboard' %}" class="nav-link text-dark">📊 Accounts Dashboard</a>
-    </li>
-    <li class="nav-item mb-3">
-      <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
-    </li>
-    <li class="nav-item mb-3">
-      <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
-    </li>
-    <li class="nav-item mb-3">
-      <a href="{% url 'deposits' %}" class="nav-link active">💰 Deposits</a>
-    </li>
-    <li class="nav-item mb-3">
-      <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
-    </li>
 
-  {% else %}
-    <li class="nav-item mb-3">
-      <a href="{% url 'dashboard' %}" class="nav-link text-dark">📊 Dashboard</a>
-    </li>
-    <li class="nav-item mb-3">
-      <a href="{% url 'stock' %}" class="nav-link text-dark">📦 Stock</a>
-    </li>
-    <li class="nav-item mb-3">
-      <a href="{% url 'sales_list' %}" class="nav-link text-dark">🛒 Sales</a>
-    </li>
-    <li class="nav-item mb-3">
-      <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
-    </li>
-    <li class="nav-item mb-3">
-      <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
-    </li>
-    <li class="nav-item mb-3">
-      <a href="{% url 'deposits' %}" class="nav-link active">💰 Deposits</a>
-    </li>
-    <li class="nav-item mb-3">
-      <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
-    </li>
-  {% endif %}
-</ul>
+                <!-- ROLE-BASED NAVIGATION -->
+                <ul class="nav flex-column">
+                    {% if user.groups.all.0.name == 'Accounts Admin' %}
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'accounts_dashboard' %}" class="nav-link text-dark">📊 Accounts Dashboard</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'deposits' %}" class="nav-link active">💰 Deposits</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
+                        </li>
+
+                    {% else %}
+                        <!-- FALLBACK - superuser or unassigned role sees everything -->
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'dashboard' %}" class="nav-link text-dark">📊 Dashboard</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'stock' %}" class="nav-link text-dark">📦 Stock</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'sales_list' %}" class="nav-link text-dark">🛒 Sales</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'deposits' %}" class="nav-link active">💰 Deposits</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
+                        </li>
+                    {% endif %}
+                </ul>
 
                 <!-- LOW STOCK ALERT -->
                 <div class="ns-alert-box mt-4">
@@ -89,6 +99,7 @@
                     <a href="{% url 'stock' %}" class="ns-alert-link">View →</a>
                 </div>
 
+                <!-- SIDEBAR FOOTER -->
                 <div class="position-absolute bottom-0 start-0 p-3 w-100">
                     <hr />
                     <small class="text-muted d-block mb-1">📦 NyondoStock v1.0</small>
@@ -106,14 +117,15 @@
                         <h4 class="mb-0">Deposits</h4>
                         <small class="text-muted">Salary-earner deposit scheme and temporary payment receipts</small>
                     </div>
-                    {% if user.groups.first.name == 'Accounts Admin' or user.groups.first.name == 'Store Manager' %}
+                    <!-- NEW DEPOSIT BUTTON - visible to Accounts Admin, Store Manager and Superuser -->
+                    {% if user.groups.first.name == 'Accounts Admin' or user.groups.first.name == 'Store Manager' or user.is_superuser %}
                     <a href="{% url 'create_deposit' %}" class="ns-btn-primary">
                         <i class="fa-solid fa-plus"></i> New Deposit
                     </a>
                     {% endif %}
                 </div>
 
-                <!-- MESSAGES -->
+                <!-- DJANGO MESSAGES -->
                 {% if messages %}
                 <div class="mb-3">
                     {% for message in messages %}
@@ -127,6 +139,7 @@
 
                 <!-- STAT CARDS -->
                 <div class="row mb-4 g-3">
+                    <!-- TOTAL DEPOSITS -->
                     <div class="col-12 col-sm-6 col-md-3">
                         <div class="stat-card">
                             <div class="stat-label">💰 TOTAL DEPOSITS</div>
@@ -134,6 +147,7 @@
                             <div class="stat-sub">all time</div>
                         </div>
                     </div>
+                    <!-- ACTIVE DEPOSITS -->
                     <div class="col-12 col-sm-6 col-md-3">
                         <div class="stat-card soft">
                             <div class="stat-label">⏳ ACTIVE</div>
@@ -141,13 +155,15 @@
                             <div class="stat-sub">paying in instalments</div>
                         </div>
                     </div>
+                    <!-- COMPLETED DEPOSITS -->
                     <div class="col-12 col-sm-6 col-md-3">
                         <div class="stat-card">
                             <div class="stat-label">✅ COMPLETED</div>
                             <div class="stat-value">{{ completed_count }}</div>
-                            <div class="stat-sub">ready to collect</div>
+                            <div class="stat-sub">goods collected</div>
                         </div>
                     </div>
+                    <!-- TOTAL ACTIVE PAID -->
                     <div class="col-12 col-sm-6 col-md-3">
                         <div class="stat-card warn">
                             <div class="stat-label">TOTAL PAID ACTIVE</div>
@@ -162,13 +178,7 @@
                     <div class="row g-2 align-items-end">
                         <div class="col-md-3">
                             <label class="form-label small text-muted mb-1">Search customer</label>
-                            <input
-                                type="text"
-                                name="search"
-                                class="form-control form-control-sm"
-                                value="{{ search }}"
-                                placeholder="Name or phone"
-                            />
+                            <input type="text" name="search" class="form-control form-control-sm" value="{{ search }}" placeholder="Name or phone" />
                         </div>
                         <div class="col-md-2">
                             <label class="form-label small text-muted mb-1">Status</label>
@@ -263,9 +273,7 @@
                                     </td>
                                     <td>
                                         {% if deposit.due_date < today and deposit.status == 'Active' %}
-                                            <span style="color: #e24b4a; font-weight: 600;">
-                                                {{ deposit.due_date|date:"d M Y" }} ⚠
-                                            </span>
+                                            <span style="color: #e24b4a; font-weight: 600;">{{ deposit.due_date|date:"d M Y" }} ⚠</span>
                                         {% else %}
                                             {{ deposit.due_date|date:"d M Y" }}
                                         {% endif %}
@@ -279,9 +287,10 @@
                                             <span class="status-badge b-red">Cancelled</span>
                                         {% endif %}
                                     </td>
+                                    <!-- ACTIONS - pay and view buttons based on status and role -->
                                     <td class="actions d-flex gap-1 flex-wrap">
                                         {% if deposit.status == 'Active' %}
-                                            {% if user.groups.first.name == 'Accounts Admin' or user.groups.first.name == 'Store Manager' %}
+                                            {% if user.groups.first.name == 'Accounts Admin' or user.groups.first.name == 'Store Manager' or user.is_superuser %}
                                             <a href="{% url 'deposit_detail' deposit.id %}" class="btn btn-sm btn-outline-success" title="Pay">
                                                 <i class="fa-solid fa-money-bill"></i>
                                             </a>
@@ -307,7 +316,7 @@
                                 <tr>
                                     <td colspan="11" class="text-center text-muted py-4">
                                         No deposits recorded yet.
-                                        {% if user.groups.first.name == 'Accounts Admin' or user.groups.first.name == 'Store Manager' %}
+                                        {% if user.groups.first.name == 'Accounts Admin' or user.groups.first.name == 'Store Manager' or user.is_superuser %}
                                         <a href="{% url 'create_deposit' %}">Create the first one</a>
                                         {% endif %}
                                     </td>
@@ -326,6 +335,7 @@
         </div>
     </div>
 
+    <!-- BOOTSTRAP JAVASCRIPT -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>
 
