@@ -26,37 +26,26 @@
       rel="stylesheet"
     />
 
-    <!-- EXTERNAL CSS -->
+    <!-- BASE AND PAGE CSS -->
     <link rel="stylesheet" href="{% static 'base.css' %}" />
     <link rel="stylesheet" href="{% static 'stock.css' %}" />
   </head>
   <body>
+
     <!-- TOPBAR WITH LOGO, NAME, USER INFO AND LOGOUT -->
     <nav class="topbar">
-      <!-- LEFT SIDE: LOGO AND COMPANY NAME -->
       <div class="topbar-left">
         <div class="logo">
-          <!-- Logo image -->
-          <img
-            src="{% static 'images/logo-edit.png' %}"
-            alt="NyondoStock Logo"
-          />
+          <img src="{% static 'images/logo-edit.png' %}" alt="NyondoStock Logo" />
         </div>
         <div>
           <div class="brand-name">Nyondo Stock</div>
           <div class="brand-sub">NYONDO General Hardware LTD</div>
         </div>
       </div>
-
-      <!-- RIGHT SIDE: USER DETAILS AND LOGOUT BUTTON -->
       <div class="topbar-right">
-        <!-- FIXED: Dynamic username instead of hardcoded "Martha" -->
         <span class="welcome">Welcome, {{ user.username }}</span>
-        <!-- FIXED: Dynamic role instead of hardcoded "Store Manager" -->
-        <span class="role"
-          >{{ user.groups.first.name|default:"Store Manager" }}</span
-        >
-        <!-- FIXED: Django URL for logout instead of index.html -->
+        <span class="role">{{ user.groups.first.name|default:"Superuser" }}</span>
         <a href="{% url 'logout' %}" class="logout">Logout</a>
       </div>
     </nav>
@@ -64,116 +53,80 @@
     <!-- MAIN LAYOUT: SIDEBAR + CONTENT -->
     <div class="container-fluid">
       <div class="row">
-        <!--  SIDEBAR SECTION  -->
+
+        <!-- SIDEBAR - role-based navigation -->
         <aside class="col-2 bg-light min-vh-100 p-3 pt-4 position-relative">
           <h6 class="text-muted">MENU</h6>
-
           <ul class="nav flex-column">
             {% if user.groups.all.0.name == 'Sales Attendant' %}
-            <li class="nav-item mb-3">
-              <a href="{% url 'sales_dashboard' %}" class="nav-link text-dark"
-                >📊 Sales Dashboard</a
-              >
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'stock' %}" class="nav-link active">📦 Stock</a>
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'sales_list' %}" class="nav-link text-dark"
-                >🛒 Sales</a
-              >
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'customers' %}" class="nav-link text-dark"
-                >👤 Customers</a
-              >
-            </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'sales_dashboard' %}" class="nav-link text-dark">📊 Sales Dashboard</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'stock' %}" class="nav-link active">📦 Stock</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'sales_list' %}" class="nav-link text-dark">🛒 Sales</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
+              </li>
 
             {% elif user.groups.all.0.name == 'Store Manager' %}
-            <li class="nav-item mb-3">
-              <a
-                href="{% url 'store_manager_dashboard' %}"
-                class="nav-link text-dark"
-                >📊 Dashboard</a
-              >
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'stock' %}" class="nav-link active">📦 Stock</a>
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'suppliers' %}" class="nav-link text-dark"
-                >🏭 Suppliers</a
-              >
-            </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'store_manager_dashboard' %}" class="nav-link text-dark">📊 Dashboard</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'stock' %}" class="nav-link active">📦 Stock</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
+              </li>
 
             {% elif user.groups.all.0.name == 'Accounts Admin' %}
-            <li class="nav-item mb-3">
-              <a
-                href="{% url 'accounts_dashboard' %}"
-                class="nav-link text-dark"
-                >📊 Accounts Dashboard</a
-              >
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'suppliers' %}" class="nav-link text-dark"
-                >🏭 Suppliers</a
-              >
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'customers' %}" class="nav-link text-dark"
-                >👤 Customers</a
-              >
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'deposits' %}" class="nav-link text-dark"
-                >💰 Deposits</a
-              >
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'reports' %}" class="nav-link text-dark"
-                >📈 Reports</a
-              >
-            </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'accounts_dashboard' %}" class="nav-link text-dark">📊 Accounts Dashboard</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'deposits' %}" class="nav-link text-dark">💰 Deposits</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
+              </li>
 
             {% else %}
-            <!-- SUPERUSER / FALLBACK: full access -->
-            <li class="nav-item mb-3">
-              <a href="{% url 'dashboard' %}" class="nav-link text-dark"
-                >📊 Dashboard</a
-              >
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'stock' %}" class="nav-link active">📦 Stock</a>
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'sales_list' %}" class="nav-link text-dark"
-                >🛒 Sales</a
-              >
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'suppliers' %}" class="nav-link text-dark"
-                >🏭 Suppliers</a
-              >
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'customers' %}" class="nav-link text-dark"
-                >👤 Customers</a
-              >
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'deposits' %}" class="nav-link text-dark"
-                >💰 Deposits</a
-              >
-            </li>
-            <li class="nav-item mb-3">
-              <a href="{% url 'reports' %}" class="nav-link text-dark"
-                >📈 Reports</a
-              >
-            </li>
+              <!-- Superuser or unassigned role sees everything -->
+              <li class="nav-item mb-3">
+                <a href="{% url 'dashboard' %}" class="nav-link text-dark">📊 Dashboard</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'stock' %}" class="nav-link active">📦 Stock</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'sales_list' %}" class="nav-link text-dark">🛒 Sales</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'deposits' %}" class="nav-link text-dark">💰 Deposits</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
+              </li>
             {% endif %}
           </ul>
 
-          <!-- LOW STOCK WARNING ALERT -->
+          <!-- LOW STOCK ALERT -->
           <div class="ns-alert-box mt-4">
             <div class="ns-alert-title">⚠ Low Stock</div>
             <div class="ns-alert-body">{{ low_stock_count }} items need attention</div>
@@ -184,29 +137,21 @@
           <div class="position-absolute bottom-0 start-0 p-3 w-100">
             <hr />
             <small class="text-muted d-block mb-1">📦 NyondoStock v1.0</small>
-            <small class="text-muted d-block mb-1"
-              >🏪 NYONDO General Hardware</small
-            >
-            <small class="text-muted d-block">📅 April 2026</small>
+            <small class="text-muted d-block mb-1">🏪 NYONDO General Hardware</small>
+            <small class="text-muted d-block">📅 {% now "F Y" %}</small>
           </div>
         </aside>
 
-        <!-- MAIN CONTENT SECTION -->
+        <!-- MAIN CONTENT -->
         <main class="col-10 p-5">
+
+          <!-- DJANGO MESSAGES -->
           {% if messages %}
           <div class="mb-3">
             {% for message in messages %}
-            <div
-              class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show"
-              role="alert"
-            >
+            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
               {{ message }}
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="alert"
-                aria-label="Close"
-              ></button>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             {% endfor %}
           </div>
@@ -218,7 +163,8 @@
               <h4 class="mb-0">Stock</h4>
               <small class="text-muted">{% now "l, d F Y" %}</small>
             </div>
-            <!-- ADD STOCK BUTTON (TRIGGERS MODAL) -->
+            <!-- Add Stock button - only shown to managers -->
+            {% if user.groups.all.0.name == 'Store Manager' or user.is_superuser %}
             <button
               type="button"
               class="ns-btn-primary"
@@ -227,11 +173,11 @@
             >
               + Add Stock Item
             </button>
+            {% endif %}
           </div>
 
-          <!-- STATISTICS CARDS ROW -->
+          <!-- STAT CARDS -->
           <div class="row mb-4 g-3">
-            <!-- CARD 1: TOTAL ITEMS -->
             <div class="col-12 col-sm-6 col-md-3">
               <div class="stat-card soft">
                 <div class="stat-label">📦 Total Items</div>
@@ -239,7 +185,6 @@
                 <div class="stat-sub">items in inventory</div>
               </div>
             </div>
-            <!-- CARD 2: IN STOCK ITEMS -->
             <div class="col-12 col-sm-6 col-md-3">
               <div class="stat-card">
                 <div class="stat-label">✅ In Stock</div>
@@ -247,7 +192,6 @@
                 <div class="stat-sub">sufficient quantity</div>
               </div>
             </div>
-            <!-- CARD 3: LOW STOCK ALERTS -->
             <div class="col-12 col-sm-6 col-md-3">
               <div class="stat-card warn">
                 <div class="stat-label">⚠ Low Stock</div>
@@ -255,7 +199,6 @@
                 <div class="stat-sub">items need restocking</div>
               </div>
             </div>
-            <!-- CARD 4: OUT OF STOCK ITEMS -->
             <div class="col-12 col-sm-6 col-md-3">
               <div class="stat-card danger">
                 <div class="stat-label">🚫 Out of Stock</div>
@@ -265,8 +208,27 @@
             </div>
           </div>
 
-          <!-- STOCK LIST TABLE SECTION -->
+          <!-- SEARCH BAR -->
+          <form method="GET" action="{% url 'stock' %}" class="stock-filter bg-body-tertiary p-3 rounded mb-4">
+            <div class="row g-2 align-items-end">
+              <div class="col-md-5">
+                <label class="form-label small text-muted mb-1">Search item</label>
+                <input
+                  type="text"
+                  name="search"
+                  class="form-control form-control-sm"
+                  value="{{ search }}"
+                  placeholder="e.g. Cement, Iron Bars..."
+                />
+              </div>
+              <div class="col-md-auto">
+                <button type="submit" class="btn btn-success btn-sm">Search</button>
+                <a href="{% url 'stock' %}" class="btn btn-outline-secondary btn-sm ms-2">Clear</a>
+              </div>
+            </div>
+          </form>
 
+          <!-- STOCK LIST TABLE -->
           <section class="stock-list-card mt-4">
             <div class="stock-list-header">
               <h5>Stock List</h5>
@@ -275,7 +237,6 @@
 
             <div class="table-responsive">
               <table class="table stock-table align-middle mb-0">
-                <!-- TABLE HEADERS -->
                 <thead>
                   <tr>
                     <th>#</th>
@@ -288,8 +249,6 @@
                     <th>Actions</th>
                   </tr>
                 </thead>
-
-                <!-- TABLE BODY (STOCK ITEMS) -->
                 <tbody>
                   {% for item in items %}
                   <tr>
@@ -302,18 +261,20 @@
                     </td>
                     <td>{{ item.category }}</td>
                     <td>{{ item.quantity }}</td>
-                    <td><span>UGX</span> {{ item.buying_price }}</td>
+                    <td>UGX {{ item.buying_price }}</td>
                     <td><strong>UGX {{ item.selling_price }}</strong></td>
                     <td>
                       {% if item.stock_status == 'In Stock' %}
-                      <span class="status-badge b-green">In Stock</span>
+                        <span class="status-badge b-green">In Stock</span>
                       {% elif item.stock_status == 'Low Stock' %}
-                      <span class="status-badge b-yellow">Low Stock</span>
+                        <span class="status-badge b-yellow">Low Stock</span>
                       {% else %}
-                      <span class="status-badge b-red">Out of Stock</span>
+                        <span class="status-badge b-red">Out of Stock</span>
                       {% endif %}
                     </td>
                     <td class="actions d-flex gap-1">
+                      <!-- Edit button - only for managers -->
+                      {% if user.groups.all.0.name == 'Store Manager' or user.is_superuser %}
                       <button
                         class="btn btn-sm btn-outline-success"
                         type="button"
@@ -331,26 +292,20 @@
                       >
                         <i class="fa-solid fa-pen"></i>
                       </button>
-                      <form
-                        method="POST"
-                        action="{% url 'stock' %}"
-                        class="d-inline"
-                      >
+                      <!-- Delete button with confirmation -->
+                      <form method="POST" action="{% url 'stock' %}" class="d-inline">
                         {% csrf_token %}
                         <input type="hidden" name="action" value="delete" />
-                        <input
-                          type="hidden"
-                          name="item_id"
-                          value="{{ item.id }}"
-                        />
-                       <button
-  class="btn btn-sm btn-outline-danger"
-  type="submit"
-  onclick="return confirm('Are you sure you want to delete {{ item.item_name|escapejs }}? This cannot be undone.')"
->
-  <i class="fa-solid fa-trash"></i>
-</button>
+                        <input type="hidden" name="item_id" value="{{ item.id }}" />
+                        <button
+                          class="btn btn-sm btn-outline-danger"
+                          type="submit"
+                          onclick="return confirm('Are you sure you want to delete {{ item.item_name|escapejs }}? This cannot be undone.')"
+                        >
+                          <i class="fa-solid fa-trash"></i>
+                        </button>
                       </form>
+                      {% endif %}
                     </td>
                   </tr>
                   {% empty %}
@@ -364,83 +319,34 @@
               </table>
             </div>
 
-            <!-- TABLE PAGINATION -->
             <div class="stock-list-footer">
               <span>Showing {{ total_items }} items</span>
-             <nav aria-label="...">
-    <ul class="pagination pagination-sm mb-0">
-        <li class="page-item disabled">
-            <a class="page-link" href="#">Prev</a>
-        </li>
-        <li class="page-item active">
-            <a class="page-link" href="#">1</a>
-        </li>
-        <li class="page-item"><a class="page-link" href="#">2</a></li>
-        <li class="page-item"><a class="page-link" href="#">3</a></li>
-        <li class="page-item">
-            <a class="page-link" href="#">Next</a>
-        </li>
-    </ul>
-</nav> 
             </div>
           </section>
         </main>
       </div>
     </div>
 
-    <!-- ========== ADD STOCK MODAL (POPUP FORM) ========== -->
-    <div
-      class="modal fade add-stock-modal"
-      id="addStockModal"
-      tabindex="-1"
-      aria-labelledby="addStockModalLabel"
-      aria-hidden="true"
-    >
+    <!-- ADD STOCK MODAL -->
+    <div class="modal fade add-stock-modal" id="addStockModal" tabindex="-1" aria-labelledby="addStockModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
-          <!-- MODAL HEADER -->
           <div class="modal-header">
-            <h5 class="modal-title" id="addStockModalLabel">
-              + Add New Stock Item
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
+            <h5 class="modal-title" id="addStockModalLabel">+ Add New Stock Item</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-
-          <!-- MODAL FORM -->
           <form method="POST" action="{% url 'stock' %}">
             {% csrf_token %}
             <input type="hidden" name="action" value="create" />
             <div class="modal-body">
               <div class="row g-3">
-                <!-- ITEM NAME -->
                 <div class="col-md-6">
                   <label for="itemName" class="form-label">Item Name *</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="itemName"
-                    name="item_name"
-                    placeholder="e.g. CEM II N Cement, 10mm Iron Bars, Roofing Nails 5kg"
-                    required
-                  />
+                  <input type="text" class="form-control" id="itemName" name="item_name" placeholder="e.g. CEM II N Cement, 10mm Iron Bars" required />
                 </div>
-
-                <!-- CATEGORY -->
                 <div class="col-md-6">
-                  <label for="itemCategory" class="form-label"
-                    >Category *</label
-                  >
-                  <select
-                    class="form-select"
-                    id="itemCategory"
-                    name="category"
-                    required
-                  >
+                  <label for="itemCategory" class="form-label">Category *</label>
+                  <select class="form-select" id="itemCategory" name="category" required>
                     <option value="" selected>Select category...</option>
                     <option>Cement</option>
                     <option>Iron Bars</option>
@@ -451,34 +357,13 @@
                     <option>Barbed Wire</option>
                   </select>
                 </div>
-
-                <!-- QUANTITY -->
                 <div class="col-md-4">
-                  <label for="itemQuantity" class="form-label"
-                    >Quantity *</label
-                  >
-                  <input
-                    type="number"
-                    class="form-control"
-                    id="itemQuantity"
-                    name="quantity"
-                    placeholder="0"
-                    min="0"
-                    required
-                  />
+                  <label for="itemQuantity" class="form-label">Quantity *</label>
+                  <input type="number" class="form-control" id="itemQuantity" name="quantity" placeholder="0" min="0" required />
                 </div>
-
-                <!-- UNIT OF MEASURE -->
                 <div class="col-md-4">
-                  <label for="unitMeasure" class="form-label"
-                    >Unit of Measure *</label
-                  >
-                  <select
-                    class="form-select"
-                    id="unitMeasure"
-                    name="unit"
-                    required
-                  >
+                  <label for="unitMeasure" class="form-label">Unit of Measure *</label>
+                  <select class="form-select" id="unitMeasure" name="unit" required>
                     <option selected>Pieces</option>
                     <option>Bags</option>
                     <option>Sheets</option>
@@ -489,111 +374,47 @@
                     <option>Metres</option>
                   </select>
                 </div>
-
-                <!-- MINIMUM STOCK LEVEL -->
                 <div class="col-md-4">
-                  <label for="minimumStock" class="form-label"
-                    >Minimum Stock Level</label
-                  >
-                  <input
-                    type="number"
-                    class="form-control"
-                    id="minimumStock"
-                    name="minimum_stock"
-                    placeholder="e.g. 10"
-                    min="0"
-                  />
+                  <label for="minimumStock" class="form-label">Minimum Stock Level</label>
+                  <input type="number" class="form-control" id="minimumStock" name="minimum_stock" placeholder="e.g. 10" min="0" />
                 </div>
-
-                <!-- BUYING PRICE -->
                 <div class="col-md-6">
-                  <label for="buyingPrice" class="form-label"
-                    >Buying Price (UGX) *</label
-                  >
-                  <input
-                    type="number"
-                    class="form-control"
-                    id="buyingPrice"
-                    name="buying_price"
-                    placeholder="0"
-                    min="0"
-                    required
-                  />
+                  <label for="buyingPrice" class="form-label">Buying Price (UGX) *</label>
+                  <input type="number" class="form-control" id="buyingPrice" name="buying_price" placeholder="0" min="0" required />
                 </div>
-
-                <!-- SELLING PRICE -->
                 <div class="col-md-6">
-                  <label for="sellingPrice" class="form-label"
-                    >Selling Price (UGX) *</label
-                  >
-                  <input
-                    type="number"
-                    class="form-control"
-                    id="sellingPrice"
-                    name="selling_price"
-                    placeholder="0"
-                    min="0"
-                    required
-                  />
+                  <label for="sellingPrice" class="form-label">Selling Price (UGX) *</label>
+                  <input type="number" class="form-control" id="sellingPrice" name="selling_price" placeholder="0" min="0" required />
                 </div>
-
-                <!-- SUPPLIER (OPTIONAL) -->
+                <!-- Supplier dropdown pulls from actual Supplier model -->
                 <div class="col-12">
-                  <label for="supplierName" class="form-label"
-                    >Supplier (optional)</label
-                  >
+                  <label for="supplierName" class="form-label">Supplier (optional)</label>
                   <select class="form-select" id="supplierName" name="supplier">
                     <option value="" selected>Select supplier...</option>
-                    <option>ABC Suppliers</option>
-                    <option>Steel Masters Ltd</option>
-                    <option>Kampala Hardware Ltd</option>
-                    <option>Colour World Uganda</option>
-                    <option>Elec Supplies Kampala</option>
+                    {% for supplier in suppliers %}
+                    <option value="{{ supplier.supplier_name }}">{{ supplier.supplier_name }}</option>
+                    {% endfor %}
                   </select>
                 </div>
               </div>
             </div>
-
-            <!-- MODAL FOOTER BUTTONS -->
             <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-outline-secondary"
-                data-bs-dismiss="modal"
-              >
-                Cancel
-              </button>
-              <button type="submit" class="btn btn-success">
-                Save Stock Item
-              </button>
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-success">Save Stock Item</button>
             </div>
           </form>
         </div>
       </div>
     </div>
 
-    <!-- ========== EDIT STOCK MODAL ========== -->
-    <div
-      class="modal fade add-stock-modal"
-      id="editStockModal"
-      tabindex="-1"
-      aria-labelledby="editStockModalLabel"
-      aria-hidden="true"
-    >
+    <!-- EDIT STOCK MODAL -->
+    <div class="modal fade add-stock-modal" id="editStockModal" tabindex="-1" aria-labelledby="editStockModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="editStockModalLabel">
-              ✏ Edit Stock Item
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
+            <h5 class="modal-title" id="editStockModalLabel">✏ Edit Stock Item</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-
           <form method="POST" action="{% url 'stock' %}" id="editStockForm">
             {% csrf_token %}
             <input type="hidden" name="action" value="update" />
@@ -601,27 +422,12 @@
             <div class="modal-body">
               <div class="row g-3">
                 <div class="col-md-6">
-                  <label for="editItemName" class="form-label"
-                    >Item Name *</label
-                  >
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="editItemName"
-                    name="item_name"
-                    required
-                  />
+                  <label for="editItemName" class="form-label">Item Name *</label>
+                  <input type="text" class="form-control" id="editItemName" name="item_name" required />
                 </div>
                 <div class="col-md-6">
-                  <label for="editItemCategory" class="form-label"
-                    >Category *</label
-                  >
-                  <select
-                    class="form-select"
-                    id="editItemCategory"
-                    name="category"
-                    required
-                  >
+                  <label for="editItemCategory" class="form-label">Category *</label>
+                  <select class="form-select" id="editItemCategory" name="category" required>
                     <option>Cement</option>
                     <option>Iron Bars</option>
                     <option>Iron Sheets</option>
@@ -632,28 +438,12 @@
                   </select>
                 </div>
                 <div class="col-md-4">
-                  <label for="editItemQuantity" class="form-label"
-                    >Quantity *</label
-                  >
-                  <input
-                    type="number"
-                    class="form-control"
-                    id="editItemQuantity"
-                    name="quantity"
-                    min="0"
-                    required
-                  />
+                  <label for="editItemQuantity" class="form-label">Quantity *</label>
+                  <input type="number" class="form-control" id="editItemQuantity" name="quantity" min="0" required />
                 </div>
                 <div class="col-md-4">
-                  <label for="editUnitMeasure" class="form-label"
-                    >Unit of Measure *</label
-                  >
-                  <select
-                    class="form-select"
-                    id="editUnitMeasure"
-                    name="unit"
-                    required
-                  >
+                  <label for="editUnitMeasure" class="form-label">Unit of Measure *</label>
+                  <select class="form-select" id="editUnitMeasure" name="unit" required>
                     <option>Pieces</option>
                     <option>Bags</option>
                     <option>Sheets</option>
@@ -665,67 +455,27 @@
                   </select>
                 </div>
                 <div class="col-md-4">
-                  <label for="editMinimumStock" class="form-label"
-                    >Minimum Stock Level</label
-                  >
-                  <input
-                    type="number"
-                    class="form-control"
-                    id="editMinimumStock"
-                    name="minimum_stock"
-                    min="0"
-                  />
+                  <label for="editMinimumStock" class="form-label">Minimum Stock Level</label>
+                  <input type="number" class="form-control" id="editMinimumStock" name="minimum_stock" min="0" />
                 </div>
                 <div class="col-md-6">
-                  <label for="editBuyingPrice" class="form-label"
-                    >Buying Price (UGX) *</label
-                  >
-                  <input
-                    type="number"
-                    class="form-control"
-                    id="editBuyingPrice"
-                    name="buying_price"
-                    min="0"
-                    required
-                  />
+                  <label for="editBuyingPrice" class="form-label">Buying Price (UGX) *</label>
+                  <input type="number" class="form-control" id="editBuyingPrice" name="buying_price" min="0" required />
                 </div>
                 <div class="col-md-6">
-                  <label for="editSellingPrice" class="form-label"
-                    >Selling Price (UGX) *</label
-                  >
-                  <input
-                    type="number"
-                    class="form-control"
-                    id="editSellingPrice"
-                    name="selling_price"
-                    min="0"
-                    required
-                  />
+                  <label for="editSellingPrice" class="form-label">Selling Price (UGX) *</label>
+                  <input type="number" class="form-control" id="editSellingPrice" name="selling_price" min="0" required />
                 </div>
+                <!-- Supplier text input - auto-filled from data attribute -->
                 <div class="col-12">
-                  <label for="editSupplierName" class="form-label"
-                    >Supplier (optional)</label
-                  >
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="editSupplierName"
-                    name="supplier"
-                  />
+                  <label for="editSupplierName" class="form-label">Supplier (optional)</label>
+                  <input type="text" class="form-control" id="editSupplierName" name="supplier" />
                 </div>
               </div>
             </div>
             <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-outline-secondary"
-                data-bs-dismiss="modal"
-              >
-                Cancel
-              </button>
-              <button type="submit" class="btn btn-success">
-                Update Stock Item
-              </button>
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-success">Update Stock Item</button>
             </div>
           </form>
         </div>
@@ -733,16 +483,10 @@
     </div>
 
     <!-- BOOTSTRAP JAVASCRIPT -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
-      integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
-      crossorigin="anonymous"
-    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>
+
+    <!-- EDIT MODAL - auto-fills fields from the clicked row's data attributes -->
     <script>
       const editStockModal = document.getElementById("editStockModal");
       if (editStockModal) {
@@ -750,26 +494,18 @@
           const button = event.relatedTarget;
           if (!button) return;
 
-          document.getElementById("editItemId").value =
-            button.getAttribute("data-item-id") || "";
-          document.getElementById("editItemName").value =
-            button.getAttribute("data-item-name") || "";
-          document.getElementById("editItemCategory").value =
-            button.getAttribute("data-category") || "Cement";
-          document.getElementById("editItemQuantity").value =
-            button.getAttribute("data-quantity") || 0;
-          document.getElementById("editUnitMeasure").value =
-            button.getAttribute("data-unit") || "Pieces";
-          document.getElementById("editMinimumStock").value =
-            button.getAttribute("data-minimum-stock") || 0;
-          document.getElementById("editBuyingPrice").value =
-            button.getAttribute("data-buying-price") || 0;
-          document.getElementById("editSellingPrice").value =
-            button.getAttribute("data-selling-price") || 0;
-          document.getElementById("editSupplierName").value =
-            button.getAttribute("data-supplier") || "";
+          document.getElementById("editItemId").value = button.getAttribute("data-item-id") || "";
+          document.getElementById("editItemName").value = button.getAttribute("data-item-name") || "";
+          document.getElementById("editItemCategory").value = button.getAttribute("data-category") || "Cement";
+          document.getElementById("editItemQuantity").value = button.getAttribute("data-quantity") || 0;
+          document.getElementById("editUnitMeasure").value = button.getAttribute("data-unit") || "Pieces";
+          document.getElementById("editMinimumStock").value = button.getAttribute("data-minimum-stock") || 0;
+          document.getElementById("editBuyingPrice").value = button.getAttribute("data-buying-price") || 0;
+          document.getElementById("editSellingPrice").value = button.getAttribute("data-selling-price") || 0;
+          document.getElementById("editSupplierName").value = button.getAttribute("data-supplier") || "";
         });
       }
     </script>
+
   </body>
 </html>

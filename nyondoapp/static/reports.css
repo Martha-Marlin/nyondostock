@@ -224,3 +224,47 @@
   .report-tabs  { gap: 6px; }
   .report-tab   { padding: 7px 14px; font-size: 13px; }
 }
+
+@media print {
+  /* Hide EVERYTHING on the page */
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* Then show ONLY the reports content */
+  .reports-page,
+  .reports-page * {
+    visibility: visible !important;
+  }
+
+  /* Position it to fill the full page */
+  .reports-page {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    padding: 1rem !important;
+  }
+
+  /* Clean up for paper */
+  .report-stat-card,
+  .report-list-card,
+  .report-total-card {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+  }
+
+  .report-table thead th,
+  .report-table tbody td {
+    border: 1px solid #ccc !important;
+  }
+
+  .report-table tbody tr {
+    page-break-inside: avoid;
+  }
+
+  /* Hide the print button inside the reports page */
+  .reports-header .d-flex {
+    visibility: hidden !important;
+  }
+}

@@ -311,7 +311,7 @@ class SupplierCredit(models.Model):
         return f"Credit #{self.id} - {self.supplier.supplier_name} - UGX {self.total_amount:,.0f}"
 
 
-# ========== SUPPLIER CREDIT PAYMENT MODEL ==========
+# SUPPLIER CREDIT PAYMENT MODEL 
 # Records one payment made against a specific supplier credit
 class SupplierCreditPayment(models.Model):
 

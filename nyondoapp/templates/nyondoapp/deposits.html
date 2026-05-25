@@ -201,10 +201,10 @@
                                 <option value="Iron Bars 16mm" {% if item_type == 'Iron Bars 16mm' %}selected{% endif %}>Iron Bars 16mm</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
-                            <button type="submit" class="btn btn-success btn-sm w-100">Search</button>
-                            <a href="{% url 'deposits' %}" class="btn btn-outline-secondary btn-sm w-100 mt-2">Clear</a>
-                        </div>
+                        <div class="col-md-auto d-flex align-items-end gap-2">
+    <button type="submit" class="btn btn-success btn-sm">Search</button>
+    <a href="{% url 'deposits' %}" class="btn btn-outline-secondary btn-sm">Clear</a>
+</div>
                     </div>
                 </form>
 

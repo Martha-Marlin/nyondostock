@@ -27,7 +27,7 @@
         </div>
         <div class="topbar-right">
             <span class="welcome">Welcome, {{ user.username }}</span>
-            <span class="role">{{ user.groups.first.name|default:"Sales Attendant" }}</span>
+            <span class="role">{{ user.groups.first.name|default:"Accounts Admin" }}</span>
             <a href="{% url 'logout' %}" class="logout">Logout</a>
         </div>
     </nav>
@@ -39,46 +39,46 @@
             <aside class="col-lg-2 col-md-3 bg-light min-vh-100 p-3 pt-4 position-relative">
                 <h6 class="text-muted">MENU</h6>
                 <ul class="nav flex-column">
-    {% if user.groups.all.0.name == 'Accounts Admin' %}
-        <li class="nav-item mb-3">
-            <a href="{% url 'accounts_dashboard' %}" class="nav-link text-dark">📊 Accounts Dashboard</a>
-        </li>
-        <li class="nav-item mb-3">
-            <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
-        </li>
-        <li class="nav-item mb-3">
-            <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
-        </li>
-        <li class="nav-item mb-3">
-            <a href="{% url 'deposits' %}" class="nav-link active">💰 Deposits</a>
-        </li>
-        <li class="nav-item mb-3">
-            <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
-        </li>
-    {% else %}
-        <li class="nav-item mb-3">
-            <a href="{% url 'dashboard' %}" class="nav-link text-dark">📊 Dashboard</a>
-        </li>
-        <li class="nav-item mb-3">
-            <a href="{% url 'stock' %}" class="nav-link text-dark">📦 Stock</a>
-        </li>
-        <li class="nav-item mb-3">
-            <a href="{% url 'sales_list' %}" class="nav-link text-dark">🛒 Sales</a>
-        </li>
-        <li class="nav-item mb-3">
-            <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
-        </li>
-        <li class="nav-item mb-3">
-            <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
-        </li>
-        <li class="nav-item mb-3">
-            <a href="{% url 'deposits' %}" class="nav-link active">💰 Deposits</a>
-        </li>
-        <li class="nav-item mb-3">
-            <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
-        </li>
-    {% endif %}
-</ul>
+                    {% if user.groups.all.0.name == 'Accounts Admin' %}
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'accounts_dashboard' %}" class="nav-link text-dark">📊 Accounts Dashboard</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'deposits' %}" class="nav-link active">💰 Deposits</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'dashboard' %}" class="nav-link text-dark">📊 Dashboard</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'stock' %}" class="nav-link text-dark">📦 Stock</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'sales_list' %}" class="nav-link text-dark">🛒 Sales</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'deposits' %}" class="nav-link active">💰 Deposits</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
+                        </li>
+                    {% endif %}
+                </ul>
 
                 <div class="ns-alert-box mt-4">
                     <div class="ns-alert-title">⚠ Low Stock</div>
@@ -108,20 +108,21 @@
                 {% if messages %}
                 <div class="mb-3">
                     {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'success' in message.tags %}alert-success{% elif 'warning' in message.tags %}alert-warning{% endif %} alert-dismissible fade show d-flex align-items-center gap-2" role="alert">
+                        {% if 'error' in message.tags %}⚠️{% elif 'success' in message.tags %}✅{% endif %}
+                        <span>{{ message }}</span>
+                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
                     </div>
                     {% endfor %}
                 </div>
                 {% endif %}
 
                 <div class="lock-note mt-3 mb-4">
-    The deposit scheme is only available for <strong>Cement CEM II N</strong>, 
-    <strong>Cement CEM III N</strong>, <strong>Iron Sheets</strong>, and 
-    <strong>Iron Bars 10mm, 12mm, and 16mm</strong>. 
-    These are the only products eligible for instalment payments at NYONDO General Hardware.
-</div>
+                    The deposit scheme is only available for <strong>Cement CEM II N</strong>,
+                    <strong>Cement CEM III N</strong>, <strong>Iron Sheets</strong>, and
+                    <strong>Iron Bars 10mm, 12mm, and 16mm</strong>.
+                    These are the only products eligible for instalment payments at NYONDO General Hardware.
+                </div>
 
                 <!-- FORM -->
                 <form method="POST" action="{% url 'create_deposit' %}">
@@ -140,7 +141,7 @@
                                     <label class="ns-field-label" for="customer_id">
                                         Registered Customer <span class="req">*</span>
                                     </label>
-                                    <select id="customer_id" name="customer_id" class="ns-input" required>
+                                    <select id="customer_id" name="customer_id" class="ns-input">
                                         <option value="" disabled selected>Select customer</option>
                                         {% for customer in customers %}
                                         <option value="{{ customer.id }}">{{ customer.full_name }} — {{ customer.phone_number }}</option>
@@ -164,7 +165,7 @@
                                     <label class="ns-field-label" for="item_type">
                                         Item Type <span class="req">*</span>
                                     </label>
-                                    <select id="item_type" name="item_type" class="ns-input" required>
+                                    <select id="item_type" name="item_type" class="ns-input">
                                         <option value="" disabled selected>Select item</option>
                                         <option value="Cement CEM II N">Cement CEM II N</option>
                                         <option value="Cement CEM III N">Cement CEM III N</option>
@@ -192,7 +193,7 @@
                                     <label class="ns-field-label" for="unit">
                                         Unit <span class="req">*</span>
                                     </label>
-                                    <select id="unit" name="unit" class="ns-input" required>
+                                    <select id="unit" name="unit" class="ns-input">
                                         <option value="Bags">Bags</option>
                                         <option value="Sheets">Sheets</option>
                                         <option value="Pieces">Pieces</option>
@@ -200,13 +201,13 @@
                                 </div>
                             </div>
                             <div class="row g-3">
-                               <div class="col-md-4">
-    <label class="ns-field-label">Total Amount (UGX)</label>
-    <div style="background: #f4f9f6; border: 1px solid #d5ede3; border-radius: 8px; padding: 10px 12px; font-size: 13.5px; color: #142e1a; font-weight: 600;">
-        Not fixed until collection day
-    </div>
-    <div class="ns-hint">Temporary receipts are issued for each payment. Goods are calculated using the selling price on pickup day.</div>
-</div>
+                                <div class="col-md-4">
+                                    <label class="ns-field-label">Total Amount (UGX)</label>
+                                    <div style="background: #f4f9f6; border: 1px solid #d5ede3; border-radius: 8px; padding: 10px 12px; font-size: 13.5px; color: #142e1a; font-weight: 600;">
+                                        Not fixed until collection day
+                                    </div>
+                                    <div class="ns-hint">Temporary receipts are issued for each payment. Goods are calculated using the selling price on pickup day.</div>
+                                </div>
                                 <div class="col-md-4">
                                     <label class="ns-field-label" for="due_date">
                                         Expected Collection Date <span class="req">*</span>
@@ -216,7 +217,6 @@
                                         id="due_date"
                                         name="due_date"
                                         class="ns-input"
-                                        required
                                     />
                                 </div>
                                 <div class="col-md-4">

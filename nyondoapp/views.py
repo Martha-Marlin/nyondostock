@@ -1,12 +1,11 @@
 # IMPORT DJANGO CORE FUNCTIONS
-
+import re
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.staticfiles import finders
 from datetime import datetime
-from decimal import Decimal
-from decimal import ROUND_FLOOR
+from decimal import Decimal, ROUND_FLOOR
 from django.db.models import Q, Sum, F
 from django.contrib.auth.decorators import login_required
 from .models import (
@@ -15,13 +14,9 @@ from .models import (
     Customer, CustomerCreditPayment,
     Deposit, DepositPayment,
 )
-# MIDDLEWARE TO PREVENT BROWSER CACHING OF PROTECTED PAGES
-# This runs after every response and adds no-cache headers
-# so the browser back button cannot show protected pages after logout
-from django.utils.decorators import decorator_from_middleware
-from django.middleware.cache import CacheMiddleware
 
 
+# MIDDLEWARE - prevents browser back button from showing protected pages after logout
 class NoCacheMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
@@ -33,6 +28,8 @@ class NoCacheMiddleware:
         response['Expires'] = '0'
         return response
 
+
+# ROLE CONSTANTS
 SALES_ROLE = 'Sales Attendant'
 MANAGER_ROLE = 'Store Manager'
 ACCOUNTS_ROLE = 'Accounts Admin'
@@ -40,10 +37,12 @@ STOCK_MANAGER_ROLE = 'Stock Manager'
 
 
 def user_has_role(user, *roles):
+    # Superuser bypasses all role checks
     return user.is_superuser or user.groups.filter(name__in=roles).exists()
 
 
 def role_home_url(user):
+    # Returns the correct dashboard URL for each role
     if user.groups.filter(name=SALES_ROLE).exists():
         return 'sales_dashboard'
     if user.groups.filter(name=ACCOUNTS_ROLE).exists():
@@ -54,6 +53,7 @@ def role_home_url(user):
 
 
 def require_roles(request, *roles):
+    # Redirects to role home if user doesn't have required role
     if user_has_role(request.user, *roles):
         return None
     messages.error(request, 'You do not have permission to access that page.')
@@ -61,6 +61,7 @@ def require_roles(request, *roles):
 
 
 def find_deposit_stock_item(item_type, available_only=True):
+    # Finds a stock item matching the deposit item type
     stock_items = StockItem.objects.all()
     if available_only:
         stock_items = stock_items.filter(quantity__gt=0)
@@ -70,14 +71,15 @@ def find_deposit_stock_item(item_type, available_only=True):
 
 
 def calculate_collectable_quantity(deposit, stock_item):
+    # Calculates how many units a customer can collect based on amount paid
     if not stock_item or stock_item.selling_price <= 0:
         return 0
     quantity = (deposit.amount_paid / stock_item.selling_price).to_integral_value(rounding=ROUND_FLOOR)
     return int(quantity)
 
 
-# RECEIPT CSS HELPER
 def _get_receipt_css():
+    # Reads the receipt CSS file for inline download rendering
     css_path = finders.find('deposit_receipt.css')
     if not css_path:
         return ''
@@ -85,8 +87,8 @@ def _get_receipt_css():
         return f.read()
 
 
-# RECEIPT RESPONSE HELPER
 def render_receipt_response(request, template_name, context, download_filename):
+    # Renders a receipt — either inline or as a downloadable HTML file
     is_download = request.GET.get('download') == '1'
     if is_download:
         context = {
@@ -108,46 +110,54 @@ def landing_view(request):
 
 
 # LOGIN VIEW
-# Handles user login with role-based redirects
 def login_view(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '').strip()
 
-        if user is not None:
-            login(request, user)
-            if user.groups.filter(name='Sales Attendant').exists():
-                return redirect('sales_dashboard')
-            if user.groups.filter(name='Accounts Admin').exists():
-                return redirect('accounts_dashboard')
-            if user.groups.filter(name='Stock Manager').exists():
-                return redirect('stock')
-            return redirect('dashboard')
+        # Django server-side validation
+        if not username and not password:
+            messages.error(request, 'Please enter your username and password.')
+        elif not username:
+            messages.error(request, 'Please enter your username.')
+        elif not password:
+            messages.error(request, 'Please enter your password.')
         else:
-            messages.error(request, 'Invalid username or password')
+            user = authenticate(request, username=username, password=password)
+
+            if user is not None:
+                login(request, user)
+                # Redirect to role-specific dashboard after login
+                if user.groups.filter(name='Sales Attendant').exists():
+                    return redirect('sales_dashboard')
+                if user.groups.filter(name='Accounts Admin').exists():
+                    return redirect('accounts_dashboard')
+                if user.groups.filter(name='Stock Manager').exists():
+                    return redirect('stock')
+                return redirect('dashboard')
+            else:
+                messages.error(request, 'Incorrect username or password. Please try again.')
 
     return render(request, 'nyondoapp/login.html')
 
 
 # LOGOUT VIEW
-# Clears the session, prevents browser caching, and redirects to login
 def logout_view(request):
     logout(request)
     messages.success(request, 'Logged out successfully')
     response = redirect('login')
-    # PREVENT BROWSER BACK BUTTON FROM SHOWING PROTECTED PAGES AFTER LOGOUT
+    # Prevent browser back button from showing protected pages after logout
     response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     response['Pragma'] = 'no-cache'
     response['Expires'] = '0'
     return response
 
 
-# DASHBOARD REDIRECT VIEW
-# Routes each user to their role-specific dashboard
+# DASHBOARD REDIRECT VIEW - routes user to their role dashboard
 @login_required(login_url='login')
 def dashboard_view(request):
     return redirect(role_home_url(request.user))
+
 
 # STORE MANAGER DASHBOARD VIEW
 @login_required(login_url='login')
@@ -165,23 +175,17 @@ def store_manager_dashboard_view(request):
     low_stock = all_items.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count()
     in_stock = total_items - low_stock - out_of_stock
 
-    # STOCK VALUE — buying price x quantity
     stock_value = all_items.aggregate(
         total=Sum(F('buying_price') * F('quantity'))
     )['total'] or 0
 
-    # LOW STOCK ITEMS — for the alert table
     low_stock_items = StockItem.objects.filter(
         quantity__gt=0, quantity__lte=F('minimum_stock')
     ).order_by('quantity')[:8]
 
-    # OUT OF STOCK ITEMS
     out_of_stock_items = StockItem.objects.filter(quantity=0).order_by('item_name')[:8]
-
-    # RECENT STOCK UPDATES — last 5 modified
     recent_stock = StockItem.objects.all().order_by('-updated_at')[:5]
 
-    # SUPPLIER CREDITS DUE SOON
     supplier_credits_due = SupplierCredit.objects.filter(
         status__in=['Unpaid', 'Partial']
     ).select_related('supplier').order_by('due_date')[:5]
@@ -211,20 +215,16 @@ def sales_dashboard_view(request):
     from django.utils import timezone
     today = timezone.now().date()
 
-    # TODAY'S SALES — all sales recorded today
     todays_sales = Sale.objects.filter(
         sale_date__date=today
     ).prefetch_related('items__stock_item').order_by('-sale_date')
 
-    # MY SALES TODAY — only sales by the logged-in user
     my_sales_today = todays_sales.filter(sold_by=request.user)
 
-    # STATS
     sales_today_count = todays_sales.count()
     revenue_today = todays_sales.aggregate(total=Sum('total_amount'))['total'] or 0
     pending_credits = Sale.objects.filter(payment_status__in=['Pending', 'Credit']).count()
 
-    # STOCK
     stock_items = StockItem.objects.all().order_by('quantity')
     low_stock_count = StockItem.objects.filter(
         quantity__gt=0, quantity__lte=F('minimum_stock')
@@ -256,7 +256,6 @@ def admin_dashboard_view(request):
     today = timezone.now().date()
     first_of_month = today.replace(day=1)
 
-    # STAT CARDS
     revenue_today = Sale.objects.filter(
         sale_date__date=today, payment_status='Paid'
     ).aggregate(total=Sum('total_amount'))['total'] or 0
@@ -273,20 +272,16 @@ def admin_dashboard_view(request):
         total=Sum('amount_paid')
     )['total'] or 0
 
-    # RECENT SALES — read-only financial tracking
     recent_sales = Sale.objects.select_related('customer').order_by('-sale_date')[:5]
 
-    # SUPPLIER CREDITS DUE
     supplier_credits_due = SupplierCredit.objects.filter(
         status__in=['Unpaid', 'Partial']
     ).select_related('supplier').order_by('due_date')[:5]
 
-    # DEPOSIT SCHEME ACTIVITY
     recent_deposits = Deposit.objects.filter(
         status='Active'
     ).select_related('customer').order_by('-created_at')[:5]
 
-    # FINANCIAL SUMMARY — this month
     monthly_revenue = Sale.objects.filter(
         sale_date__date__gte=first_of_month, payment_status='Paid'
     ).aggregate(total=Sum('total_amount'))['total'] or 0
@@ -314,8 +309,8 @@ def admin_dashboard_view(request):
     }
     return render(request, 'nyondoapp/accounts_dashboard.html', context)
 
+
 # STOCK LIST VIEW
-# Handles viewing, adding, updating, and deleting stock items
 @login_required(login_url='login')
 def stock_view(request):
     denied = require_roles(request, SALES_ROLE, MANAGER_ROLE, STOCK_MANAGER_ROLE)
@@ -323,6 +318,7 @@ def stock_view(request):
         return denied
 
     if request.method == 'POST':
+        # Only managers can add, edit or delete stock
         denied = require_roles(request, MANAGER_ROLE, STOCK_MANAGER_ROLE)
         if denied:
             return denied
@@ -334,14 +330,14 @@ def stock_view(request):
             item.delete()
             messages.success(request, 'Stock item deleted successfully.')
             return redirect('stock')
-        
+
         if action == 'create':
             item_name = request.POST.get('item_name', '').strip()
             category = request.POST.get('category', 'Cement')
             unit = request.POST.get('unit', 'Pieces')
             supplier = request.POST.get('supplier', '').strip()
 
-            # Check if item already exists (same name, category, unit, supplier)
+            # If item already exists with same details, add to its quantity
             existing_item = StockItem.objects.filter(
                 item_name=item_name,
                 category=category,
@@ -350,19 +346,14 @@ def stock_view(request):
             ).first()
 
             if existing_item:
-                # Add to existing quantity
                 additional_quantity = int(request.POST.get('quantity', 0) or 0)
                 existing_item.quantity += additional_quantity
-
-                # Optionally update prices if they changed
                 existing_item.buying_price = request.POST.get('buying_price', 0) or 0
                 existing_item.selling_price = request.POST.get('selling_price', 0) or 0
                 existing_item.minimum_stock = int(request.POST.get('minimum_stock', 0) or 0)
-
                 existing_item.save()
                 messages.success(request, f'Added {additional_quantity} to existing {item_name}. New total: {existing_item.quantity}')
             else:
-                # Create new item
                 StockItem.objects.create(
                     item_name=item_name,
                     category=category,
@@ -391,9 +382,13 @@ def stock_view(request):
             messages.success(request, 'Stock item updated successfully.')
             return redirect('stock')
 
-    # GET request - handle filtering
+    # GET - filter and search stock items
     stock_filter = request.GET.get('filter', '')
+    search = request.GET.get('search', '')
     items = StockItem.objects.all()
+
+    if search:
+        items = items.filter(item_name__icontains=search)
 
     if stock_filter == 'in_stock':
         items = items.filter(quantity__gt=F('minimum_stock'))
@@ -415,15 +410,16 @@ def stock_view(request):
         'low_stock': low_stock,
         'out_of_stock': out_of_stock,
         'stock_filter': stock_filter,
+        'search': search,
         'low_stock_count': StockItem.objects.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count(),
+        'suppliers': Supplier.objects.all().order_by('supplier_name'),
     }
     return render(request, 'nyondoapp/stock.html', context)
 
+
 # RECORD SALES PAGE VIEW
-# Displays the blank sale form with available stock items and registered customers
 @login_required(login_url='login')
 def record_sales_view(request):
-    
     denied = require_roles(request, SALES_ROLE)
     if denied:
         return denied
@@ -437,9 +433,7 @@ def record_sales_view(request):
     }
     return render(request, 'nyondoapp/record_sales.html', context)
 
-
 # ADD SALE VIEW
-# Processes the sale form with multiple items and delivery checkbox
 @login_required(login_url='login')
 def add_sale_view(request):
     denied = require_roles(request, SALES_ROLE)
@@ -447,7 +441,6 @@ def add_sale_view(request):
         return denied
 
     if request.method == 'POST':
-
         customer_name = request.POST.get('customer_name', '').strip()
         phone_number = request.POST.get('phone_number', '').strip()
         item_ids = request.POST.getlist('item[]')
@@ -458,7 +451,25 @@ def add_sale_view(request):
         payment_method = request.POST.get('payment_method', 'Cash')
         notes = request.POST.get('notes', '').strip()
 
-        # VALIDATE CREDIT SALE HAS A REGISTERED CUSTOMER
+        # ---- SERVER-SIDE VALIDATION ----
+        if not customer_name:
+            messages.error(request, 'Customer name is required.')
+            return redirect('record_sales')
+
+        if not phone_number:
+            messages.error(request, 'Phone number is required.')
+            return redirect('record_sales')
+
+        if not re.match(r'^(07|03)\d{8}$', phone_number.replace(' ', '')):
+            messages.error(request, 'Enter a valid Ugandan phone number (e.g. 0701234567).')
+            return redirect('record_sales')
+
+        if not item_ids or all(not i for i in item_ids):
+            messages.error(request, 'Please select at least one item.')
+            return redirect('record_sales')
+        # ---- END VALIDATION ----
+
+        # Credit sales must be linked to a registered customer
         registered_customer = None
         if payment_status.capitalize() == 'Credit':
             registered_customer_id = request.POST.get('registered_customer_id')
@@ -481,7 +492,6 @@ def add_sale_view(request):
             messages.error(request, 'Please add at least one item.')
             return redirect('record_sales')
 
-        # VALIDATE AND FETCH ALL STOCK ITEMS
         sale_items = []
         subtotal = Decimal('0')
 
@@ -509,7 +519,7 @@ def add_sale_view(request):
                 'line_total': line_total,
             })
 
-        # CALCULATE TRANSPORT CHARGE
+        # Transport rule: free within 10km for orders above 500k, else 30k flat
         if not wants_delivery:
             transport_charge = Decimal('0')
         elif distance <= 10 and subtotal >= 500000:
@@ -519,7 +529,6 @@ def add_sale_view(request):
 
         total_amount = subtotal + transport_charge
 
-        # SAVE SALE RECORD
         sale = Sale.objects.create(
             customer_name=customer_name,
             phone_number=phone_number,
@@ -533,7 +542,7 @@ def add_sale_view(request):
             sold_by=request.user,
         )
 
-        # SAVE SALE ITEMS AND REDUCE STOCK
+        # Save sale items and reduce stock quantities
         for item_data in sale_items:
             SaleItem.objects.create(
                 sale=sale,
@@ -555,14 +564,12 @@ def add_sale_view(request):
     return redirect('record_sales')
 
 
-# DELETE SALE VIEW
-# Deletes a sale and restores stock quantities
+# DELETE SALE VIEW - restores stock quantities on deletion
 @login_required(login_url='login')
 def delete_sale_view(request, sale_id):
     sale = get_object_or_404(Sale, id=sale_id)
     if request.method == 'POST':
         for item in sale.items.all():
-            # Only restore stock if the stock item still exists
             if item.stock_item:
                 item.stock_item.quantity += item.quantity
                 item.stock_item.save()
@@ -571,8 +578,7 @@ def delete_sale_view(request, sale_id):
     return redirect('sales_list')
 
 
-# EDIT SALE VIEW
-# Updates customer details and payment info for an existing sale
+# EDIT SALE VIEW - updates customer info and payment details only
 @login_required(login_url='login')
 def edit_sale_view(request, sale_id):
     denied = require_roles(request, SALES_ROLE)
@@ -597,7 +603,6 @@ def edit_sale_view(request, sale_id):
 
 
 # PRINT RECEIPT VIEW
-# Renders a printable receipt for a specific sale
 @login_required(login_url='login')
 def print_receipt_view(request, sale_id):
     denied = require_roles(request, SALES_ROLE)
@@ -619,7 +624,6 @@ def print_receipt_view(request, sale_id):
 
 
 # SALES LIST VIEW
-# Displays all sales with search and filter options
 @login_required(login_url='login')
 def sales_list_view(request):
     denied = require_roles(request, SALES_ROLE, STOCK_MANAGER_ROLE)
@@ -654,17 +658,16 @@ def sales_list_view(request):
         'date_from': date_from,
         'date_to': date_to,
         'total_sales': sales_list.count(),
-        'low_stock_count': StockItem.objects.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count(),
         'total_revenue': sales_list.aggregate(total=Sum('total_amount'))['total'] or 0,
         'pending_count': sales_list.filter(payment_status='Pending').count(),
         'credit_count': sales_list.filter(payment_status='Credit').count(),
+        'low_stock_count': StockItem.objects.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count(),
         'now': datetime.now(),
     }
     return render(request, 'nyondoapp/sales_list.html', context)
 
 
 # SUPPLIERS LIST VIEW
-# Displays all suppliers with search and filter options
 @login_required(login_url='login')
 def suppliers_view(request):
     denied = require_roles(request, ACCOUNTS_ROLE, MANAGER_ROLE)
@@ -672,7 +675,6 @@ def suppliers_view(request):
         return denied
 
     suppliers = Supplier.objects.all()
-
     search = request.GET.get('search', '')
     status = request.GET.get('status', '')
 
@@ -779,8 +781,7 @@ def supplier_transactions_view(request, supplier_id):
     return render(request, 'nyondoapp/supplier_transactions.html', context)
 
 
-# RECORD PAYMENT VIEW
-# Records a transaction for a supplier
+# RECORD SUPPLIER TRANSACTION VIEW
 @login_required(login_url='login')
 def record_payment_view(request, supplier_id):
     denied = require_roles(request, ACCOUNTS_ROLE, MANAGER_ROLE)
@@ -802,6 +803,7 @@ def record_payment_view(request, supplier_id):
             created_by=request.user,
         )
 
+        # Update supplier balance based on transaction type
         if transaction_type == 'Credit':
             supplier.balance += amount
         elif transaction_type in ['Payment', 'Adjustment']:
@@ -884,6 +886,7 @@ def record_credit_payment_view(request, credit_id):
         credit.status = 'Cleared' if credit.amount_paid >= credit.total_amount else 'Partial'
         credit.save()
 
+        # Reduce supplier balance and mark active if fully cleared
         supplier = credit.supplier
         supplier.balance -= amount
         if supplier.balance <= 0:
@@ -901,6 +904,7 @@ def customers_view(request):
     customers = Customer.objects.all().order_by('-registered_on')
     search = request.GET.get('search', '')
     gender = request.GET.get('gender', '')
+
     if search:
         customers = customers.filter(
             Q(full_name__icontains=search) |
@@ -909,6 +913,7 @@ def customers_view(request):
         )
     if gender:
         customers = customers.filter(gender=gender)
+
     context = {
         'customers': customers,
         'search': search,
@@ -919,12 +924,15 @@ def customers_view(request):
     return render(request, 'nyondoapp/customers_list.html', context)
 
 
-# REGISTER CUSTOMER VIEW
+# REGISTER CUSTOMER VIEW - only Accounts Admin can register
 @login_required(login_url='login')
 def register_customer_view(request):
     denied = require_roles(request, ACCOUNTS_ROLE)
     if denied:
         return denied
+
+    low_stock_count = StockItem.objects.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count()
+    context = {'low_stock_count': low_stock_count}
 
     if request.method == 'POST':
         full_name = request.POST.get('full_name', '').strip()
@@ -933,26 +941,42 @@ def register_customer_view(request):
         area = request.POST.get('area', '').strip() or None
         notes = request.POST.get('notes', '').strip() or None
 
-        # VALIDATION FOR NIN
+        # ---- SERVER-SIDE VALIDATION ----
+        if not full_name:
+            messages.error(request, 'Full name is required.')
+            return render(request, 'nyondoapp/register_customer.html', context)
+
+        if not phone_number:
+            messages.error(request, 'Phone number is required.')
+            return render(request, 'nyondoapp/register_customer.html', context)
+
+        if not re.match(r'^(07|03)\d{8}$', phone_number.replace(' ', '')):
+            messages.error(request, 'Enter a valid Ugandan phone number (e.g. 0701234567).')
+            return render(request, 'nyondoapp/register_customer.html', context)
+
+        if not nin:
+            messages.error(request, 'NIN is required.')
+            return render(request, 'nyondoapp/register_customer.html', context)
+
         if len(nin) != 14:
             messages.error(request, 'NIN must be exactly 14 characters.')
-            return render(request, 'nyondoapp/register_customer.html')
-         # VALIDATE NIN PREFIX FOR GENDER
+            return render(request, 'nyondoapp/register_customer.html', context)
+
         nin_prefix = nin[:2]
         if nin_prefix not in ['CM', 'CF']:
             messages.error(request, 'Invalid NIN format. Must start with CM (Male) or CF (Female).')
-            return render(request, 'nyondoapp/register_customer.html')
-        
-        # DETERMINE GENDER FROM NIN
+            return render(request, 'nyondoapp/register_customer.html', context)
+        # ---- END VALIDATION ----
+
         gender = 'M' if nin_prefix == 'CM' else 'F'
 
-        # VALIDATION FOR PHONE NUMBER
         if Customer.objects.filter(nin=nin).exists():
             messages.error(request, f'A customer with NIN {nin} is already registered.')
-            return render(request, 'nyondoapp/register_customer.html')
+            return render(request, 'nyondoapp/register_customer.html', context)
+
         if Customer.objects.filter(phone_number=phone_number).exists():
             messages.error(request, 'A customer with this phone number is already registered.')
-            return render(request, 'nyondoapp/register_customer.html')
+            return render(request, 'nyondoapp/register_customer.html', context)
 
         Customer.objects.create(
             full_name=full_name,
@@ -966,8 +990,7 @@ def register_customer_view(request):
         messages.success(request, f'{full_name} registered successfully!')
         return redirect('customers')
 
-    return render(request, 'nyondoapp/register_customer.html')
-
+    return render(request, 'nyondoapp/register_customer.html', context) 
 
 # EDIT CUSTOMER VIEW
 @login_required(login_url='login')
@@ -1006,8 +1029,7 @@ def edit_customer_view(request, customer_id):
     return redirect('customers')
 
 
-
-# DELETE CUSTOMER VIEW
+# DELETE CUSTOMER VIEW - blocked if customer has deposits
 @login_required(login_url='login')
 def delete_customer_view(request, customer_id):
     customer = get_object_or_404(Customer, id=customer_id)
@@ -1021,8 +1043,7 @@ def delete_customer_view(request, customer_id):
     return redirect('customers')
 
 
-# CUSTOMER DETAIL VIEW
-# Shows full customer info and credit history
+# CUSTOMER DETAIL VIEW - shows credit history and payment tracking
 @login_required(login_url='login')
 def customer_detail_view(request, customer_id):
     customer = get_object_or_404(Customer, id=customer_id)
@@ -1090,7 +1111,6 @@ def deposits_view(request):
         return denied
 
     deposits = Deposit.objects.all().order_by('-created_at')
-
     search = request.GET.get('search', '')
     status = request.GET.get('status', '')
     item_type = request.GET.get('item_type', '')
@@ -1124,7 +1144,6 @@ def deposits_view(request):
 
 
 # CREATE DEPOSIT VIEW
-# Handles the new deposit form and reserves stock immediately
 @login_required(login_url='login')
 def create_deposit_view(request):
     denied = require_roles(request, ACCOUNTS_ROLE)
@@ -1135,14 +1154,46 @@ def create_deposit_view(request):
     low_stock_count = StockItem.objects.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count()
 
     if request.method == 'POST':
-        customer = get_object_or_404(Customer, id=request.POST.get('customer_id'))
+        customer_id = request.POST.get('customer_id', '').strip()
         item_type = request.POST.get('item_type', '').strip()
-        quantity_ordered = int(request.POST.get('quantity_ordered') or 0)
+        quantity_ordered = request.POST.get('quantity_ordered', '').strip()
+        unit = request.POST.get('unit', 'Bags')
+        due_date = request.POST.get('due_date', '').strip()
+        notes = request.POST.get('notes', '').strip() or None
+
+        context = {
+            'customers': customers,
+            'low_stock_count': low_stock_count,
+        }
+
+        # ---- SERVER-SIDE VALIDATION ----
+        if not customer_id:
+            messages.error(request, 'Please select a registered customer.')
+            return render(request, 'nyondoapp/create_deposit.html', context)
+
+        if not item_type:
+            messages.error(request, 'Please select an item type.')
+            return render(request, 'nyondoapp/create_deposit.html', context)
+
+        if not due_date:
+            messages.error(request, 'Expected collection date is required.')
+            return render(request, 'nyondoapp/create_deposit.html', context)
+
+        # Due date must not be in the past
+        from django.utils import timezone
+        due_date_parsed = datetime.strptime(due_date, '%Y-%m-%d').date()
+        if due_date_parsed < timezone.now().date():
+            messages.error(request, 'Expected collection date cannot be in the past.')
+            return render(request, 'nyondoapp/create_deposit.html', context)
+
+        quantity_ordered = int(quantity_ordered) if quantity_ordered else 0
 
         if quantity_ordered < 0:
             messages.error(request, 'Estimated quantity cannot be negative.')
-            return render(request, 'nyondoapp/create_deposit.html', {'customers': customers, 'low_stock_count': low_stock_count})
+            return render(request, 'nyondoapp/create_deposit.html', context)
+        # ---- END VALIDATION ----
 
+        customer = get_object_or_404(Customer, id=customer_id)
         stock_item = find_deposit_stock_item(item_type, available_only=False)
         total_amount = stock_item.selling_price * quantity_ordered if stock_item and quantity_ordered > 0 else Decimal('0')
 
@@ -1150,17 +1201,16 @@ def create_deposit_view(request):
             customer=customer,
             item_type=item_type,
             quantity_ordered=quantity_ordered,
-            unit=request.POST.get('unit', 'Bags'),
+            unit=unit,
             total_amount=total_amount,
-            due_date=request.POST.get('due_date'),
-            notes=request.POST.get('notes', '').strip() or None,
+            due_date=due_date,
+            notes=notes,
             created_by=request.user,
         )
         messages.success(request, f'Deposit #{deposit.id} opened for {customer.full_name}. Goods will be calculated from amount paid on collection day.')
         return redirect('deposit_detail', deposit_id=deposit.id)
 
     return render(request, 'nyondoapp/create_deposit.html', {'customers': customers, 'low_stock_count': low_stock_count})
-
 
 # DEPOSIT DETAIL VIEW
 @login_required(login_url='login')
@@ -1180,7 +1230,6 @@ def deposit_detail_view(request, deposit_id):
 
 
 # RECORD DEPOSIT PAYMENT VIEW
-# Records an instalment payment against a deposit
 @login_required(login_url='login')
 def record_deposit_payment_view(request, deposit_id):
     denied = require_roles(request, ACCOUNTS_ROLE)
@@ -1207,14 +1256,12 @@ def record_deposit_payment_view(request, deposit_id):
         deposit.amount_paid += amount
         deposit.save()
         messages.success(request, f'Temporary receipt created for UGX {amount:,.0f}. Goods will be determined on collection day.')
-
         return redirect('deposit_receipt', payment_id=payment.id)
 
     return redirect('deposit_detail', deposit_id=deposit.id)
 
 
 # CANCEL DEPOSIT VIEW
-# Cancels an active salary-earner deposit account
 @login_required(login_url='login')
 def cancel_deposit_view(request, deposit_id):
     denied = require_roles(request, ACCOUNTS_ROLE)
@@ -1226,15 +1273,13 @@ def cancel_deposit_view(request, deposit_id):
         if deposit.status != 'Active':
             messages.error(request, 'Only active deposits can be cancelled.')
             return redirect('deposit_detail', deposit_id=deposit.id)
-
         deposit.status = 'Cancelled'
         deposit.save()
         messages.success(request, f'Deposit #{deposit.id} cancelled.')
     return redirect('deposits')
 
 
-# DEPOSIT RECEIPT VIEW
-# Prints a temporary deposit receipt for a specific payment
+# DEPOSIT RECEIPT VIEW - temporary receipt per payment
 @login_required(login_url='login')
 def deposit_receipt_view(request, payment_id):
     denied = require_roles(request, ACCOUNTS_ROLE)
@@ -1254,6 +1299,7 @@ def deposit_receipt_view(request, payment_id):
     )
 
 
+# COLLECT DEPOSIT VIEW - deducts stock and marks deposit as completed
 @login_required(login_url='login')
 def collect_deposit_view(request, deposit_id):
     denied = require_roles(request, ACCOUNTS_ROLE)
@@ -1296,8 +1342,7 @@ def collect_deposit_view(request, deposit_id):
     return redirect('collection_receipt', deposit_id=deposit.id)
 
 
-# EDIT DEPOSIT VIEW
-# Updates the preferred item and expected collection details before collection.
+# EDIT DEPOSIT VIEW - only active deposits can be edited
 @login_required(login_url='login')
 def edit_deposit_view(request, deposit_id):
     denied = require_roles(request, ACCOUNTS_ROLE)
@@ -1332,8 +1377,7 @@ def edit_deposit_view(request, deposit_id):
     return redirect('deposit_detail', deposit_id=deposit.id)
 
 
-# COLLECTION RECEIPT VIEW
-# Prints the official collection receipt for a completed deposit
+# COLLECTION RECEIPT VIEW - official receipt for completed deposits
 @login_required(login_url='login')
 def collection_receipt_view(request, deposit_id):
     denied = require_roles(request, ACCOUNTS_ROLE)
@@ -1374,13 +1418,13 @@ def reports_view(request):
     date_from = datetime.strptime(date_from, '%Y-%m-%d').date() if date_from else today.replace(day=1)
     date_to = datetime.strptime(date_to, '%Y-%m-%d').date() if date_to else today
 
-    # SUMMARY STAT CARDS — always visible
+    # Summary stat cards - all time totals
     total_revenue = Sale.objects.filter(payment_status='Paid').aggregate(total=Sum('total_amount'))['total'] or 0
     total_transport = Sale.objects.filter(transport_charge__gt=0).aggregate(total=Sum('transport_charge'))['total'] or 0
     total_deposits = Deposit.objects.aggregate(total=Sum('amount_paid'))['total'] or 0
     total_supplier_credit = SupplierCredit.objects.filter(status__in=['Unpaid', 'Partial']).aggregate(total=Sum('total_amount'))['total'] or 0
 
-    # SALES REPORT
+    # Sales filtered by date range
     sales = Sale.objects.filter(
         sale_date__date__gte=date_from,
         sale_date__date__lte=date_to
@@ -1390,7 +1434,7 @@ def reports_view(request):
     sales_transport = sales.aggregate(total=Sum('transport_charge'))['total'] or 0
     sales_outstanding = sales.filter(payment_status__in=['Pending', 'Credit']).aggregate(total=Sum('total_amount'))['total'] or 0
 
-    # TRANSPORT REPORT — sales where company absorbed delivery cost
+    # Transport report - sales where company absorbed delivery cost
     transport_sales = Sale.objects.filter(
         sale_date__date__gte=date_from,
         sale_date__date__lte=date_to,
@@ -1398,13 +1442,11 @@ def reports_view(request):
         transport_charge=0
     ).select_related('customer').order_by('-sale_date')
 
-    # DEPOSITS REPORT
     deposits = Deposit.objects.filter(
         created_at__date__gte=date_from,
         created_at__date__lte=date_to
     ).select_related('customer').order_by('-created_at')
 
-    # SUPPLIER CREDITS REPORT
     supplier_credits = SupplierCredit.objects.filter(
         created_at__date__gte=date_from,
         created_at__date__lte=date_to

@@ -374,3 +374,107 @@ body {
     position: static !important;
   }
 }
+/*  FORM VALIDATION STYLES*/
+
+/* ERROR STATE - input and select */
+.form-control.is-invalid,
+.form-select.is-invalid {
+  border-color: #e24b4a !important;
+  background-color: #fff8f8;
+  box-shadow: 0 0 0 0.15rem rgba(226, 75, 74, 0.15) !important;
+}
+
+/* ERROR STATE FOCUS */
+.form-control.is-invalid:focus,
+.form-select.is-invalid:focus {
+  border-color: #e24b4a !important;
+  box-shadow: 0 0 0 0.2rem rgba(226, 75, 74, 0.25) !important;
+}
+
+/* SUCCESS STATE - input and select */
+.form-control.is-valid,
+.form-select.is-valid {
+  border-color: #1d9e75 !important;
+  background-color: #f4faf6;
+  box-shadow: 0 0 0 0.15rem rgba(29, 158, 117, 0.15) !important;
+}
+
+/* SUCCESS STATE FOCUS */
+.form-control.is-valid:focus,
+.form-select.is-valid:focus {
+  border-color: #1d9e75 !important;
+  box-shadow: 0 0 0 0.2rem rgba(29, 158, 117, 0.25) !important;
+}
+
+/* INLINE ERROR MESSAGE BELOW FIELD */
+.ns-field-error {
+  font-size: 12.5px;
+  color: #a32d2d;
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ns-field-error::before {
+  content: "⚠";
+  font-size: 12px;
+}
+
+/* INLINE HELP TEXT BELOW FIELD */
+.ns-field-help {
+  font-size: 12.5px;
+  color: #7a907a;
+  margin-top: 4px;
+}
+
+/* DJANGO MESSAGES - ERROR ALERT */
+.alert-error,
+.alert-danger {
+  background: #fdeaea;
+  border: 1px solid #f5b8b8;
+  border-left: 4px solid #e24b4a;
+  color: #a32d2d;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* DJANGO MESSAGES - SUCCESS ALERT */
+.alert-success {
+  background: #e6f5ee;
+  border: 1px solid #9fe1cb;
+  border-left: 4px solid #1d9e75;
+  color: #0f6e56;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* DJANGO MESSAGES - WARNING ALERT */
+.alert-warning {
+  background: #fff8e6;
+  border: 1px solid #f7d58a;
+  border-left: 4px solid #ef9f27;
+  color: #7a4f00;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* EMPTY DROPDOWN OPTION - placeholder styling */
+select option[value=""] {
+  color: #a0b8a0;
+}
+
+/* DISABLED / READONLY FIELDS */
+.form-control[readonly],
+.form-control:disabled {
+  background: #f4faf6 !important;
+  color: #5c7a64;
+  border-color: #d5e0d5;
+  cursor: not-allowed;
+}
