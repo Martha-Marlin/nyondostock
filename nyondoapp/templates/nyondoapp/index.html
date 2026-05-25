@@ -30,8 +30,13 @@
     <!-- HERO SECTION -->
     <section class="lp-hero" id="top">
         <div class="lp-hero-inner">
+
+            <!-- LEFT TEXT -->
             <div class="lp-hero-text">
-                <div class="lp-hero-badge">Hardware Management System</div>
+                <div class="lp-hero-badge">
+                    <span class="lp-badge-dot"></span>
+                    Hardware Management System
+                </div>
                 <h1 class="lp-hero-title">
                     Hardware management,<br>
                     built for how<br>
@@ -41,10 +46,7 @@
                     NyondoStock brings your inventory, sales, credits, and deposits
                     into one system. No confusion. Just control.
                 </p>
-                <div class="lp-hero-btns">
-                    <a href="{% url 'login' %}" class="lp-hero-btn-primary">→ Go to Dashboard</a>
-                    <a href="#features" class="lp-hero-btn-secondary">Learn more ↓</a>
-                </div>
+                <a href="{% url 'login' %}" class="lp-hero-btn-primary">→ Sign In</a>
             </div>
 
             <!-- DASHBOARD PREVIEW -->
@@ -93,6 +95,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </section>
 
@@ -112,144 +115,10 @@
         </div>
     </div>
 
-    <!-- FEATURES SECTION -->
-    <section class="lp-section" id="features">
-        <div class="lp-section-eyebrow">Features</div>
-        <div class="lp-section-title">Everything the hardware business needs.</div>
-        <div class="lp-section-sub">From stocking to sales and receipts — NyondoStock handles every step in between.</div>
-
-        <div class="lp-features">
-            <div class="lp-feat">
-                <div class="lp-feat-icon green">
-                    <i class="fa-solid fa-boxes-stacked"></i>
-                </div>
-                <div class="lp-feat-title">Stock & Inventory</div>
-                <div class="lp-feat-desc">Track every item, quantity, category, and supplier. Low stock alerts fire automatically before you run out.</div>
-            </div>
-            <div class="lp-feat">
-                <div class="lp-feat-icon blue">
-                    <i class="fa-solid fa-receipt"></i>
-                </div>
-                <div class="lp-feat-title">Sales & Receipts</div>
-                <div class="lp-feat-desc">Record and manage sales fast. Print receipts instantly with all payment details included.</div>
-            </div>
-            <div class="lp-feat">
-                <div class="lp-feat-icon amber">
-                    <i class="fa-solid fa-truck"></i>
-                </div>
-                <div class="lp-feat-title">Supplier Management</div>
-                <div class="lp-feat-desc">Maintain a full supplier directory with credit balances and complete transaction history.</div>
-            </div>
-            <div class="lp-feat">
-                <div class="lp-feat-icon purple">
-                    <i class="fa-solid fa-wallet"></i>
-                </div>
-                <div class="lp-feat-title">Deposit Records</div>
-                <div class="lp-feat-desc">Register customer deposits, track instalments, and issue receipts at every payment stage.</div>
-            </div>
-            <div class="lp-feat">
-                <div class="lp-feat-icon teal">
-                    <i class="fa-solid fa-users"></i>
-                </div>
-                <div class="lp-feat-title">Customer Accounts</div>
-                <div class="lp-feat-desc">Register and manage customers. Track credit balances, full history, and all payments made.</div>
-            </div>
-            <div class="lp-feat">
-                <div class="lp-feat-icon coral">
-                    <i class="fa-solid fa-chart-bar"></i>
-                </div>
-                <div class="lp-feat-title">Reports</div>
-                <div class="lp-feat-desc">Review sales performance, track summaries, and monitor outstanding credits on demand.</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ROLES SECTION -->
-    <section class="lp-roles-section">
-        <div class="lp-section-eyebrow" style="color:#9fe1cb;">Access Control</div>
-        <div class="lp-section-title" style="color:#fff;">Three roles. One system.</div>
-        <div class="lp-section-sub" style="color:rgba(255,255,255,0.5);">Each person sees exactly what they need — nothing more, nothing less.</div>
-
-        <div class="lp-roles">
-            <div class="lp-role">
-                <div class="lp-role-badge mgr">Store Manager</div>
-                <div class="lp-role-title">Full Visibility</div>
-                <ul class="lp-role-list">
-                    <li><i class="fa-solid fa-check"></i> All stock & reports</li>
-                    <li><i class="fa-solid fa-check"></i> Manage stock & inventory</li>
-                    <li><i class="fa-solid fa-check"></i> Oversee sales & credit</li>
-                    <li><i class="fa-solid fa-check"></i> Add and manage suppliers</li>
-                </ul>
-            </div>
-            <div class="lp-role">
-                <div class="lp-role-badge sal">Sales Attendant</div>
-                <div class="lp-role-title">Sales Operations</div>
-                <ul class="lp-role-list">
-                    <li><i class="fa-solid fa-check"></i> Record & process sales</li>
-                    <li><i class="fa-solid fa-check"></i> Generate receipts</li>
-                    <li><i class="fa-solid fa-check"></i> View stock availability</li>
-                    <li><i class="fa-solid fa-check"></i> Flag customer queries</li>
-                </ul>
-            </div>
-            <div class="lp-role">
-                <div class="lp-role-badge acc">Accounts Admin</div>
-                <div class="lp-role-title">Finance Control</div>
-                <ul class="lp-role-list">
-                    <li><i class="fa-solid fa-check"></i> Manage deposit records</li>
-                    <li><i class="fa-solid fa-check"></i> Track supplier credits</li>
-                    <li><i class="fa-solid fa-check"></i> View financial reports</li>
-                    <li><i class="fa-solid fa-check"></i> Customer credit tracking</li>
-                </ul>
-            </div>
-        </div>
-    </section>
-
-    <!-- ABOUT SECTION -->
-    <section class="lp-about">
-        <div class="lp-about-inner">
-            <div class="lp-about-text">
-                <div class="lp-section-eyebrow" style="text-align:left;">About</div>
-                <h2 class="lp-about-title">Built for NYONDO<br>General Hardware</h2>
-                <p class="lp-about-desc">
-                    NyondoStock is a purpose-built management system designed from the ground up
-                    for the operations of NYONDO General Hardware LTD. It replaces spreadsheets,
-                    notebooks, and paper receipts with a single, reliable platform.
-                    <br><br>
-                    Built by understanding the real daily challenges of running a hardware
-                    business in Uganda.
-                </p>
-                <div class="lp-about-stats">
-                    <div class="lp-about-stat">
-                        <div class="lp-about-stat-num">15</div>
-                        <div class="lp-about-stat-label">System pages</div>
-                    </div>
-                    <div class="lp-about-stat">
-                        <div class="lp-about-stat-num">3</div>
-                        <div class="lp-about-stat-label">User roles</div>
-                    </div>
-                    <div class="lp-about-stat">
-                        <div class="lp-about-stat-num">100%</div>
-                        <div class="lp-about-stat-label">Secure role login</div>
-                    </div>
-                    <div class="lp-about-stat">
-                        <div class="lp-about-stat-num">0</div>
-                        <div class="lp-about-stat-label">Paper receipts needed</div>
-                    </div>
-                </div>
-            </div>
-            <div class="lp-about-visual">
-                <i class="fa-solid fa-store"></i>
-                <div class="lp-about-visual-text">NYONDO General Hardware LTD</div>
-                <div class="lp-about-visual-sub">Kampala, Uganda</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA SECTION -->
-    <section class="lp-cta">
-        <div class="lp-cta-title">Ready to get started?</div>
-        <div class="lp-cta-sub">Sign in to access your dashboard and take control of your store today.</div>
-        <a href="{% url 'login' %}" class="lp-cta-btn">→ Go to Login</a>
+    <!-- CTA -->
+    <section style="background:#f4faf6; text-align:center; padding: 48px 2.5rem; border-top: 1px solid #e0e8e0;">
+        <p style="font-size:20px; font-weight:700; color:#142e1a; margin-bottom:20px;">Ready to get started?</p>
+        <a href="{% url 'login' %}" class="lp-nav-btn">→ Sign In</a>
     </section>
 
     <!-- FOOTER -->

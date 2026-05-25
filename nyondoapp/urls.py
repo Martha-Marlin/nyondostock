@@ -63,7 +63,5 @@ path('deposits/<int:deposit_id>/collection-receipt/', views.collection_receipt_v
 #REPORTS URLS
 path('reports/', views.reports_view, name='reports'),
 
-    # PLACEHOLDER URLS (pages not built yet)
-    path('audit_log/', views.dashboard_view, name='audit_log'),
-    
+
 ]
