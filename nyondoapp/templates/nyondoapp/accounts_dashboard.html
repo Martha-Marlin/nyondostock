@@ -230,12 +230,11 @@
                           <td>
                             <div class="progress" style="height: 6px; min-width: 60px;">
                               <div class="progress-bar bg-success" role="progressbar"
-                                style="width: {% if deposit.amount_paid > 0 %}100{% else %}0{% endif %}%;"
-                                aria-valuenow="{% if deposit.amount_paid > 0 %}100{% else %}0{% endif %}"
-                                aria-valuemin="0" aria-valuemax="100">
-                              </div>
-                            </div>
-                            <small class="text-muted">UGX {{ deposit.amount_paid|floatformat:0 }}</small>
+  style="width: {% if deposit.total_amount > 0 %}{% widthratio deposit.amount_paid deposit.total_amount 100 %}{% else %}0{% endif %}%;"
+  aria-valuenow="{% if deposit.total_amount > 0 %}{% widthratio deposit.amount_paid deposit.total_amount 100 %}{% else %}0{% endif %}"
+  aria-valuemin="0" aria-valuemax="100">
+</div>
+<small class="text-muted">UGX {{ deposit.amount_paid|floatformat:0 }}</small>
                           </td>
                         </tr>
                       {% empty %}

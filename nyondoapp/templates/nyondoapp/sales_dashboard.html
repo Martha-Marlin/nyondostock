@@ -56,11 +56,13 @@
           </ul>
 
           <!-- LOW STOCK ALERT BOX -->
-          <div class="ns-alert-box mt-4">
-            <div class="ns-alert-title">⚠️ Low Stock</div>
-            <div class="ns-alert-body">{{ low_stock_count }} items need attention</div>
-            <a href="{% url 'stock' %}" class="ns-alert-link">View →</a>
-          </div>
+{% if low_stock_count > 0 %}
+<div class="ns-alert-box mt-4">
+  <div class="ns-alert-title">⚠️ Low Stock</div>
+  <div class="ns-alert-body">{{ low_stock_count }} items need attention</div>
+  <a href="{% url 'stock' %}" class="ns-alert-link">View →</a>
+</div>
+{% endif %}
 
           <div class="sidebar-footer mt-auto pt-3">
             <hr />
@@ -183,7 +185,7 @@
                     <tbody>
                       {% for item in stock_items %}
 <tr>
-    <td>{{ item.item_name }}</td>  <!-- CHANGE THIS LINE -->
+    <td>{{ item.item_name }}</td>  
     <td>{{ item.quantity }}</td>
     <td>
         {% if item.quantity == 0 %}
@@ -232,8 +234,8 @@
               <div class="col-md-8">
                 <div class="dashboard-list-card">
                   <div class="dashboard-list-header">
-                    <h5>Recent Activity</h5>
-                    <span class="text-muted small">Today</span>
+                    <h5>All Sales Today</h5>
+<span class="text-muted small">All attendants</span>
                   </div>
                   <div class="table-responsive mt-3">
                     <table class="table dashboard-table mb-0">

@@ -44,6 +44,13 @@ class StockItem(models.Model):
     # SUPPLIER REFERENCE (plain text for now, not linked to Supplier model yet)
     supplier = models.CharField(max_length=120, blank=True)
 
+    STATUS_CHOICES = [
+    ('Active', 'Active'),
+    ('Discontinued', 'Discontinued'),
+    ('Seasonal', 'Seasonal'),
+    ]
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Active')
+
     # TIMESTAMPS - auto set when record is created or updated
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

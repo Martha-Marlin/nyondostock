@@ -263,49 +263,41 @@
                     <td>{{ item.quantity }}</td>
                     <td>UGX {{ item.buying_price }}</td>
                     <td><strong>UGX {{ item.selling_price }}</strong></td>
-                    <td>
-                      {% if item.stock_status == 'In Stock' %}
-                        <span class="status-badge b-green">In Stock</span>
-                      {% elif item.stock_status == 'Low Stock' %}
-                        <span class="status-badge b-yellow">Low Stock</span>
-                      {% else %}
-                        <span class="status-badge b-red">Out of Stock</span>
-                      {% endif %}
-                    </td>
+                     <td>
+  {% if item.status == 'Discontinued' %}
+    <span class="status-badge b-grey">Discontinued</span>
+  {% elif item.status == 'Seasonal' %}
+    <span class="status-badge b-blue">Seasonal</span>
+  {% elif item.stock_status == 'In Stock' %}
+    <span class="status-badge b-green">In Stock</span>
+  {% elif item.stock_status == 'Low Stock' %}
+    <span class="status-badge b-yellow">Low Stock</span>
+  {% else %}
+    <span class="status-badge b-red">Out of Stock</span>
+  {% endif %}
+</td>
                     <td class="actions d-flex gap-1">
                       <!-- Edit button - only for managers -->
                       {% if user.groups.all.0.name == 'Store Manager' or user.is_superuser %}
-                      <button
-                        class="btn btn-sm btn-outline-success"
-                        type="button"
-                        data-bs-toggle="modal"
-                        data-bs-target="#editStockModal"
-                        data-item-id="{{ item.id }}"
-                        data-item-name="{{ item.item_name }}"
-                        data-category="{{ item.category }}"
-                        data-quantity="{{ item.quantity }}"
-                        data-unit="{{ item.unit }}"
-                        data-minimum-stock="{{ item.minimum_stock }}"
-                        data-buying-price="{{ item.buying_price }}"
-                        data-selling-price="{{ item.selling_price }}"
-                        data-supplier="{{ item.supplier }}"
-                      >
-                        <i class="fa-solid fa-pen"></i>
-                      </button>
-                      <!-- Delete button with confirmation -->
-                      <form method="POST" action="{% url 'stock' %}" class="d-inline">
-                        {% csrf_token %}
-                        <input type="hidden" name="action" value="delete" />
-                        <input type="hidden" name="item_id" value="{{ item.id }}" />
-                        <button
-                          class="btn btn-sm btn-outline-danger"
-                          type="submit"
-                          onclick="return confirm('Are you sure you want to delete {{ item.item_name|escapejs }}? This cannot be undone.')"
-                        >
-                          <i class="fa-solid fa-trash"></i>
-                        </button>
-                      </form>
-                      {% endif %}
+<button
+  class="btn btn-sm btn-outline-success"
+  type="button"
+  data-bs-toggle="modal"
+  data-bs-target="#editStockModal"
+  data-item-id="{{ item.id }}"
+  data-item-name="{{ item.item_name }}"
+  data-category="{{ item.category }}"
+  data-quantity="{{ item.quantity }}"
+  data-unit="{{ item.unit }}"
+  data-minimum-stock="{{ item.minimum_stock }}"
+  data-buying-price="{{ item.buying_price }}"
+  data-selling-price="{{ item.selling_price }}"
+  data-supplier="{{ item.supplier }}"
+  data-status="{{ item.status }}"
+>
+  <i class="fa-solid fa-pen"></i>
+</button>
+{% endif %}
                     </td>
                   </tr>
                   {% empty %}
@@ -471,6 +463,14 @@
                   <label for="editSupplierName" class="form-label">Supplier (optional)</label>
                   <input type="text" class="form-control" id="editSupplierName" name="supplier" />
                 </div>
+                <div class="col-12">
+  <label for="editStatus" class="form-label">Status *</label>
+  <select class="form-select" id="editStatus" name="status">
+    <option value="Active">Active</option>
+    <option value="Discontinued">Discontinued</option>
+    <option value="Seasonal">Seasonal</option>
+  </select>
+</div>
               </div>
             </div>
             <div class="modal-footer">
@@ -503,6 +503,7 @@
           document.getElementById("editBuyingPrice").value = button.getAttribute("data-buying-price") || 0;
           document.getElementById("editSellingPrice").value = button.getAttribute("data-selling-price") || 0;
           document.getElementById("editSupplierName").value = button.getAttribute("data-supplier") || "";
+          document.getElementById("editStatus").value = button.getAttribute("data-status") || "Active";
         });
       }
     </script>

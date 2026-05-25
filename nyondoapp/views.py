@@ -128,6 +128,8 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 # Redirect to role-specific dashboard after login
+                if user.is_superuser:
+                    return redirect('accounts_dashboard')
                 if user.groups.filter(name='Sales Attendant').exists():
                     return redirect('sales_dashboard')
                 if user.groups.filter(name='Accounts Admin').exists():
@@ -378,6 +380,7 @@ def stock_view(request):
             item.buying_price = request.POST.get('buying_price', 0) or 0
             item.selling_price = request.POST.get('selling_price', 0) or 0
             item.supplier = request.POST.get('supplier', '').strip()
+            item.status = request.POST.get('status', 'Active')
             item.save()
             messages.success(request, 'Stock item updated successfully.')
             return redirect('stock')
@@ -424,7 +427,7 @@ def record_sales_view(request):
     if denied:
         return denied
 
-    stock_items = StockItem.objects.filter(quantity__gt=0)
+    stock_items = StockItem.objects.filter(quantity__gt=0, status='Active').order_by('item_name')
     registered_customers = Customer.objects.all().order_by('full_name')
     context = {
         'now': datetime.now(),

@@ -308,6 +308,16 @@ body {
   background: #fdeaea;
   color: #a32d2d;
 }
+/* BLUE STATUS BADGE (SEASONAL) */
+.b-blue {
+  background: #e8f0fe;
+  color: #1a56a0;
+}
+/* GREY STATUS BADGE (DISCONTINUED) */
+.b-grey {
+  background: #f0f0f0;
+  color: #555555;
+}
 
 /* QUICK ACTIONS BUTTONS */
 .ns-qa-btn {
