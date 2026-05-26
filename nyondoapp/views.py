@@ -1478,3 +1478,6 @@ def reports_view(request):
         'credits_cleared': supplier_credits.filter(status='Cleared').count(),
     }
     return render(request, 'nyondoapp/reports.html', context)
+
+def custom_404_view(request, exception):
+    return render(request, 'nyondoapp/404.html', status=404)

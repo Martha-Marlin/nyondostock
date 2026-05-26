@@ -63,5 +63,6 @@ path('deposits/<int:deposit_id>/collection-receipt/', views.collection_receipt_v
 #REPORTS URLS
 path('reports/', views.reports_view, name='reports'),
 
-
 ]
+
+handler404 = 'nyondoapp.views.custom_404_view'
