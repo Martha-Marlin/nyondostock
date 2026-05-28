@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -120,6 +121,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'nyondoapp/static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # PREVENT BROWSER CACHING OF PROTECTED PAGES
 SESSION_COOKIE_SECURE = False  # Set True in production with HTTPS

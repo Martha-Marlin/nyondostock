@@ -23,3 +23,4 @@ urlpatterns = [
     path('', include('nyondoapp.urls')),
    
 ]
+handler404 = 'nyondoapp.views.custom_404_view'

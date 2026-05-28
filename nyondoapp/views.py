@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.staticfiles import finders
+from django.utils import timezone
 from datetime import datetime
 from decimal import Decimal, ROUND_FLOOR
 from django.db.models import Q, Sum, F
@@ -115,7 +116,6 @@ def login_view(request):
         username = request.POST.get('username', '').strip()
         password = request.POST.get('password', '').strip()
 
-        # Django server-side validation
         if not username and not password:
             messages.error(request, 'Please enter your username and password.')
         elif not username:
@@ -124,10 +124,8 @@ def login_view(request):
             messages.error(request, 'Please enter your password.')
         else:
             user = authenticate(request, username=username, password=password)
-
             if user is not None:
                 login(request, user)
-                # Redirect to role-specific dashboard after login
                 if user.is_superuser:
                     return redirect('accounts_dashboard')
                 if user.groups.filter(name='Sales Attendant').exists():
@@ -148,14 +146,13 @@ def logout_view(request):
     logout(request)
     messages.success(request, 'Logged out successfully')
     response = redirect('login')
-    # Prevent browser back button from showing protected pages after logout
     response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     response['Pragma'] = 'no-cache'
     response['Expires'] = '0'
     return response
 
 
-# DASHBOARD REDIRECT VIEW - routes user to their role dashboard
+# DASHBOARD REDIRECT VIEW
 @login_required(login_url='login')
 def dashboard_view(request):
     return redirect(role_home_url(request.user))
@@ -168,7 +165,6 @@ def store_manager_dashboard_view(request):
     if denied:
         return denied
 
-    from django.utils import timezone
     today = timezone.now().date()
 
     all_items = StockItem.objects.all()
@@ -214,7 +210,6 @@ def sales_dashboard_view(request):
     if denied:
         return denied
 
-    from django.utils import timezone
     today = timezone.now().date()
 
     todays_sales = Sale.objects.filter(
@@ -254,7 +249,6 @@ def admin_dashboard_view(request):
     if denied:
         return denied
 
-    from django.utils import timezone
     today = timezone.now().date()
     first_of_month = today.replace(day=1)
 
@@ -320,7 +314,6 @@ def stock_view(request):
         return denied
 
     if request.method == 'POST':
-        # Only managers can add, edit or delete stock
         denied = require_roles(request, MANAGER_ROLE, STOCK_MANAGER_ROLE)
         if denied:
             return denied
@@ -338,8 +331,32 @@ def stock_view(request):
             category = request.POST.get('category', 'Cement')
             unit = request.POST.get('unit', 'Pieces')
             supplier = request.POST.get('supplier', '').strip()
+            quantity_raw = request.POST.get('quantity', '').strip()
+            selling_price_raw = request.POST.get('selling_price', '').strip()
+            buying_price_raw = request.POST.get('buying_price', '').strip()
 
-            # If item already exists with same details, add to its quantity
+            # ---- SERVER-SIDE VALIDATION ----
+            if not item_name:
+                messages.error(request, 'Item name is required.')
+                return redirect('stock')
+
+            if not quantity_raw or int(quantity_raw or 0) < 0:
+                messages.error(request, 'Quantity must be zero or greater.')
+                return redirect('stock')
+
+            if not selling_price_raw or Decimal(selling_price_raw or 0) <= 0:
+                messages.error(request, 'Selling price must be greater than zero.')
+                return redirect('stock')
+
+            if not buying_price_raw or Decimal(buying_price_raw or 0) <= 0:
+                messages.error(request, 'Buying price must be greater than zero.')
+                return redirect('stock')
+
+            if Decimal(buying_price_raw) > Decimal(selling_price_raw):
+                messages.error(request, 'Buying price cannot be greater than selling price.')
+                return redirect('stock')
+            # ---- END VALIDATION ----
+
             existing_item = StockItem.objects.filter(
                 item_name=item_name,
                 category=category,
@@ -348,10 +365,10 @@ def stock_view(request):
             ).first()
 
             if existing_item:
-                additional_quantity = int(request.POST.get('quantity', 0) or 0)
+                additional_quantity = int(quantity_raw or 0)
                 existing_item.quantity += additional_quantity
-                existing_item.buying_price = request.POST.get('buying_price', 0) or 0
-                existing_item.selling_price = request.POST.get('selling_price', 0) or 0
+                existing_item.buying_price = buying_price_raw
+                existing_item.selling_price = selling_price_raw
                 existing_item.minimum_stock = int(request.POST.get('minimum_stock', 0) or 0)
                 existing_item.save()
                 messages.success(request, f'Added {additional_quantity} to existing {item_name}. New total: {existing_item.quantity}')
@@ -359,11 +376,11 @@ def stock_view(request):
                 StockItem.objects.create(
                     item_name=item_name,
                     category=category,
-                    quantity=int(request.POST.get('quantity', 0) or 0),
+                    quantity=int(quantity_raw or 0),
                     unit=unit,
                     minimum_stock=int(request.POST.get('minimum_stock', 0) or 0),
-                    buying_price=request.POST.get('buying_price', 0) or 0,
-                    selling_price=request.POST.get('selling_price', 0) or 0,
+                    buying_price=buying_price_raw,
+                    selling_price=selling_price_raw,
                     supplier=supplier,
                 )
                 messages.success(request, 'New stock item added successfully.')
@@ -372,20 +389,40 @@ def stock_view(request):
 
         if action == 'update':
             item = get_object_or_404(StockItem, id=request.POST.get('item_id'))
-            item.item_name = request.POST.get('item_name', '').strip()
+            item_name = request.POST.get('item_name', '').strip()
+            selling_price_raw = request.POST.get('selling_price', '').strip()
+            buying_price_raw = request.POST.get('buying_price', '').strip()
+
+            # ---- SERVER-SIDE VALIDATION ----
+            if not item_name:
+                messages.error(request, 'Item name is required.')
+                return redirect('stock')
+
+            if not selling_price_raw or Decimal(selling_price_raw or 0) <= 0:
+                messages.error(request, 'Selling price must be greater than zero.')
+                return redirect('stock')
+
+            if not buying_price_raw or Decimal(buying_price_raw or 0) <= 0:
+                messages.error(request, 'Buying price must be greater than zero.')
+                return redirect('stock')
+
+            if Decimal(buying_price_raw) > Decimal(selling_price_raw):
+                messages.error(request, 'Buying price cannot be greater than selling price.')
+                return redirect('stock')
+            # ---- END VALIDATION ----
+
+            item.item_name = item_name
             item.category = request.POST.get('category', 'Cement')
             item.quantity = int(request.POST.get('quantity', 0) or 0)
             item.unit = request.POST.get('unit', 'Pieces')
             item.minimum_stock = int(request.POST.get('minimum_stock', 0) or 0)
-            item.buying_price = request.POST.get('buying_price', 0) or 0
-            item.selling_price = request.POST.get('selling_price', 0) or 0
+            item.buying_price = buying_price_raw
+            item.selling_price = selling_price_raw
             item.supplier = request.POST.get('supplier', '').strip()
-            item.status = request.POST.get('status', 'Active')
             item.save()
             messages.success(request, 'Stock item updated successfully.')
             return redirect('stock')
 
-    # GET - filter and search stock items
     stock_filter = request.GET.get('filter', '')
     search = request.GET.get('search', '')
     items = StockItem.objects.all()
@@ -436,6 +473,7 @@ def record_sales_view(request):
     }
     return render(request, 'nyondoapp/record_sales.html', context)
 
+
 # ADD SALE VIEW
 @login_required(login_url='login')
 def add_sale_view(request):
@@ -472,7 +510,6 @@ def add_sale_view(request):
             return redirect('record_sales')
         # ---- END VALIDATION ----
 
-        # Credit sales must be linked to a registered customer
         registered_customer = None
         if payment_status.capitalize() == 'Credit':
             registered_customer_id = request.POST.get('registered_customer_id')
@@ -490,10 +527,6 @@ def add_sale_view(request):
             'bank_transfer': 'Bank Transfer',
         }
         payment_method = payment_method_map.get(payment_method, 'Cash')
-
-        if not item_ids:
-            messages.error(request, 'Please add at least one item.')
-            return redirect('record_sales')
 
         sale_items = []
         subtotal = Decimal('0')
@@ -522,7 +555,6 @@ def add_sale_view(request):
                 'line_total': line_total,
             })
 
-        # Transport rule: free within 10km for orders above 500k, else 30k flat
         if not wants_delivery:
             transport_charge = Decimal('0')
         elif distance <= 10 and subtotal >= 500000:
@@ -545,7 +577,6 @@ def add_sale_view(request):
             sold_by=request.user,
         )
 
-        # Save sale items and reduce stock quantities
         for item_data in sale_items:
             SaleItem.objects.create(
                 sale=sale,
@@ -567,7 +598,7 @@ def add_sale_view(request):
     return redirect('record_sales')
 
 
-# DELETE SALE VIEW - restores stock quantities on deletion
+# DELETE SALE VIEW
 @login_required(login_url='login')
 def delete_sale_view(request, sale_id):
     sale = get_object_or_404(Sale, id=sale_id)
@@ -581,7 +612,7 @@ def delete_sale_view(request, sale_id):
     return redirect('sales_list')
 
 
-# EDIT SALE VIEW - updates customer info and payment details only
+# EDIT SALE VIEW
 @login_required(login_url='login')
 def edit_sale_view(request, sale_id):
     denied = require_roles(request, SALES_ROLE)
@@ -711,13 +742,29 @@ def add_supplier_view(request):
         return denied
 
     if request.method == 'POST':
+        supplier_name = request.POST.get('supplier_name', '').strip()
         phone = request.POST.get('phone', '').strip()
+
+        # ---- SERVER-SIDE VALIDATION ----
+        if not supplier_name:
+            messages.error(request, 'Supplier name is required.')
+            return redirect('suppliers')
+
+        if not phone:
+            messages.error(request, 'Phone number is required.')
+            return redirect('suppliers')
+
+        if not re.match(r'^(07|03)\d{8}$', phone.replace(' ', '')):
+            messages.error(request, 'Enter a valid Ugandan phone number (e.g. 0701234567).')
+            return redirect('suppliers')
+
         if Supplier.objects.filter(phone=phone).exists():
             messages.error(request, 'A supplier with this phone number already exists.')
             return redirect('suppliers')
+        # ---- END VALIDATION ----
 
         Supplier.objects.create(
-            supplier_name=request.POST.get('supplier_name', '').strip(),
+            supplier_name=supplier_name,
             phone=phone,
             tin_number=request.POST.get('tin_number', '').strip() or None,
             email=request.POST.get('email', '').strip() or None,
@@ -727,7 +774,7 @@ def add_supplier_view(request):
             notes=request.POST.get('notes', '').strip() or None,
             created_by=request.user,
         )
-        messages.success(request, f'{request.POST.get("supplier_name")} added successfully!')
+        messages.success(request, f'{supplier_name} added successfully!')
     return redirect('suppliers')
 
 
@@ -740,8 +787,29 @@ def edit_supplier_view(request, supplier_id):
 
     supplier = get_object_or_404(Supplier, id=supplier_id)
     if request.method == 'POST':
-        supplier.supplier_name = request.POST.get('supplier_name', '').strip()
-        supplier.phone = request.POST.get('phone', '').strip()
+        supplier_name = request.POST.get('supplier_name', '').strip()
+        phone = request.POST.get('phone', '').strip()
+
+        # ---- SERVER-SIDE VALIDATION ----
+        if not supplier_name:
+            messages.error(request, 'Supplier name is required.')
+            return redirect('suppliers')
+
+        if not phone:
+            messages.error(request, 'Phone number is required.')
+            return redirect('suppliers')
+
+        if not re.match(r'^(07|03)\d{8}$', phone.replace(' ', '')):
+            messages.error(request, 'Enter a valid Ugandan phone number (e.g. 0701234567).')
+            return redirect('suppliers')
+
+        if Supplier.objects.filter(phone=phone).exclude(id=supplier_id).exists():
+            messages.error(request, 'Another supplier with this phone number already exists.')
+            return redirect('suppliers')
+        # ---- END VALIDATION ----
+
+        supplier.supplier_name = supplier_name
+        supplier.phone = phone
         supplier.tin_number = request.POST.get('tin_number', '').strip() or None
         supplier.email = request.POST.get('email', '').strip() or None
         supplier.location = request.POST.get('location', '').strip() or None
@@ -749,7 +817,7 @@ def edit_supplier_view(request, supplier_id):
         supplier.status = request.POST.get('status', 'Active')
         supplier.notes = request.POST.get('notes', '').strip() or None
         supplier.save()
-        messages.success(request, f'{supplier.supplier_name} updated successfully.')
+        messages.success(request, f'{supplier_name} updated successfully.')
     return redirect('suppliers')
 
 
@@ -806,7 +874,6 @@ def record_payment_view(request, supplier_id):
             created_by=request.user,
         )
 
-        # Update supplier balance based on transaction type
         if transaction_type == 'Credit':
             supplier.balance += amount
         elif transaction_type in ['Payment', 'Adjustment']:
@@ -850,12 +917,40 @@ def add_supplier_credit_view(request, supplier_id):
 
     supplier = get_object_or_404(Supplier, id=supplier_id)
     if request.method == 'POST':
-        total_amount = Decimal(request.POST.get('total_amount') or 0)
+        description = request.POST.get('description', '').strip()
+        due_date = request.POST.get('due_date', '').strip()
+        total_amount_raw = request.POST.get('total_amount', '').strip()
+
+        # ---- SERVER-SIDE VALIDATION ----
+        if not description:
+            messages.error(request, 'Description is required.')
+            return redirect('supplier_credit_detail', supplier_id=supplier.id)
+
+        if not total_amount_raw:
+            messages.error(request, 'Credit amount is required.')
+            return redirect('supplier_credit_detail', supplier_id=supplier.id)
+
+        total_amount = Decimal(total_amount_raw)
+
+        if total_amount <= 0:
+            messages.error(request, 'Credit amount must be greater than zero.')
+            return redirect('supplier_credit_detail', supplier_id=supplier.id)
+
+        if not due_date:
+            messages.error(request, 'Due date is required.')
+            return redirect('supplier_credit_detail', supplier_id=supplier.id)
+
+        due_date_parsed = datetime.strptime(due_date, '%Y-%m-%d').date()
+        if due_date_parsed < timezone.now().date():
+            messages.error(request, 'Due date cannot be in the past.')
+            return redirect('supplier_credit_detail', supplier_id=supplier.id)
+        # ---- END VALIDATION ----
+
         SupplierCredit.objects.create(
             supplier=supplier,
-            description=request.POST.get('description', '').strip(),
+            description=description,
             total_amount=total_amount,
-            due_date=request.POST.get('due_date'),
+            due_date=due_date,
             created_by=request.user,
         )
         supplier.balance += total_amount
@@ -874,7 +969,24 @@ def record_credit_payment_view(request, credit_id):
 
     credit = get_object_or_404(SupplierCredit, id=credit_id)
     if request.method == 'POST':
-        amount = Decimal(request.POST.get('amount') or 0)
+        amount_raw = request.POST.get('amount', '').strip()
+
+        # ---- SERVER-SIDE VALIDATION ----
+        if not amount_raw:
+            messages.error(request, 'Payment amount is required.')
+            return redirect('supplier_credit_detail', supplier_id=credit.supplier.id)
+
+        amount = Decimal(amount_raw)
+
+        if amount <= 0:
+            messages.error(request, 'Payment amount must be greater than zero.')
+            return redirect('supplier_credit_detail', supplier_id=credit.supplier.id)
+
+        balance_remaining = credit.total_amount - credit.amount_paid
+        if amount > balance_remaining:
+            messages.error(request, f'Amount exceeds balance due. Maximum payable is UGX {balance_remaining:,.0f}.')
+            return redirect('supplier_credit_detail', supplier_id=credit.supplier.id)
+        # ---- END VALIDATION ----
 
         SupplierCreditPayment.objects.create(
             credit=credit,
@@ -889,7 +1001,6 @@ def record_credit_payment_view(request, credit_id):
         credit.status = 'Cleared' if credit.amount_paid >= credit.total_amount else 'Partial'
         credit.save()
 
-        # Reduce supplier balance and mark active if fully cleared
         supplier = credit.supplier
         supplier.balance -= amount
         if supplier.balance <= 0:
@@ -927,7 +1038,7 @@ def customers_view(request):
     return render(request, 'nyondoapp/customers_list.html', context)
 
 
-# REGISTER CUSTOMER VIEW - only Accounts Admin can register
+# REGISTER CUSTOMER VIEW
 @login_required(login_url='login')
 def register_customer_view(request):
     denied = require_roles(request, ACCOUNTS_ROLE)
@@ -993,7 +1104,8 @@ def register_customer_view(request):
         messages.success(request, f'{full_name} registered successfully!')
         return redirect('customers')
 
-    return render(request, 'nyondoapp/register_customer.html', context) 
+    return render(request, 'nyondoapp/register_customer.html', context)
+
 
 # EDIT CUSTOMER VIEW
 @login_required(login_url='login')
@@ -1032,7 +1144,7 @@ def edit_customer_view(request, customer_id):
     return redirect('customers')
 
 
-# DELETE CUSTOMER VIEW - blocked if customer has deposits
+# DELETE CUSTOMER VIEW
 @login_required(login_url='login')
 def delete_customer_view(request, customer_id):
     customer = get_object_or_404(Customer, id=customer_id)
@@ -1046,7 +1158,7 @@ def delete_customer_view(request, customer_id):
     return redirect('customers')
 
 
-# CUSTOMER DETAIL VIEW - shows credit history and payment tracking
+# CUSTOMER DETAIL VIEW
 @login_required(login_url='login')
 def customer_detail_view(request, customer_id):
     customer = get_object_or_404(Customer, id=customer_id)
@@ -1182,8 +1294,6 @@ def create_deposit_view(request):
             messages.error(request, 'Expected collection date is required.')
             return render(request, 'nyondoapp/create_deposit.html', context)
 
-        # Due date must not be in the past
-        from django.utils import timezone
         due_date_parsed = datetime.strptime(due_date, '%Y-%m-%d').date()
         if due_date_parsed < timezone.now().date():
             messages.error(request, 'Expected collection date cannot be in the past.')
@@ -1214,6 +1324,7 @@ def create_deposit_view(request):
         return redirect('deposit_detail', deposit_id=deposit.id)
 
     return render(request, 'nyondoapp/create_deposit.html', {'customers': customers, 'low_stock_count': low_stock_count})
+
 
 # DEPOSIT DETAIL VIEW
 @login_required(login_url='login')
@@ -1282,7 +1393,7 @@ def cancel_deposit_view(request, deposit_id):
     return redirect('deposits')
 
 
-# DEPOSIT RECEIPT VIEW - temporary receipt per payment
+# DEPOSIT RECEIPT VIEW
 @login_required(login_url='login')
 def deposit_receipt_view(request, payment_id):
     denied = require_roles(request, ACCOUNTS_ROLE)
@@ -1302,7 +1413,7 @@ def deposit_receipt_view(request, payment_id):
     )
 
 
-# COLLECT DEPOSIT VIEW - deducts stock and marks deposit as completed
+# COLLECT DEPOSIT VIEW
 @login_required(login_url='login')
 def collect_deposit_view(request, deposit_id):
     denied = require_roles(request, ACCOUNTS_ROLE)
@@ -1345,7 +1456,7 @@ def collect_deposit_view(request, deposit_id):
     return redirect('collection_receipt', deposit_id=deposit.id)
 
 
-# EDIT DEPOSIT VIEW - only active deposits can be edited
+# EDIT DEPOSIT VIEW
 @login_required(login_url='login')
 def edit_deposit_view(request, deposit_id):
     denied = require_roles(request, ACCOUNTS_ROLE)
@@ -1380,7 +1491,7 @@ def edit_deposit_view(request, deposit_id):
     return redirect('deposit_detail', deposit_id=deposit.id)
 
 
-# COLLECTION RECEIPT VIEW - official receipt for completed deposits
+# COLLECTION RECEIPT VIEW
 @login_required(login_url='login')
 def collection_receipt_view(request, deposit_id):
     denied = require_roles(request, ACCOUNTS_ROLE)
@@ -1411,7 +1522,6 @@ def reports_view(request):
     if denied:
         return denied
 
-    from django.utils import timezone
     today = timezone.now().date()
 
     date_from = request.GET.get('date_from')
@@ -1421,13 +1531,11 @@ def reports_view(request):
     date_from = datetime.strptime(date_from, '%Y-%m-%d').date() if date_from else today.replace(day=1)
     date_to = datetime.strptime(date_to, '%Y-%m-%d').date() if date_to else today
 
-    # Summary stat cards - all time totals
     total_revenue = Sale.objects.filter(payment_status='Paid').aggregate(total=Sum('total_amount'))['total'] or 0
     total_transport = Sale.objects.filter(transport_charge__gt=0).aggregate(total=Sum('transport_charge'))['total'] or 0
     total_deposits = Deposit.objects.aggregate(total=Sum('amount_paid'))['total'] or 0
     total_supplier_credit = SupplierCredit.objects.filter(status__in=['Unpaid', 'Partial']).aggregate(total=Sum('total_amount'))['total'] or 0
 
-    # Sales filtered by date range
     sales = Sale.objects.filter(
         sale_date__date__gte=date_from,
         sale_date__date__lte=date_to
@@ -1437,7 +1545,6 @@ def reports_view(request):
     sales_transport = sales.aggregate(total=Sum('transport_charge'))['total'] or 0
     sales_outstanding = sales.filter(payment_status__in=['Pending', 'Credit']).aggregate(total=Sum('total_amount'))['total'] or 0
 
-    # Transport report - sales where company absorbed delivery cost
     transport_sales = Sale.objects.filter(
         sale_date__date__gte=date_from,
         sale_date__date__lte=date_to,
@@ -1479,5 +1586,7 @@ def reports_view(request):
     }
     return render(request, 'nyondoapp/reports.html', context)
 
+
+# CUSTOM 404 VIEW
 def custom_404_view(request, exception):
     return render(request, 'nyondoapp/404.html', status=404)

@@ -1,0 +1,319 @@
+/* ========== SUPPLIERS PAGE SPECIFIC STYLES ========== */
+
+/* SUPPLIERS FILTER BAR */
+.stock-filter {
+  border: 1px solid #dce7dd;
+  background: #fff !important;
+  border-radius: 12px;
+}
+
+/* SEARCH ICON CONTAINER */
+.search-control {
+  position: relative;
+}
+
+/* SEARCH ICON POSITIONING */
+.search-control .fa-magnifying-glass {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  color: #6e8880;
+  font-size: 13px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* SEARCH INPUT PADDING (MAKES ROOM FOR ICON) */
+.search-control .form-control {
+  padding-left: 38px;
+}
+
+/* SUPPLIERS LIST CARD CONTAINER */
+.stock-list-card {
+  background: #fff;
+  border: 1px solid #dce7dd;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+}
+
+/* SUPPLIERS LIST HEADER */
+.stock-list-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 66px;
+  padding: 0 1.25rem;
+  border-bottom: 1px solid #edf2ee;
+}
+
+/* SUPPLIERS LIST HEADER TITLE */
+.stock-list-header h5 {
+  margin: 0;
+  color: #142e1a;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* SUPPLIERS LIST HEADER AND FOOTER TEXT */
+.stock-list-header span,
+.stock-list-footer span {
+  color: #8aa39a;
+  font-size: 14px;
+}
+
+/* SUPPLIERS TABLE */
+.stock-table {
+  min-width: 960px;
+}
+
+/* First column: supplier code (SUP-001), aligned with stock # column */
+.stock-table tbody td.supplier-id-cell {
+  font-family: "DM Mono", ui-monospace, monospace;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* TABLE HEADER CELLS */
+.stock-table thead th {
+  background: #f6faf7;
+  color: #789076;
+  border-bottom: 1px solid #dfe8e0;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.45px;
+  padding: 13px 1.25rem;
+  text-transform: uppercase;
+}
+
+/* TABLE BODY CELLS */
+.stock-table tbody td {
+  color: #132f24;
+  font-size: 15px;
+  padding: 14px 1.25rem;
+  vertical-align: middle;
+  border-color: #edf2ee;
+}
+
+/* BOLD TEXT INSIDE TABLE CELLS */
+.stock-table tbody td strong {
+  display: block;
+  color: #061d14;
+  font-weight: 700;
+}
+
+/* SMALL ID TEXT BELOW SUPPLIER NAMES */
+.stock-table tbody td small {
+  display: block;
+  color: #7a907a;
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+/* SUPPLIER CELL */
+.item-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+/* TABLE ROW HOVER */
+.stock-table tbody tr:hover {
+  background: #f4faf6;
+  transition: background 0.2s ease;
+}
+
+/* ACTIONS COLUMN (EDIT/DELETE/VIEW BUTTONS) */
+.stock-table .actions {
+  white-space: nowrap;
+}
+
+/* ACTION BUTTONS */
+.stock-table .actions .btn {
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+/* SUPPLIERS LIST FOOTER */
+.stock-list-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid #edf2ee;
+}
+
+/* PAGINATION LINKS */
+.stock-list-footer .page-link {
+  color: #1d7d60;
+  border-color: #d5e2d8;
+  font-size: 13px;
+}
+
+/* ACTIVE PAGINATION PAGE */
+.stock-list-footer .active .page-link {
+  background: #1d9e75;
+  border-color: #1d9e75;
+  color: #fff;
+}
+
+/* ========== ADD SUPPLIER MODAL ========== */
+
+/* MODAL DIALOG */
+.add-stock-modal .modal-dialog {
+  max-width: 860px;
+}
+
+/* MODAL CONTENT */
+.add-stock-modal .modal-content {
+  border: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.24);
+}
+
+/* MODAL HEADER - GREEN THEME */
+.add-stock-modal .modal-header {
+  background: #1d9e75;
+  border-bottom: 0;
+  min-height: 56px;
+  padding: 0.95rem 1.35rem;
+}
+
+/* MODAL TITLE */
+.add-stock-modal .modal-title {
+  color: #fff;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+/* MODAL CLOSE BUTTON (VISIBLE ON GREEN) */
+.add-stock-modal .btn-close {
+  filter: brightness(0) invert(1);
+  opacity: 0.8;
+}
+
+.add-stock-modal .btn-close:hover {
+  opacity: 1;
+}
+
+/* MODAL BODY */
+.add-stock-modal .modal-body {
+  padding: 1.55rem 1.55rem 1.3rem;
+  background: #fff;
+}
+
+/* FORM LABELS */
+.add-stock-modal .form-label {
+  color: #5c7a64;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: 0.3px;
+}
+
+/* FORM INPUTS AND DROPDOWNS */
+.add-stock-modal .form-control,
+.add-stock-modal .form-select,
+.add-stock-modal textarea {
+  border: 1.5px solid #cbdccf;
+  border-radius: 10px;
+  padding: 0.65rem 1rem;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+/* INPUT FOCUS STATE */
+.add-stock-modal .form-control:focus,
+.add-stock-modal .form-select:focus,
+.add-stock-modal textarea:focus {
+  border-color: #1d9e75;
+  box-shadow: 0 0 0 3px rgba(29, 158, 117, 0.1);
+  outline: none;
+}
+
+/* INPUT PLACEHOLDER */
+.add-stock-modal .form-control::placeholder,
+.add-stock-modal textarea::placeholder {
+  color: #cbd5e1;
+  font-size: 0.85rem;
+}
+
+/* HELPER TEXT */
+.add-stock-modal .text-muted {
+  font-size: 0.7rem;
+  color: #94a3b8 !important;
+  margin-top: 0.35rem;
+  display: block;
+}
+
+/* MODAL FOOTER */
+.add-stock-modal .modal-footer {
+  background: #f8fbf8;
+  border-top: 1px solid #dfe8e0;
+  padding: 1rem 1.35rem;
+}
+
+/* MODAL FOOTER BUTTONS */
+.add-stock-modal .modal-footer .btn {
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 7px 14px;
+}
+
+/* CANCEL BUTTON */
+.add-stock-modal .btn-outline-secondary {
+  border-color: #cbd5e1;
+  color: #64748b;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.add-stock-modal .btn-outline-secondary:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #334155;
+}
+
+/* SAVE BUTTON */
+.add-stock-modal .modal-footer .btn-success {
+  background: #1d9e75;
+  border-color: #1d9e75;
+  min-width: 150px;
+}
+
+.add-stock-modal .modal-footer .btn-success:hover {
+  background: #0f6e56;
+  border-color: #0f6e56;
+  transform: translateY(-1px);
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 576px) {
+  .add-stock-modal .modal-dialog {
+    margin: 0.75rem;
+  }
+
+  .add-stock-modal .modal-body,
+  .add-stock-modal .modal-footer {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .add-stock-modal .modal-footer {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .add-stock-modal .modal-footer .btn {
+    width: 100%;
+  }
+
+  .stock-list-header,
+  .stock-list-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

@@ -65,4 +65,3 @@ path('reports/', views.reports_view, name='reports'),
 
 ]
 
-handler404 = 'nyondoapp.views.custom_404_view'

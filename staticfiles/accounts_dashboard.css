@@ -1,0 +1,106 @@
+/* BLUE STATUS BADGE (CUSTOM FOR ACCOUNTS DASHBOARD) */
+.b-blue {
+  background: #e8f0ff;    /* Light blue background */
+  color: #2457b8;         /* Dark blue text */
+}
+
+/* FINANCIAL SUMMARY LIST CONTAINER */
+.summary-list {
+  padding: 12px 18px 18px;  /* Top, right/left, bottom padding */
+}
+
+/* FINANCIAL SUMMARY ROW (Revenue, Expenses, Profit) */
+.summary-row {
+  align-items: center;
+  border-bottom: 1px solid #e6efe9;  /* Light green separator line */
+  display: flex;
+  justify-content: space-between;     /* Pushes label left, value right */
+  padding: 12px 0;                   /* Vertical padding only */
+}
+
+/* LAST ROW - NO BORDER */
+.summary-row:last-child {
+  border-bottom: 0;                  /* Removes border from final row */
+}
+
+/* SUMMARY LABEL (e.g., "Revenue (month)") */
+.summary-row span {
+  color: #5c7a64;    /* Muted green-gray */
+  font-size: 15px;
+}
+
+/* SUMMARY VALUE (e.g., "UGX 48.2M") */
+.summary-row strong {
+  color: #142e1a;    /* Dark forest green */
+  font-size: 15px;
+}
+
+/* CARDS/SECTION POLISH FOR ACCOUNTS DASHBOARD */
+.accounts-dashboard-header h4 {
+  color: #142e1a;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.accounts-dashboard-header .role {
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 5px 12px;
+}
+
+.stock-list-card {
+  border: 1px solid #e6efe9;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.stock-list-header {
+  padding: 16px 18px 8px;
+}
+
+.stock-list-header h5 {
+  margin-bottom: 0;
+  font-size: 19px;
+}
+
+.stock-table th {
+  font-size: 14px;
+  color: #6c757d;
+  font-weight: 600;
+}
+
+.stock-table td {
+  font-size: 15px;
+  vertical-align: middle;
+}
+
+.stock-table tbody tr:hover {
+  background: #f6faf7;
+}
+
+.ns-qa-btn {
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* RESPONSIVE: STACK HEADER ON TABLET/MOBILE */
+@media (max-width: 992px) {
+  .accounts-dashboard-header {
+    align-items: flex-start !important;  /* Align to top */
+    flex-direction: column;              /* Stack vertically */
+    gap: 12px;                          /* Space between stacked items */
+  }
+}
+/* SUMMARY ROW HOVER EFFECT  */
+.summary-row:hover {
+  background-color: #f8faf6;
+  margin-left: -5px;
+  padding-left: 5px;
+  margin-right: -5px;
+  padding-right: 5px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
