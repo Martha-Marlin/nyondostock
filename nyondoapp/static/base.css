@@ -27,11 +27,6 @@ body {
 
 /* LOGO CIRCLE */
 .logo {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -39,10 +34,9 @@ body {
 
 /* LOGO IMAGE */
 .logo img {
-  width: 42px;
-  height: 42px;
-  object-fit: cover;
-  border-radius: 50%;
+  height: 48px;
+  width: auto;
+  object-fit: contain;
 }
 
 /* COMPANY NAME */

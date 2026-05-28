@@ -5,110 +5,188 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Register Customer - NyondoStock</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="{% static 'base.css' %}" />
     <link rel="stylesheet" href="{% static 'register_customer.css' %}" />
   </head>
   <body>
-
     <!-- TOPBAR -->
     <nav class="topbar">
       <div class="topbar-left">
         <div class="logo">
-          <img src="{% static 'images/logo-edit.png' %}" alt="NyondoStock Logo" />
+          <svg
+            width="42"
+            height="42"
+            viewBox="0 0 100 100"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <polygon
+              points="50,6 90,28 90,72 50,94 10,72 10,28"
+              fill="rgba(255,255,255,0.2)"
+            />
+            <polygon
+              points="50,14 82,32 82,68 50,86 18,68 18,32"
+              fill="none"
+              stroke="rgba(255,255,255,0.6)"
+              stroke-width="2"
+            />
+            <text
+              x="50"
+              y="64"
+              text-anchor="middle"
+              font-family="DM Sans, Arial, sans-serif"
+              font-weight="900"
+              font-size="42"
+              fill="#ffffff"
+            >
+              N
+            </text>
+          </svg>
         </div>
-        <div>
-          <div class="brand-name">Nyondo Stock</div>
+         <div>
+          <div class="brand-name">NyondoStock</div>
           <div class="brand-sub">NYONDO General Hardware LTD</div>
         </div>
       </div>
       <div class="topbar-right">
         <span class="welcome">Welcome, {{ user.username }}</span>
-        <span class="role">{{ user.groups.first.name|default:"Accounts Admin" }}</span>
+        <span class="role"
+          >{{ user.groups.first.name|default:"Accounts Admin" }}</span
+        >
         <a href="{% url 'logout' %}" class="logout">Logout</a>
       </div>
     </nav>
 
     <div class="container-fluid">
       <div class="row">
-
         <!-- SIDEBAR -->
-        <aside class="col-lg-2 col-md-3 bg-light min-vh-100 p-3 pt-4 position-relative">
+        <aside
+          class="col-lg-2 col-md-3 bg-light min-vh-100 p-3 pt-4 position-relative"
+        >
           <h6 class="text-muted">MENU</h6>
           <ul class="nav flex-column">
             {% if user.groups.all.0.name == 'Sales Attendant' %}
-              <li class="nav-item mb-3">
-                <a href="{% url 'sales_dashboard' %}" class="nav-link text-dark">📊 Sales Dashboard</a>
-              </li>
-              <li class="nav-item mb-3">
-                <a href="{% url 'stock' %}" class="nav-link text-dark">📦 Stock</a>
-              </li>
-              <li class="nav-item mb-3">
-                <a href="{% url 'sales_list' %}" class="nav-link text-dark">🛒 Sales</a>
-              </li>
-              <li class="nav-item mb-3">
-                <a href="{% url 'customers' %}" class="nav-link active">👤 Customers</a>
-              </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'sales_dashboard' %}" class="nav-link text-dark"
+                >📊 Sales Dashboard</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'stock' %}" class="nav-link text-dark"
+                >📦 Stock</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'sales_list' %}" class="nav-link text-dark"
+                >🛒 Sales</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'customers' %}" class="nav-link active"
+                >👤 Customers</a
+              >
+            </li>
             {% elif user.groups.all.0.name == 'Accounts Admin' %}
-              <li class="nav-item mb-3">
-                <a href="{% url 'accounts_dashboard' %}" class="nav-link text-dark">📊 Accounts Dashboard</a>
-              </li>
-              <li class="nav-item mb-3">
-                <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
-              </li>
-              <li class="nav-item mb-3">
-                <a href="{% url 'customers' %}" class="nav-link active">👤 Customers</a>
-              </li>
-              <li class="nav-item mb-3">
-                <a href="{% url 'deposits' %}" class="nav-link text-dark">💰 Deposits</a>
-              </li>
-              <li class="nav-item mb-3">
-                <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
-              </li>
+            <li class="nav-item mb-3">
+              <a
+                href="{% url 'accounts_dashboard' %}"
+                class="nav-link text-dark"
+                >📊 Accounts Dashboard</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'suppliers' %}" class="nav-link text-dark"
+                >🏭 Suppliers</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'customers' %}" class="nav-link active"
+                >👤 Customers</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'deposits' %}" class="nav-link text-dark"
+                >💰 Deposits</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'reports' %}" class="nav-link text-dark"
+                >📈 Reports</a
+              >
+            </li>
             {% else %}
-              <li class="nav-item mb-3">
-                <a href="{% url 'dashboard' %}" class="nav-link text-dark">📊 Dashboard</a>
-              </li>
-              <li class="nav-item mb-3">
-                <a href="{% url 'stock' %}" class="nav-link text-dark">📦 Stock</a>
-              </li>
-              <li class="nav-item mb-3">
-                <a href="{% url 'sales_list' %}" class="nav-link text-dark">🛒 Sales</a>
-              </li>
-              <li class="nav-item mb-3">
-                <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
-              </li>
-              <li class="nav-item mb-3">
-                <a href="{% url 'customers' %}" class="nav-link active">👤 Customers</a>
-              </li>
-              <li class="nav-item mb-3">
-                <a href="{% url 'deposits' %}" class="nav-link text-dark">💰 Deposits</a>
-              </li>
-              <li class="nav-item mb-3">
-                <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
-              </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'dashboard' %}" class="nav-link text-dark"
+                >📊 Dashboard</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'stock' %}" class="nav-link text-dark"
+                >📦 Stock</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'sales_list' %}" class="nav-link text-dark"
+                >🛒 Sales</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'suppliers' %}" class="nav-link text-dark"
+                >🏭 Suppliers</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'customers' %}" class="nav-link active"
+                >👤 Customers</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'deposits' %}" class="nav-link text-dark"
+                >💰 Deposits</a
+              >
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'reports' %}" class="nav-link text-dark"
+                >📈 Reports</a
+              >
+            </li>
             {% endif %}
           </ul>
 
           <div class="ns-alert-box mt-4">
             <div class="ns-alert-title">⚠ Low Stock</div>
-            <div class="ns-alert-body">{{ low_stock_count }} items need attention</div>
+            <div class="ns-alert-body">
+              {{ low_stock_count }} items need attention
+            </div>
             <a href="{% url 'stock' %}" class="ns-alert-link">View →</a>
           </div>
 
           <div class="position-absolute bottom-0 start-0 p-3 w-100">
             <hr />
             <small class="text-muted d-block mb-1">📦 NyondoStock v1.0</small>
-            <small class="text-muted d-block mb-1">🏪 NYONDO General Hardware</small>
+            <small class="text-muted d-block mb-1"
+              >🏪 NYONDO General Hardware</small
+            >
             <small class="text-muted d-block">📅 {% now "F Y" %}</small>
           </div>
         </aside>
 
         <!-- MAIN CONTENT -->
         <main class="col-lg-10 col-md-9 p-4 p-lg-5">
-
           <div class="ns-breadcrumb">
             <a href="{% url 'customers' %}">Customers</a> /
             <span>Register Customer</span>
@@ -123,10 +201,18 @@
           {% if messages %}
           <div class="mb-3 mt-3">
             {% for message in messages %}
-            <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'success' in message.tags %}alert-success{% elif 'warning' in message.tags %}alert-warning{% endif %} alert-dismissible fade show d-flex align-items-center gap-2" role="alert">
-              {% if 'error' in message.tags %}⚠️{% elif 'success' in message.tags %}✅{% endif %}
+            <div
+              class="alert {% if 'error' in message.tags %}alert-error{% elif 'success' in message.tags %}alert-success{% elif 'warning' in message.tags %}alert-warning{% endif %} alert-dismissible fade show d-flex align-items-center gap-2"
+              role="alert"
+            >
+              {% if 'error' in message.tags %}⚠️{% elif 'success' in
+              message.tags %}✅{% endif %}
               <span>{{ message }}</span>
-              <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+              <button
+                type="button"
+                class="btn-close ms-auto"
+                data-bs-dismiss="alert"
+              ></button>
             </div>
             {% endfor %}
           </div>
@@ -137,14 +223,12 @@
             {% csrf_token %}
 
             <div class="ns-form-card">
-
               <!-- SECTION 1: PERSONAL DETAILS -->
               <div class="ns-section-header">
                 <div class="ns-section-dot"></div>
                 <div class="ns-section-title">Personal Details</div>
               </div>
               <div class="ns-section-body">
-
                 <!-- ROW 1: Full Name + Phone -->
                 <div class="row g-3 mb-3">
                   <div class="col-md-6">
@@ -178,7 +262,8 @@
                 <div class="row g-3 mb-3">
                   <div class="col-12">
                     <label class="ns-field-label" for="nin">
-                      National Identification Number (NIN) <span class="req">*</span>
+                      National Identification Number (NIN)
+                      <span class="req">*</span>
                     </label>
                     <input
                       type="text"
@@ -189,11 +274,24 @@
                       maxlength="14"
                     />
                     <div class="ns-char-row">
-                      <div class="ns-hint">Must start with CM (Male) or CF (Female) + 12 digits (14 total)</div>
+                      <div class="ns-hint">
+                        Must start with CM (Male) or CF (Female) + 12 digits (14
+                        total)
+                      </div>
                       <div class="ns-hint" id="nin-counter">0 / 14</div>
                     </div>
-                    <div id="genderPreview" style="display: none; margin-top: 8px; padding: 6px 12px; border-radius: 6px; font-size: 13px;">
-                      <i class="fa-solid fa-venus-mars"></i> Detected gender: <span id="detectedGender"></span>
+                    <div
+                      id="genderPreview"
+                      style="
+                        display: none;
+                        margin-top: 8px;
+                        padding: 6px 12px;
+                        border-radius: 6px;
+                        font-size: 13px;
+                      "
+                    >
+                      <i class="fa-solid fa-venus-mars"></i> Detected gender:
+                      <span id="detectedGender"></span>
                     </div>
                   </div>
                 </div>
@@ -209,16 +307,21 @@
                       value="Auto-detected from NIN"
                       readonly
                       disabled
-                      style="background-color: #f0f4f0; cursor: not-allowed;"
+                      style="background-color: #f0f4f0; cursor: not-allowed"
                     />
-                    <div class="ns-hint">Gender is automatically detected from NIN prefix (CM = Male, CF = Female)</div>
+                    <div class="ns-hint">
+                      Gender is automatically detected from NIN prefix (CM =
+                      Male, CF = Female)
+                    </div>
                   </div>
                 </div>
 
                 <!-- ROW 3: Area + Notes -->
                 <div class="row g-3">
                   <div class="col-md-6">
-                    <label class="ns-field-label" for="area">Area / Location</label>
+                    <label class="ns-field-label" for="area"
+                      >Area / Location</label
+                    >
                     <input
                       type="text"
                       id="area"
@@ -245,18 +348,20 @@
               <div class="ns-divider"></div>
 
               <!-- SECTION 2: DEPOSIT ELIGIBILITY -->
-              <div class="ns-section-header" style="border-bottom: none;">
+              <div class="ns-section-header" style="border-bottom: none">
                 <div class="ns-section-dot"></div>
                 <div class="ns-section-title">
                   Deposit Eligibility
                   <span class="ns-auto-badge">Auto-set on registration</span>
                 </div>
               </div>
-              <div class="ns-section-body" style="padding-top: 12px;">
+              <div class="ns-section-body" style="padding-top: 12px">
                 <div class="ns-deposit-panel">
                   <div class="ns-deposit-col">
                     <div class="ns-deposit-key">Eligible Products</div>
-                    <div class="ns-deposit-val">Cement, Iron sheets, Iron bars</div>
+                    <div class="ns-deposit-val">
+                      Cement, Iron sheets, Iron bars
+                    </div>
                   </div>
                   <div class="ns-deposit-col">
                     <div class="ns-deposit-key">Registration Date</div>
@@ -274,15 +379,22 @@
                   <i class="fa-solid fa-user-plus"></i> Register Customer
                 </button>
               </div>
-
             </div>
           </form>
         </main>
       </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
+      integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
+      crossorigin="anonymous"
+    ></script>
 
     <script>
       // NIN CHARACTER COUNTER AND GENDER DETECTION
@@ -307,32 +419,35 @@
         }
 
         if (len >= 2) {
-          if (prefix === 'CM') {
-            detectedGenderSpan.innerHTML = '<strong style="color: #0f6e56;">Male</strong> (CM prefix)';
-            genderPreview.style.display = 'block';
-            genderPreview.style.backgroundColor = '#e8f5e9';
-            genderPreview.style.color = '#2e7d32';
-            genderDisplay.value = 'Male (Auto-detected from NIN)';
-            genderDisplay.style.backgroundColor = '#e8f5e9';
-          } else if (prefix === 'CF') {
-            detectedGenderSpan.innerHTML = '<strong style="color: #0f6e56;">Female</strong> (CF prefix)';
-            genderPreview.style.display = 'block';
-            genderPreview.style.backgroundColor = '#e8f5e9';
-            genderPreview.style.color = '#2e7d32';
-            genderDisplay.value = 'Female (Auto-detected from NIN)';
-            genderDisplay.style.backgroundColor = '#e8f5e9';
+          if (prefix === "CM") {
+            detectedGenderSpan.innerHTML =
+              '<strong style="color: #0f6e56;">Male</strong> (CM prefix)';
+            genderPreview.style.display = "block";
+            genderPreview.style.backgroundColor = "#e8f5e9";
+            genderPreview.style.color = "#2e7d32";
+            genderDisplay.value = "Male (Auto-detected from NIN)";
+            genderDisplay.style.backgroundColor = "#e8f5e9";
+          } else if (prefix === "CF") {
+            detectedGenderSpan.innerHTML =
+              '<strong style="color: #0f6e56;">Female</strong> (CF prefix)';
+            genderPreview.style.display = "block";
+            genderPreview.style.backgroundColor = "#e8f5e9";
+            genderPreview.style.color = "#2e7d32";
+            genderDisplay.value = "Female (Auto-detected from NIN)";
+            genderDisplay.style.backgroundColor = "#e8f5e9";
           } else {
-            detectedGenderSpan.innerHTML = '<strong style="color: #d32f2f;">Invalid</strong> — Must start with CM or CF';
-            genderPreview.style.display = 'block';
-            genderPreview.style.backgroundColor = '#ffebee';
-            genderPreview.style.color = '#c62828';
-            genderDisplay.value = 'Invalid NIN Format';
-            genderDisplay.style.backgroundColor = '#ffebee';
+            detectedGenderSpan.innerHTML =
+              '<strong style="color: #d32f2f;">Invalid</strong> — Must start with CM or CF';
+            genderPreview.style.display = "block";
+            genderPreview.style.backgroundColor = "#ffebee";
+            genderPreview.style.color = "#c62828";
+            genderDisplay.value = "Invalid NIN Format";
+            genderDisplay.style.backgroundColor = "#ffebee";
           }
         } else {
-          genderPreview.style.display = 'none';
-          genderDisplay.value = 'Auto-detected from NIN';
-          genderDisplay.style.backgroundColor = '#f0f4f0';
+          genderPreview.style.display = "none";
+          genderDisplay.value = "Auto-detected from NIN";
+          genderDisplay.style.backgroundColor = "#f0f4f0";
         }
 
         ninInput.value = nin;
@@ -351,6 +466,5 @@
 
       validateNIN();
     </script>
-
   </body>
 </html>
