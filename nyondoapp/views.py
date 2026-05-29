@@ -119,13 +119,14 @@ def login_view(request):
         if not username and not password:
             messages.error(request, 'Please enter your username and password.')
         elif not username:
-            messages.error(request, 'Please enter your username.')
+            messages.error(request, 'Please enter your username.', extra_tags='username_error')
         elif not password:
-            messages.error(request, 'Please enter your password.')
+            messages.error(request, 'Please enter your password.', extra_tags='password_error')
         else:
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
+                messages.success(request, "Login successful. Welcome back!")
                 if user.is_superuser:
                     return redirect('accounts_dashboard')
                 if user.groups.filter(name='Sales Attendant').exists():
@@ -136,7 +137,7 @@ def login_view(request):
                     return redirect('stock')
                 return redirect('dashboard')
             else:
-                messages.error(request, 'Incorrect username or password. Please try again.')
+                messages.error(request, 'Incorrect username or password. Please try again.', extra_tags='credentials_error')
 
     return render(request, 'nyondoapp/login.html')
 
@@ -492,30 +493,48 @@ def add_sale_view(request):
         payment_method = request.POST.get('payment_method', 'Cash')
         notes = request.POST.get('notes', '').strip()
 
+        # Context to re-render the form with errors
+        def error_context(extra_tags=''):
+            return {
+                'stock_items': StockItem.objects.filter(quantity__gt=0, status='Active').order_by('item_name'),
+                'registered_customers': Customer.objects.all().order_by('full_name'),
+                'now': datetime.now(),
+                # Pass back what user typed so form repopulates
+                'posted_customer_name': customer_name,
+                'posted_phone': phone_number,
+                'posted_notes': notes,
+                'posted_payment_status': payment_status,
+                'posted_payment_method': payment_method,
+                'posted_wants_delivery': wants_delivery,
+                'posted_distance': distance,
+                'error_field': extra_tags,
+            }
+
         # ---- SERVER-SIDE VALIDATION ----
         if not customer_name:
-            messages.error(request, 'Customer name is required.')
-            return redirect('record_sales')
+            messages.error(request, 'Customer name is required.', extra_tags='customer_name_error')
+            return render(request, 'nyondoapp/record_sales.html', error_context('customer_name_error'))
 
         if not phone_number:
-            messages.error(request, 'Phone number is required.')
-            return redirect('record_sales')
+            messages.error(request, 'Phone number is required.', extra_tags='phone_error')
+            return render(request, 'nyondoapp/record_sales.html', error_context('phone_error'))
 
         if not re.match(r'^(07|03)\d{8}$', phone_number.replace(' ', '')):
-            messages.error(request, 'Enter a valid Ugandan phone number (e.g. 0701234567).')
-            return redirect('record_sales')
+            messages.error(request, 'Enter a valid Ugandan phone number (e.g. 0701234567).', extra_tags='phone_error')
+            return render(request, 'nyondoapp/record_sales.html', error_context('phone_error'))
 
-        if not item_ids or all(not i for i in item_ids):
-            messages.error(request, 'Please select at least one item.')
-            return redirect('record_sales')
+        valid_item_ids = [i for i in item_ids if i.strip()]
+        if not valid_item_ids:
+            messages.error(request, 'Please select at least one item.', extra_tags='items_error')
+            return render(request, 'nyondoapp/record_sales.html', error_context('items_error'))
         # ---- END VALIDATION ----
 
         registered_customer = None
         if payment_status.capitalize() == 'Credit':
             registered_customer_id = request.POST.get('registered_customer_id')
             if not registered_customer_id:
-                messages.error(request, 'Credit sales must be linked to a registered customer.')
-                return redirect('record_sales')
+                messages.error(request, 'Credit sales must be linked to a registered customer.', extra_tags='credit_error')
+                return render(request, 'nyondoapp/record_sales.html', error_context('credit_error'))
             registered_customer = get_object_or_404(Customer, id=registered_customer_id)
             customer_name = registered_customer.full_name
             phone_number = registered_customer.phone_number
@@ -536,16 +555,13 @@ def add_sale_view(request):
                 continue
             quantity = int(quantities[i]) if i < len(quantities) else 1
             if quantity <= 0:
-                messages.error(request, 'Quantity must be greater than zero for all items.')
-                return redirect('record_sales')
+                messages.error(request, 'Quantity must be greater than zero for all items.', extra_tags='items_error')
+                return render(request, 'nyondoapp/record_sales.html', error_context('items_error'))
             stock_item = get_object_or_404(StockItem, id=item_id)
             unit_price = stock_item.selling_price
             if quantity > stock_item.quantity:
-                messages.error(
-                    request,
-                    f'Not enough stock for {stock_item.item_name}. Only {stock_item.quantity} {stock_item.unit} available.'
-                )
-                return redirect('record_sales')
+                messages.error(request, f'Not enough stock for {stock_item.item_name}. Only {stock_item.quantity} {stock_item.unit} available.', extra_tags='items_error')
+                return render(request, 'nyondoapp/record_sales.html', error_context('items_error'))
             line_total = unit_price * quantity
             subtotal += line_total
             sale_items.append({
@@ -612,7 +628,6 @@ def delete_sale_view(request, sale_id):
     return redirect('sales_list')
 
 
-# EDIT SALE VIEW
 @login_required(login_url='login')
 def edit_sale_view(request, sale_id):
     denied = require_roles(request, SALES_ROLE)
@@ -621,17 +636,58 @@ def edit_sale_view(request, sale_id):
 
     sale = get_object_or_404(Sale, id=sale_id)
     if request.method == 'POST':
+        # Update basic sale details
         sale.customer_name = request.POST.get('customer_name', '').strip()
         sale.phone_number = request.POST.get('phone_number', '').strip()
         sale.payment_status = request.POST.get('payment_status', 'Pending').capitalize()
         payment_method_map = {
-            'cash': 'Cash',
-            'mobile_money': 'Mobile Money',
-            'bank_transfer': 'Bank Transfer',
+            'Cash': 'Cash',
+            'Mobile Money': 'Mobile Money',
+            'Bank Transfer': 'Bank Transfer',
         }
-        sale.payment_method = payment_method_map.get(request.POST.get('payment_method', 'cash'), 'Cash')
-        sale.notes = request.POST.get('notes', '').strip()
+        sale.payment_method = payment_method_map.get(request.POST.get('payment_method', 'Cash'), 'Cash')
+
+        # Update each sale item
+        sale_item_ids = request.POST.getlist('sale_item_id')
+        new_subtotal = Decimal('0')
+
+        for sale_item_id in sale_item_ids:
+            sale_item = get_object_or_404(SaleItem, id=sale_item_id)
+            new_item_id = request.POST.get(f'item_id_{sale_item_id}')
+            new_quantity = int(request.POST.get(f'quantity_{sale_item_id}', 1))
+
+            new_stock_item = get_object_or_404(StockItem, id=new_item_id)
+
+            # Restore old stock quantity
+            if sale_item.stock_item:
+                sale_item.stock_item.quantity += sale_item.quantity
+                sale_item.stock_item.save()
+
+            # Check new stock has enough
+            if new_quantity > new_stock_item.quantity:
+                messages.error(request, f'Not enough stock for {new_stock_item.item_name}. Only {new_stock_item.quantity} available.')
+                return redirect('sales_list')
+
+            # Deduct new quantity from stock
+            new_stock_item.quantity -= new_quantity
+            new_stock_item.save()
+
+            # Update the sale item
+            new_unit_price = new_stock_item.selling_price
+            new_line_total = new_unit_price * new_quantity
+            sale_item.stock_item = new_stock_item
+            sale_item.quantity = new_quantity
+            sale_item.unit_price = new_unit_price
+            sale_item.line_total = new_line_total
+            sale_item.save()
+
+            new_subtotal += new_line_total
+
+        # Recalculate sale totals
+        sale.subtotal = new_subtotal
+        sale.total_amount = new_subtotal + sale.transport_charge
         sale.save()
+
         messages.success(request, f'Sale #{sale_id} updated successfully.')
     return redirect('sales_list')
 
@@ -697,6 +753,7 @@ def sales_list_view(request):
         'credit_count': sales_list.filter(payment_status='Credit').count(),
         'low_stock_count': StockItem.objects.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count(),
         'now': datetime.now(),
+        'all_stock': StockItem.objects.all().order_by('item_name'),
     }
     return render(request, 'nyondoapp/sales_list.html', context)
 

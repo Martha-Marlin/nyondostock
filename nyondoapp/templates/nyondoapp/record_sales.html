@@ -120,24 +120,19 @@
                     <section class="form-section">
                         <h6>1. CUSTOMER DETAILS</h6>
                         <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Customer Name *</label>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    name="customer_name"
-                                    placeholder="e.g. John Katongole"
-                                />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Phone Number *</label>
-                                <input
-                                    type="tel"
-                                    class="form-control"
-                                    name="phone_number"
-                                    placeholder="e.g. 0701 234 567"
-                                />
-                            </div>
+                           <!-- Customer Name -->
+<div class="col-md-6">
+    <label class="form-label">Customer Name *</label>
+    <input type="text" name="customer_name" placeholder="e.g. John Katongole" value="{{ posted_customer_name }}" class="form-control {% for message in messages %}{% if 'customer_name_error' in message.tags %}is-invalid{% endif %}{% endfor %}" />
+    {% for message in messages %}{% if 'customer_name_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
+</div>
+
+<!-- Phone Number -->
+<div class="col-md-6">
+    <label class="form-label">Phone Number *</label>
+    <input type="tel" name="phone_number" placeholder="e.g. 0701 234 567" value="{{ posted_phone }}" class="form-control {% for message in messages %}{% if 'phone_error' in message.tags %}is-invalid{% endif %}{% endfor %}" />
+    {% for message in messages %}{% if 'phone_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
+</div>
                         </div>
 
                         <!-- REGISTERED CUSTOMER DROPDOWN - shown only for credit sales -->
@@ -163,7 +158,7 @@
                         <p class="field-help">Add as many items as the customer is buying. Price is auto-filled from stock.</p>
 
                         <!-- ITEMS TABLE -->
-                        <div class="table-responsive">
+                        <div class="table-responsive {% for message in messages %}{% if 'items_error' in message.tags %}border border-danger rounded{% endif %}{% endfor %}">
                             <table class="table table-bordered align-middle" id="items-table">
                                 <thead class="table-light">
                                     <tr>
@@ -178,7 +173,7 @@
                                     <!-- FIRST ROW - always present, cannot be removed -->
                                     <tr class="item-row">
                                         <td>
-                                            <select class="form-select form-select-sm item-select" name="item[]" required>
+                                            <select class="form-select form-select-sm item-select" name="item[]">
                                                 <option value="" disabled selected>Select item</option>
                                                 {% for item in stock_items %}
                                                 <option value="{{ item.id }}" data-price="{{ item.selling_price }}">
@@ -194,7 +189,6 @@
                                                 name="quantity[]"
                                                 min="1"
                                                 value="1"
-                                                required
                                             />
                                         </td>
                                         <td>
@@ -223,6 +217,8 @@
                                 </tbody>
                             </table>
                         </div>
+
+                        {% for message in messages %}{% if 'items_error' in message.tags %}<div class="text-danger small mt-1">{{ message }}</div>{% endif %}{% endfor %}
 
                         <!-- ADD ITEM BUTTON -->
                         <button type="button" class="btn btn-outline-success btn-sm" id="add-item-btn">
@@ -315,12 +311,8 @@
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Notes (optional)</label>
-                                <textarea
-                                    class="form-control"
-                                    name="notes"
-                                    rows="2"
-                                    placeholder="Any extra details..."
-                                ></textarea>
+                               
+                               <textarea class="form-control" name="notes" rows="2" placeholder="Any extra details...">{{ posted_notes }}</textarea>
                             </div>
                         </div>
                     </section>

@@ -324,48 +324,62 @@
                     {% csrf_token %}
                     <input type="hidden" name="action" value="edit" />
                     <div class="modal-body">
-                      <div class="mb-3">
-                        <label class="form-label">Customer name</label>
-                        <input
-                          type="text"
-                          name="customer_name"
-                          class="form-control form-control-sm"
-                          value="{{ sale.customer_name }}"
-                          required
-                        />
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Phone number</label>
-                        <input
-                          type="text"
-                          name="phone_number"
-                          class="form-control form-control-sm"
-                          value="{{ sale.phone_number }}"
-                        />
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Payment status</label>
-                        <select
-                          name="payment_status"
-                          class="form-select form-select-sm"
-                        >
-                          <option value="Paid" {% if sale.payment_status == 'Paid' %}selected{% endif %}>Paid</option>
-                          <option value="Pending" {% if sale.payment_status == 'Pending' %}selected{% endif %}>Pending</option>
-                          <option value="Credit" {% if sale.payment_status == 'Credit' %}selected{% endif %}>Credit</option>
-                        </select>
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Payment method</label>
-                        <select
-                          name="payment_method"
-                          class="form-select form-select-sm"
-                        >
-                          <option value="Cash" {% if sale.payment_method == 'Cash' %}selected{% endif %}>Cash</option>
-                          <option value="Mobile Money" {% if sale.payment_method == 'Mobile Money' %}selected{% endif %}>Mobile money</option>
-                          <option value="Bank Transfer" {% if sale.payment_method == 'Bank Transfer' %}selected{% endif %}>Bank transfer</option>
-                        </select>
-                      </div>
-                    </div>
+  <div class="mb-3">
+    <label class="form-label">Customer name</label>
+    <input type="text" name="customer_name" class="form-control form-control-sm" value="{{ sale.customer_name }}" required />
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Phone number</label>
+    <input type="text" name="phone_number" class="form-control form-control-sm" value="{{ sale.phone_number }}" />
+  </div>
+
+  <!-- ITEMS SECTION -->
+  <div class="mb-3">
+    <label class="form-label fw-bold">Items</label>
+    <table class="table table-sm table-bordered">
+      <thead class="table-light">
+        <tr>
+          <th>Item</th>
+          <th style="width:100px;">Quantity</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for line in sale.items.all %}
+        <tr>
+          <td>
+            <select name="item_id_{{ line.id }}" class="form-select form-select-sm">
+              {% for stock in all_stock %}
+              <option value="{{ stock.id }}" {% if line.stock_item and line.stock_item.id == stock.id %}selected{% endif %}>{{ stock.item_name }} — UGX {{ stock.selling_price|floatformat:0 }}</option>
+              {% endfor %}
+            </select>
+            <input type="hidden" name="sale_item_id" value="{{ line.id }}" />
+          </td>
+          <td>
+            <input type="number" name="quantity_{{ line.id }}" class="form-control form-control-sm" value="{{ line.quantity }}" min="1" />
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Payment status</label>
+    <select name="payment_status" class="form-select form-select-sm">
+      <option value="Paid" {% if sale.payment_status == 'Paid' %}selected{% endif %}>Paid</option>
+      <option value="Pending" {% if sale.payment_status == 'Pending' %}selected{% endif %}>Pending</option>
+      <option value="Credit" {% if sale.payment_status == 'Credit' %}selected{% endif %}>Credit</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Payment method</label>
+    <select name="payment_method" class="form-select form-select-sm">
+      <option value="Cash" {% if sale.payment_method == 'Cash' %}selected{% endif %}>Cash</option>
+      <option value="Mobile Money" {% if sale.payment_method == 'Mobile Money' %}selected{% endif %}>Mobile money</option>
+      <option value="Bank Transfer" {% if sale.payment_method == 'Bank Transfer' %}selected{% endif %}>Bank transfer</option>
+    </select>
+  </div>
+</div>
                     <div class="modal-footer">
                       <button
                         type="button"
