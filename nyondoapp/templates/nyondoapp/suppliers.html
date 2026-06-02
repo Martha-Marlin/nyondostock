@@ -17,8 +17,12 @@
     <nav class="topbar">
       <div class="topbar-left">
         <div class="logo">
-          <img src="{% static 'images/logo-edit.png' %}" alt="NyondoStock Logo" />
-        </div>
+    <svg width="42" height="42" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="50,6 90,28 90,72 50,94 10,72 10,28" fill="rgba(255,255,255,0.2)"/>
+        <polygon points="50,14 82,32 82,68 50,86 18,68 18,32" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
+        <text x="50" y="64" text-anchor="middle" font-family="DM Sans, Arial, sans-serif" font-weight="900" font-size="42" fill="#ffffff">N</text>
+    </svg>
+</div>
         <div>
           <div class="brand-name">NyondoStock</div>
           <div class="brand-sub">NYONDO General Hardware LTD</div>
@@ -129,7 +133,7 @@
           {% if messages %}
           <div class="mb-3">
             {% for message in messages %}
-              {% if 'supplier_name_error' not in message.tags and 'phone_error' not in message.tags and 'edit_supplier_name_error' not in message.tags and 'edit_phone_error' not in message.tags and 'tin_error' not in message.tags and 'edit_tin_error' not in message.tags %}
+              {% if 'supplier_name_error' not in message.tags and 'phone_error' not in message.tags and 'edit_supplier_name_error' not in message.tags and 'edit_phone_error' not in message.tags and 'tin_error' not in message.tags and 'edit_tin_error' not in message.tags and 'email_error' not in message.tags and 'edit_email_error' not in message.tags and 'location_error' not in message.tags and 'edit_location_error' not in message.tags and 'payment_terms_error' not in message.tags and 'edit_payment_terms_error' not in message.tags %}
               <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'success' in message.tags %}alert-success{% elif 'warning' in message.tags %}alert-warning{% endif %} alert-dismissible fade show d-flex align-items-center gap-2" role="alert">
                 {% if 'error' in message.tags %}<i class="fa-solid fa-triangle-exclamation me-1"></i>{% elif 'success' in message.tags %}<i class="fa-solid fa-circle-check me-1"></i>{% endif %}
                 <span>{{ message }}</span>
@@ -207,7 +211,7 @@
                 <tbody>
                   {% for supplier in suppliers %}
                   <tr>
-                    <td class="text-muted">SUP-{{ supplier.id|stringformat:"03d" }}</td>
+                    <td class="text-muted">SUP-{{ forloop.counter|stringformat:"03d" }}</td>
                     <td><strong>{{ supplier.supplier_name }}</strong></td>
                     <td>{{ supplier.phone }}</td>
                     <td>{{ supplier.email|default:"—" }}</td>
@@ -274,44 +278,49 @@
                       <!-- Show validation errors inside the modal if edit failed -->
                       {% if edit_error and edit_supplier_id == supplier.id %}
                         {% for message in messages %}
-                          {% if 'edit_supplier_name_error' in message.tags or 'edit_phone_error' in message.tags or 'edit_tin_error' in message.tags %}
+                          {% if 'edit_supplier_name_error' in message.tags or 'edit_phone_error' in message.tags or 'edit_tin_error' in message.tags or 'edit_email_error' in message.tags or 'edit_location_error' in message.tags or 'edit_payment_terms_error' in message.tags %}
                             <div class="alert alert-danger py-2 small mb-3"><i class="fa-solid fa-triangle-exclamation me-1"></i> {{ message }}</div>
                           {% endif %}
                         {% endfor %}
                       {% endif %}
                       <div class="row g-3">
                         <div class="col-md-6">
-                          <label class="form-label">Supplier Name *</label>
+                          <label class="form-label">Supplier Name <span class="text-danger">*</span></label>
                           <input type="text" name="supplier_name" value="{% if edit_error and edit_supplier_id == supplier.id %}{{ posted_edit_supplier_name|default:supplier.supplier_name }}{% else %}{{ supplier.supplier_name }}{% endif %}" class="form-control {% if edit_error and edit_supplier_id == supplier.id %}{% for message in messages %}{% if 'edit_supplier_name_error' in message.tags %}is-invalid{% endif %}{% endfor %}{% endif %}" />
                           {% if edit_error and edit_supplier_id == supplier.id %}{% for message in messages %}{% if 'edit_supplier_name_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}{% endif %}
                         </div>
                         <div class="col-md-6">
-                          <label class="form-label">Phone Number *</label>
+                          <label class="form-label">Phone Number <span class="text-danger">*</span></label>
                           <input type="tel" name="phone" value="{% if edit_error and edit_supplier_id == supplier.id %}{{ posted_edit_phone|default:supplier.phone }}{% else %}{{ supplier.phone }}{% endif %}" class="form-control {% if edit_error and edit_supplier_id == supplier.id %}{% for message in messages %}{% if 'edit_phone_error' in message.tags %}is-invalid{% endif %}{% endfor %}{% endif %}" />
                           {% if edit_error and edit_supplier_id == supplier.id %}{% for message in messages %}{% if 'edit_phone_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}{% endif %}
                         </div>
                         <div class="col-md-6">
-                          <label class="form-label">TIN Number</label>
-                          <input type="text" name="tin_number" value="{% if edit_error and edit_supplier_id == supplier.id %}{{ posted_edit_tin|default:supplier.tin_number|default:'' }}{% else %}{{ supplier.tin_number|default:'' }}{% endif %}" class="form-control {% if edit_error and edit_supplier_id == supplier.id %}{% for message in messages %}{% if 'edit_tin_error' in message.tags %}is-invalid{% endif %}{% endfor %}{% endif %}" maxlength="10" inputmode="numeric" oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10)" />
+                          <label class="form-label">TIN Number <span class="text-danger">*</span></label>
+                          <input type="text" name="tin_number" value="{% if edit_error and edit_supplier_id == supplier.id %}{{ posted_edit_tin|default:supplier.tin_number|default:'' }}{% else %}{{ supplier.tin_number|default:'' }}{% endif %}" class="form-control {% if edit_error and edit_supplier_id == supplier.id %}{% for message in messages %}{% if 'edit_tin_error' in message.tags %}is-invalid{% endif %}{% endfor %}{% endif %}" />
                           {% if edit_error and edit_supplier_id == supplier.id %}{% for message in messages %}{% if 'edit_tin_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}{% endif %}
-                          <small class="text-muted">Uganda Revenue Authority Tax ID</small>
+                          <small class="text-muted">Uganda Revenue Authority Tax ID (exactly 10 digits)</small>
                         </div>
                         <div class="col-md-6">
-                          <label class="form-label">Email (optional)</label>
-                          <input type="email" name="email" value="{% if edit_error and edit_supplier_id == supplier.id %}{{ posted_edit_email|default:supplier.email|default:'' }}{% else %}{{ supplier.email|default:'' }}{% endif %}" class="form-control" />
+                          <label class="form-label">Email <span class="text-danger">*</span></label>
+                          <input type="email" name="email" value="{% if edit_error and edit_supplier_id == supplier.id %}{{ posted_edit_email|default:supplier.email|default:'' }}{% else %}{{ supplier.email|default:'' }}{% endif %}" class="form-control {% if edit_error and edit_supplier_id == supplier.id %}{% for message in messages %}{% if 'edit_email_error' in message.tags %}is-invalid{% endif %}{% endfor %}{% endif %}" />
+                          {% if edit_error and edit_supplier_id == supplier.id %}{% for message in messages %}{% if 'edit_email_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}{% endif %}
+                          <small class="text-muted">Valid email address (e.g., supplier@example.com)</small>
                         </div>
                         <div class="col-md-6">
-                          <label class="form-label">Location (optional)</label>
-                          <input type="text" name="location" value="{% if edit_error and edit_supplier_id == supplier.id %}{{ posted_edit_location|default:supplier.location|default:'' }}{% else %}{{ supplier.location|default:'' }}{% endif %}" class="form-control" />
+                          <label class="form-label">Location <span class="text-danger">*</span></label>
+                          <input type="text" name="location" value="{% if edit_error and edit_supplier_id == supplier.id %}{{ posted_edit_location|default:supplier.location|default:'' }}{% else %}{{ supplier.location|default:'' }}{% endif %}" class="form-control {% if edit_error and edit_supplier_id == supplier.id %}{% for message in messages %}{% if 'edit_location_error' in message.tags %}is-invalid{% endif %}{% endfor %}{% endif %}" />
+                          {% if edit_error and edit_supplier_id == supplier.id %}{% for message in messages %}{% if 'edit_location_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}{% endif %}
+                          <small class="text-muted">Physical address or area</small>
                         </div>
                         <div class="col-md-6">
-                          <label class="form-label">Payment Terms</label>
+                          <label class="form-label">Payment Terms <span class="text-danger">*</span></label>
                           <select class="form-select" name="payment_terms">
                             <option value="30" {% if edit_error and edit_supplier_id == supplier.id and posted_edit_payment_terms == '30' %}selected{% elif supplier.payment_terms == 30 and not edit_error %}selected{% endif %}>Net 30 days</option>
                             <option value="15" {% if edit_error and edit_supplier_id == supplier.id and posted_edit_payment_terms == '15' %}selected{% elif supplier.payment_terms == 15 and not edit_error %}selected{% endif %}>Net 15 days</option>
                             <option value="7" {% if edit_error and edit_supplier_id == supplier.id and posted_edit_payment_terms == '7' %}selected{% elif supplier.payment_terms == 7 and not edit_error %}selected{% endif %}>Net 7 days</option>
                             <option value="0" {% if edit_error and edit_supplier_id == supplier.id and posted_edit_payment_terms == '0' %}selected{% elif supplier.payment_terms == 0 and not edit_error %}selected{% endif %}>Cash on Delivery</option>
                           </select>
+                          {% if edit_error and edit_supplier_id == supplier.id %}{% for message in messages %}{% if 'edit_payment_terms_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}{% endif %}
                         </div>
                         <div class="col-md-6">
                           <label class="form-label">Status</label>
@@ -357,46 +366,71 @@
             {% csrf_token %}
             <div class="modal-body">
               <!-- Field-specific error alerts shown inside the modal -->
-              {% for message in messages %}{% if 'supplier_name_error' in message.tags or 'phone_error' in message.tags or 'tin_error' in message.tags %}<div class="alert alert-danger py-2 small mb-3"><i class="fa-solid fa-triangle-exclamation me-1"></i> {{ message }}</div>{% endif %}{% endfor %}
+              {% for message in messages %}
+                {% if 'supplier_name_error' in message.tags or 'phone_error' in message.tags or 'tin_error' in message.tags or 'email_error' in message.tags or 'location_error' in message.tags or 'payment_terms_error' in message.tags %}
+                  <div class="alert alert-danger py-2 small mb-3"><i class="fa-solid fa-triangle-exclamation me-1"></i> {{ message }}</div>
+                {% endif %}
+              {% endfor %}
               <div class="row g-3">
+                <!-- Supplier Name - Required -->
                 <div class="col-md-6">
-                  <label class="form-label">Supplier Name *</label>
+                  <label class="form-label">Supplier Name <span class="text-danger">*</span></label>
                   <input type="text" class="form-control {% for message in messages %}{% if 'supplier_name_error' in message.tags %}is-invalid{% endif %}{% endfor %}" name="supplier_name" placeholder="e.g. Kampala Hardware Supplies" value="{{ posted_supplier_name|default:'' }}" />
                   {% for message in messages %}{% if 'supplier_name_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
                 </div>
+                
+                <!-- Phone Number - Required -->
                 <div class="col-md-6">
-                  <label class="form-label">Phone Number *</label>
-                  <input type="tel" class="form-control {% for message in messages %}{% if 'phone_error' in message.tags %}is-invalid{% endif %}{% endfor %}" name="phone" placeholder="e.g. 0700 000 000" value="{{ posted_phone|default:'' }}" />
+                  <label class="form-label">Phone Number <span class="text-danger">*</span></label>
+                  <input type="tel" class="form-control {% for message in messages %}{% if 'phone_error' in message.tags %}is-invalid{% endif %}{% endfor %}" name="phone" placeholder="e.g. 0700000000" value="{{ posted_phone|default:'' }}" />
                   {% for message in messages %}{% if 'phone_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
+                  <small class="text-muted">Valid Ugandan phone number (10 digits, starts with 07 or 03)</small>
                 </div>
+                
+                <!-- TIN Number - Required -->
                 <div class="col-md-6">
-                  <label class="form-label">TIN Number <span class="text-muted small">(optional)</span></label>
-                  <input type="text" class="form-control {% for message in messages %}{% if 'tin_error' in message.tags %}is-invalid{% endif %}{% endfor %}" name="tin_number" placeholder="e.g. 1234567890" maxlength="10" inputmode="numeric" oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10)" value="{{ posted_tin|default:'' }}" />
+                  <label class="form-label">TIN Number <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control {% for message in messages %}{% if 'tin_error' in message.tags %}is-invalid{% endif %}{% endfor %}" name="tin_number" placeholder="e.g. 1234567890" value="{{ posted_tin|default:'' }}" />
                   {% for message in messages %}{% if 'tin_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
-                  <small class="text-muted">Uganda Revenue Authority Tax ID</small>
+                  <small class="text-muted">Uganda Revenue Authority Tax ID (exactly 10 digits, numbers only)</small>
                 </div>
+                
+                <!-- Email - Required -->
                 <div class="col-md-6">
-                  <label class="form-label">Email (optional)</label>
-                  <input type="email" class="form-control" name="email" placeholder="supplier@email.com" value="{{ posted_email|default:'' }}" />
+                  <label class="form-label">Email <span class="text-danger">*</span></label>
+                  <input type="email" class="form-control {% for message in messages %}{% if 'email_error' in message.tags %}is-invalid{% endif %}{% endfor %}" name="email" placeholder="supplier@example.com" value="{{ posted_email|default:'' }}" />
+                  {% for message in messages %}{% if 'email_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
+                  <small class="text-muted">Valid email address (e.g., supplier@example.com)</small>
                 </div>
+                
+                <!-- Location - Required -->
                 <div class="col-md-6">
-                  <label class="form-label">Location (optional)</label>
-                  <input type="text" class="form-control" name="location" placeholder="e.g. Nakawa, Kampala" value="{{ posted_location|default:'' }}" />
+                  <label class="form-label">Location <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control {% for message in messages %}{% if 'location_error' in message.tags %}is-invalid{% endif %}{% endfor %}" name="location" placeholder="e.g. Nakawa, Kampala" value="{{ posted_location|default:'' }}" />
+                  {% for message in messages %}{% if 'location_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
+                  <small class="text-muted">Physical address or area</small>
                 </div>
+                
+                <!-- Initial Balance - Optional -->
                 <div class="col-md-6">
                   <label class="form-label">Initial Balance (UGX)</label>
                   <input type="number" class="form-control" name="initial_balance" placeholder="0" min="0" value="{{ posted_balance|default:'' }}" />
                   <small class="text-muted">Starting credit balance if any</small>
                 </div>
+                
+                <!-- Payment Terms - Required -->
                 <div class="col-md-6">
-                  <label class="form-label">Payment Terms</label>
+                  <label class="form-label">Payment Terms <span class="text-danger">*</span></label>
                   <select class="form-select" name="payment_terms">
                     <option value="30" {% if posted_payment_terms == '30' %}selected{% endif %}>Net 30 days</option>
                     <option value="15" {% if posted_payment_terms == '15' %}selected{% endif %}>Net 15 days</option>
                     <option value="7" {% if posted_payment_terms == '7' %}selected{% endif %}>Net 7 days</option>
                     <option value="0" {% if posted_payment_terms == '0' %}selected{% endif %}>Cash on Delivery</option>
                   </select>
+                  {% for message in messages %}{% if 'payment_terms_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
                 </div>
+                
+                <!-- Additional Notes - Optional -->
                 <div class="col-12">
                   <label class="form-label">Additional Notes</label>
                   <textarea class="form-control" name="notes" rows="2" placeholder="Any special terms or notes about this supplier...">{{ posted_notes|default:'' }}</textarea>
@@ -411,6 +445,8 @@
         </div>
       </div>
     </div>
+
+    
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>

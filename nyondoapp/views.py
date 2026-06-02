@@ -754,8 +754,7 @@ def sales_list_view(request):
     }
     return render(request, 'nyondoapp/sales_list.html', context)
 
-
-# SUPPLIERS LIST VIEW
+# SUPPLIERS LIST VIEW - displays all suppliers
 @login_required(login_url='login')
 def suppliers_view(request):
     denied = require_roles(request, ACCOUNTS_ROLE, MANAGER_ROLE)
@@ -788,8 +787,7 @@ def suppliers_view(request):
     }
     return render(request, 'nyondoapp/suppliers.html', context)
 
-
-# ADD SUPPLIER VIEW
+# ADD SUPPLIER VIEW - handles adding a new supplier
 @login_required(login_url='login')
 def add_supplier_view(request):
     denied = require_roles(request, ACCOUNTS_ROLE, MANAGER_ROLE)
@@ -828,11 +826,14 @@ def add_supplier_view(request):
                 'posted_notes': notes,
             })
 
-        # ---- SERVER-SIDE VALIDATION ----
+        # Server-side validation
+        
+        # Supplier Name - Required
         if not supplier_name:
             messages.error(request, 'Supplier name is required.', extra_tags='supplier_name_error')
             return error_render('supplier_name_error')
 
+        # Phone Number - Required
         if not phone:
             messages.error(request, 'Phone number is required.', extra_tags='phone_error')
             return error_render('phone_error')
@@ -845,20 +846,56 @@ def add_supplier_view(request):
             messages.error(request, 'A supplier with this phone number already exists.', extra_tags='phone_error')
             return error_render('phone_error')
 
+        # TIN Number - Required
         if not tin_number:
             messages.error(request, 'TIN number is required.', extra_tags='tin_error')
             return error_render('tin_error')
+        
         if not tin_number.isdigit() or len(tin_number) != 10:
             messages.error(request, 'TIN number must be exactly 10 digits (numbers only).', extra_tags='tin_error')
             return error_render('tin_error')
-        # END VALIDATION 
+        
+        if Supplier.objects.filter(tin_number=tin_number).exists():
+            messages.error(request, 'A supplier with this TIN number already exists.', extra_tags='tin_error')
+            return error_render('tin_error')
+
+        # Email - Required
+        if not email:
+            messages.error(request, 'Email address is required.', extra_tags='email_error')
+            return error_render('email_error')
+        
+        if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
+            messages.error(request, 'Please enter a valid email address (e.g., supplier@example.com).', extra_tags='email_error')
+            return error_render('email_error')
+
+        # Location - Required
+        if not location:
+            messages.error(request, 'Location is required.', extra_tags='location_error')
+            return error_render('location_error')
+
+        # Payment Terms - Required
+        if not payment_terms:
+            messages.error(request, 'Payment terms are required.', extra_tags='payment_terms_error')
+            return error_render('payment_terms_error')
+        
+        try:
+            payment_terms_int = int(payment_terms)
+            if payment_terms_int not in [0, 7, 15, 30]:
+                messages.error(request, 'Payment terms must be 0 (COD), 7, 15, or 30 days.', extra_tags='payment_terms_error')
+                return error_render('payment_terms_error')
+        except ValueError:
+            messages.error(request, 'Payment terms must be a valid number.', extra_tags='payment_terms_error')
+            return error_render('payment_terms_error')
+
+        # Initial Balance - Optional
+        # Notes - Optional
 
         Supplier.objects.create(
             supplier_name=supplier_name,
             phone=phone,
-            tin_number=tin_number or None,
-            email=email or None,
-            location=location or None,
+            tin_number=tin_number,
+            email=email,
+            location=location,
             balance=Decimal(initial_balance or 0),
             payment_terms=int(payment_terms),
             notes=notes or None,
@@ -868,7 +905,7 @@ def add_supplier_view(request):
     return redirect('suppliers')
 
 
-# EDIT SUPPLIER VIEW
+# EDIT SUPPLIER VIEW - handles editing a supplier
 @login_required(login_url='login')
 def edit_supplier_view(request, supplier_id):
     denied = require_roles(request, ACCOUNTS_ROLE, MANAGER_ROLE)
@@ -909,11 +946,14 @@ def edit_supplier_view(request, supplier_id):
                 'posted_edit_notes': notes,
             })
 
-        # ---- SERVER-SIDE VALIDATION ----
+        # Server-side validation
+        
+        # Supplier Name - Required
         if not supplier_name:
             messages.error(request, 'Supplier name is required.', extra_tags='edit_supplier_name_error')
             return error_render('edit_supplier_name_error')
 
+        # Phone Number - Required
         if not phone:
             messages.error(request, 'Phone number is required.', extra_tags='edit_phone_error')
             return error_render('edit_phone_error')
@@ -926,19 +966,52 @@ def edit_supplier_view(request, supplier_id):
             messages.error(request, 'Another supplier with this phone number already exists.', extra_tags='edit_phone_error')
             return error_render('edit_phone_error')
 
+        # TIN Number - Required
         if not tin_number:
-            messages.error(request, 'TIN number is required.', extra_tags='tin_error')
-            return error_render('tin_error')
+            messages.error(request, 'TIN number is required.', extra_tags='edit_tin_error')
+            return error_render('edit_tin_error')
+        
         if not tin_number.isdigit() or len(tin_number) != 10:
-            messages.error(request, 'TIN number must be exactly 10 digits (numbers only).', extra_tags='tin_error')
-            return error_render('tin_error')
-        # ---- END VALIDATION ----
+            messages.error(request, 'TIN number must be exactly 10 digits (numbers only).', extra_tags='edit_tin_error')
+            return error_render('edit_tin_error')
+        
+        if Supplier.objects.filter(tin_number=tin_number).exclude(id=supplier_id).exists():
+            messages.error(request, 'Another supplier with this TIN number already exists.', extra_tags='edit_tin_error')
+            return error_render('edit_tin_error')
+
+        # Email - Required
+        if not email:
+            messages.error(request, 'Email address is required.', extra_tags='edit_email_error')
+            return error_render('edit_email_error')
+        
+        if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
+            messages.error(request, 'Please enter a valid email address (e.g., supplier@example.com).', extra_tags='edit_email_error')
+            return error_render('edit_email_error')
+
+        # Location - Required
+        if not location:
+            messages.error(request, 'Location is required.', extra_tags='edit_location_error')
+            return error_render('edit_location_error')
+
+        # Payment Terms - Required
+        if not payment_terms:
+            messages.error(request, 'Payment terms are required.', extra_tags='edit_payment_terms_error')
+            return error_render('edit_payment_terms_error')
+        
+        try:
+            payment_terms_int = int(payment_terms)
+            if payment_terms_int not in [0, 7, 15, 30]:
+                messages.error(request, 'Payment terms must be 0 (COD), 7, 15, or 30 days.', extra_tags='edit_payment_terms_error')
+                return error_render('edit_payment_terms_error')
+        except ValueError:
+            messages.error(request, 'Payment terms must be a valid number.', extra_tags='edit_payment_terms_error')
+            return error_render('edit_payment_terms_error')
 
         supplier.supplier_name = supplier_name
         supplier.phone = phone
-        supplier.tin_number = tin_number or None
-        supplier.email = email or None
-        supplier.location = location or None
+        supplier.tin_number = tin_number
+        supplier.email = email
+        supplier.location = location
         supplier.payment_terms = int(payment_terms)
         supplier.status = status
         supplier.notes = notes or None

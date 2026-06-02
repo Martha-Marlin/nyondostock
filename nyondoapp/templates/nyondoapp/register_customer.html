@@ -199,7 +199,7 @@
             Only customers requiring the deposit scheme need to be registered.
           </div>
 
-          <!-- Flash messages for user feedback -->
+          <!-- Flash messages for general feedback (non-field specific) -->
           {% if messages %}
           <div class="mb-3 mt-3">
             {% for message in messages %}
@@ -217,7 +217,7 @@
           </div>
           {% endif %}
 
-          <!-- Main registration form - all validation happens server-side -->
+          <!-- Main registration form - Django server-side validation only -->
           <form method="POST" action="{% url 'register_customer' %}">
             {% csrf_token %}
 
@@ -234,11 +234,19 @@
                     <label class="ns-field-label" for="full_name">
                       Full Name <span class="req">*</span>
                     </label>
-                    <input type="text" id="full_name" name="full_name"
-  class="ns-input {% for message in messages %}{% if 'full_name_error' in message.tags %}is-invalid{% endif %}{% endfor %}"
-  placeholder="e.g. John Okello"
-  value="{{ posted_full_name|default:'' }}" />
-{% for message in messages %}{% if 'full_name_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
+                    <input 
+                      type="text" 
+                      id="full_name" 
+                      name="full_name"
+                      class="ns-input {% for message in messages %}{% if 'full_name_error' in message.tags %}is-invalid{% endif %}{% endfor %}"
+                      placeholder="e.g. John Okello"
+                      value="{{ posted_full_name|default:'' }}"
+                    />
+                    {% for message in messages %}
+                      {% if 'full_name_error' in message.tags %}
+                        <div class="invalid-feedback d-block">{{ message }}</div>
+                      {% endif %}
+                    {% endfor %}
                   </div>
                   <div class="col-md-6">
                     <label class="ns-field-label" for="phone_number">
@@ -251,12 +259,13 @@
                       class="ns-input {% for message in messages %}{% if 'phone_error' in message.tags %}is-invalid{% endif %}{% endfor %}"
                       placeholder="0701234567"
                       value="{{ posted_phone|default:'' }}"
-                      inputmode="numeric"
-                      pattern="[0-9]{10}"
-                      title="Please enter 10 digits only"
                     />
-{% for message in messages %}{% if 'phone_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
-                    <div class="ns-hint">Must be a valid Ugandan number (10 digits, starts with 07 or 03)</div>
+                    {% for message in messages %}
+                      {% if 'phone_error' in message.tags %}
+                        <div class="invalid-feedback d-block">{{ message }}</div>
+                      {% endif %}
+                    {% endfor %}
+                    <div class="ns-hint">Valid Ugandan phone number (10 digits, starts with 07 or 03)</div>
                   </div>
                 </div>
 
@@ -273,12 +282,15 @@
                       name="nin"
                       class="ns-input {% for message in messages %}{% if 'nin_error' in message.tags %}is-invalid{% endif %}{% endfor %}"
                       placeholder="e.g. CM123456789012 or CF123456789012"
-                      maxlength="14"
                       value="{{ posted_nin|default:'' }}"
                     />
-{% for message in messages %}{% if 'nin_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
+                    {% for message in messages %}
+                      {% if 'nin_error' in message.tags %}
+                        <div class="invalid-feedback d-block">{{ message }}</div>
+                      {% endif %}
+                    {% endfor %}
                     <div class="ns-hint">
-                      Must start with CM (Male) or CF (Female) + 12 digits (14 total)
+                      Must start with CM (Male) or CF (Female) + 12 characters (14 total)
                     </div>
                   </div>
                 </div>
@@ -306,15 +318,25 @@
                 <div class="row g-3">
                   <div class="col-md-6">
                     <label class="ns-field-label" for="area">Area / Location</label>
-                    <input type="text" id="area" name="area" class="ns-input"
+                    <input 
+                      type="text" 
+                      id="area" 
+                      name="area" 
+                      class="ns-input"
                       placeholder="e.g. Bweyogerere"
-                      value="{{ posted_area|default:'' }}" />
+                      value="{{ posted_area|default:'' }}"
+                    />
                   </div>
                   <div class="col-md-6">
                     <label class="ns-field-label" for="notes">Notes</label>
-                    <input type="text" id="notes" name="notes" class="ns-input"
+                    <input 
+                      type="text" 
+                      id="notes" 
+                      name="notes" 
+                      class="ns-input"
                       placeholder="Any additional details"
-                      value="{{ posted_notes|default:'' }}" />
+                      value="{{ posted_notes|default:'' }}"
+                    />
                     <div class="ns-hint">Optional</div>
                   </div>
                 </div>
@@ -360,7 +382,7 @@
       </div>
     </div>
 
-    <!-- Bootstrap JS only - no custom JavaScript for gender detection -->
+    <!-- Bootstrap JS only -->
     <script
       src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
       integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
