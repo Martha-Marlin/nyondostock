@@ -1051,7 +1051,7 @@ def supplier_transactions_view(request, supplier_id):
     return render(request, 'nyondoapp/supplier_transactions.html', context)
 
 
-# RECORD SUPPLIER TRANSACTION VIEW
+# RECORD SUPPLIER TRANSACTION VIEW (UPDATED with error handling)
 @login_required(login_url='login')
 def record_payment_view(request, supplier_id):
     denied = require_roles(request, ACCOUNTS_ROLE, MANAGER_ROLE)
@@ -1059,20 +1059,51 @@ def record_payment_view(request, supplier_id):
         return denied
 
     supplier = get_object_or_404(Supplier, id=supplier_id)
+    
     if request.method == 'POST':
         transaction_type = request.POST.get('transaction_type', 'Payment')
-        amount = Decimal(request.POST.get('amount', 0))
+        amount_raw = request.POST.get('amount', '').strip()
+        payment_method = request.POST.get('payment_method', 'Cash')
+        reference_number = request.POST.get('reference_number', '').strip()
+        description = request.POST.get('description', '').strip()
 
+        def error_render():
+            return render(request, 'nyondoapp/supplier_transactions.html', {
+                'supplier': supplier,
+                'transactions': supplier.transactions.all(),
+                'low_stock_count': StockItem.objects.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count(),
+                'transaction_error': True,
+                'posted_amount': amount_raw,
+                'posted_reference': reference_number,
+                'posted_description': description,
+            })
+
+        # Server-side validation
+        if not amount_raw:
+            messages.error(request, 'Amount is required.', extra_tags='amount_error')
+            return error_render()
+
+        try:
+            amount = Decimal(amount_raw)
+            if amount <= 0:
+                messages.error(request, 'Amount must be greater than zero.', extra_tags='amount_error')
+                return error_render()
+        except:
+            messages.error(request, 'Please enter a valid amount.', extra_tags='amount_error')
+            return error_render()
+
+        # Create the transaction
         SupplierTransaction.objects.create(
             supplier=supplier,
             transaction_type=transaction_type,
             amount=amount,
-            payment_method=request.POST.get('payment_method', 'Cash'),
-            reference_number=request.POST.get('reference_number', '').strip() or None,
-            description=request.POST.get('description', '').strip() or None,
+            payment_method=payment_method,
+            reference_number=reference_number or None,
+            description=description or None,
             created_by=request.user,
         )
 
+        # Update supplier balance
         if transaction_type == 'Credit':
             supplier.balance += amount
         elif transaction_type in ['Payment', 'Adjustment']:
@@ -1080,6 +1111,8 @@ def record_payment_view(request, supplier_id):
         supplier.save()
 
         messages.success(request, f'Transaction of UGX {amount:,.0f} recorded successfully.')
+        return redirect('supplier_transactions', supplier_id=supplier.id)
+
     return redirect('supplier_transactions', supplier_id=supplier.id)
 
 
@@ -1115,36 +1148,57 @@ def add_supplier_credit_view(request, supplier_id):
         return denied
 
     supplier = get_object_or_404(Supplier, id=supplier_id)
+    
     if request.method == 'POST':
         description = request.POST.get('description', '').strip()
         due_date = request.POST.get('due_date', '').strip()
         total_amount_raw = request.POST.get('total_amount', '').strip()
 
-        # ---- SERVER-SIDE VALIDATION ----
+        # Helper function to render errors
+        def error_render():
+            credits = supplier.credits.all()
+            total_owed = sum(c.total_amount for c in credits)
+            total_paid = sum(c.amount_paid for c in credits)
+            return render(request, 'nyondoapp/supplier_credit_detail.html', {
+                'supplier': supplier,
+                'credits': credits,
+                'total_owed': total_owed,
+                'total_paid': total_paid,
+                'total_outstanding': total_owed - total_paid,
+                'unpaid_count': credits.filter(status='Unpaid').count(),
+                'partial_count': credits.filter(status='Partial').count(),
+                'add_credit_error': True,
+                'posted_description': description,
+                'posted_total_amount': total_amount_raw,
+                'posted_due_date': due_date,
+                'low_stock_count': StockItem.objects.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count(),
+            })
+
+        # Server-side validation
         if not description:
-            messages.error(request, 'Description is required.')
-            return redirect('supplier_credit_detail', supplier_id=supplier.id)
+            messages.error(request, 'Description is required.', extra_tags='description_error')
+            return error_render()
 
         if not total_amount_raw:
-            messages.error(request, 'Credit amount is required.')
-            return redirect('supplier_credit_detail', supplier_id=supplier.id)
+            messages.error(request, 'Credit amount is required.', extra_tags='total_amount_error')
+            return error_render()
 
         total_amount = Decimal(total_amount_raw)
 
         if total_amount <= 0:
-            messages.error(request, 'Credit amount must be greater than zero.')
-            return redirect('supplier_credit_detail', supplier_id=supplier.id)
+            messages.error(request, 'Credit amount must be greater than zero.', extra_tags='total_amount_error')
+            return error_render()
 
         if not due_date:
-            messages.error(request, 'Due date is required.')
-            return redirect('supplier_credit_detail', supplier_id=supplier.id)
+            messages.error(request, 'Due date is required.', extra_tags='due_date_error')
+            return error_render()
 
         due_date_parsed = datetime.strptime(due_date, '%Y-%m-%d').date()
         if due_date_parsed < timezone.now().date():
-            messages.error(request, 'Due date cannot be in the past.')
-            return redirect('supplier_credit_detail', supplier_id=supplier.id)
-        # ---- END VALIDATION ----
+            messages.error(request, 'Due date cannot be in the past.', extra_tags='due_date_error')
+            return error_render()
 
+        # Save the credit
         SupplierCredit.objects.create(
             supplier=supplier,
             description=description,
@@ -1156,8 +1210,9 @@ def add_supplier_credit_view(request, supplier_id):
         supplier.status = 'Credits Due'
         supplier.save()
         messages.success(request, f'Credit of UGX {total_amount:,.0f} recorded for {supplier.supplier_name}.')
-    return redirect('supplier_credit_detail', supplier_id=supplier.id)
+        return redirect('supplier_credit_detail', supplier_id=supplier.id)
 
+    return redirect('supplier_credit_detail', supplier_id=supplier.id)
 
 # RECORD CREDIT PAYMENT VIEW
 @login_required(login_url='login')
@@ -1167,26 +1222,47 @@ def record_credit_payment_view(request, credit_id):
         return denied
 
     credit = get_object_or_404(SupplierCredit, id=credit_id)
+    supplier = credit.supplier
+    
     if request.method == 'POST':
         amount_raw = request.POST.get('amount', '').strip()
 
-        # ---- SERVER-SIDE VALIDATION ----
+        # Helper function to render errors
+        def error_render():
+            credits = supplier.credits.all()
+            total_owed = sum(c.total_amount for c in credits)
+            total_paid = sum(c.amount_paid for c in credits)
+            return render(request, 'nyondoapp/supplier_credit_detail.html', {
+                'supplier': supplier,
+                'credits': credits,
+                'total_owed': total_owed,
+                'total_paid': total_paid,
+                'total_outstanding': total_owed - total_paid,
+                'unpaid_count': credits.filter(status='Unpaid').count(),
+                'partial_count': credits.filter(status='Partial').count(),
+                'payment_error': True,
+                'payment_credit_id': credit.id,
+                'posted_amount': amount_raw,
+                'low_stock_count': StockItem.objects.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count(),
+            })
+
+        # Server-side validation
         if not amount_raw:
-            messages.error(request, 'Payment amount is required.')
-            return redirect('supplier_credit_detail', supplier_id=credit.supplier.id)
+            messages.error(request, 'Payment amount is required.', extra_tags='amount_error')
+            return error_render()
 
         amount = Decimal(amount_raw)
 
         if amount <= 0:
-            messages.error(request, 'Payment amount must be greater than zero.')
-            return redirect('supplier_credit_detail', supplier_id=credit.supplier.id)
+            messages.error(request, 'Payment amount must be greater than zero.', extra_tags='amount_error')
+            return error_render()
 
         balance_remaining = credit.total_amount - credit.amount_paid
         if amount > balance_remaining:
-            messages.error(request, f'Amount exceeds balance due. Maximum payable is UGX {balance_remaining:,.0f}.')
-            return redirect('supplier_credit_detail', supplier_id=credit.supplier.id)
-        # ---- END VALIDATION ----
+            messages.error(request, f'Amount exceeds balance due. Maximum payable is UGX {balance_remaining:,.0f}.', extra_tags='amount_error')
+            return error_render()
 
+        # Save the payment
         SupplierCreditPayment.objects.create(
             credit=credit,
             amount=amount,
@@ -1200,7 +1276,6 @@ def record_credit_payment_view(request, credit_id):
         credit.status = 'Cleared' if credit.amount_paid >= credit.total_amount else 'Partial'
         credit.save()
 
-        supplier = credit.supplier
         supplier.balance -= amount
         if supplier.balance <= 0:
             supplier.balance = Decimal('0.00')
@@ -1208,7 +1283,9 @@ def record_credit_payment_view(request, credit_id):
         supplier.save()
 
         messages.success(request, f'Payment of UGX {amount:,.0f} recorded successfully.')
-    return redirect('supplier_credit_detail', supplier_id=credit.supplier.id)
+        return redirect('supplier_credit_detail', supplier_id=supplier.id)
+
+    return redirect('supplier_credit_detail', supplier_id=supplier.id)
 
 
 # CUSTOMERS LIST VIEW
