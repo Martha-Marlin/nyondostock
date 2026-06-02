@@ -13,7 +13,7 @@
   </head>
   <body>
 
-    <!-- TOPBAR -->
+    <!-- Main navigation bar with branding and user info -->
     <nav class="topbar">
       <div class="topbar-left">
         <div class="logo">
@@ -38,65 +38,66 @@
     <div class="container-fluid">
       <div class="row">
 
-        <!-- SIDEBAR -->
+        <!-- Sidebar navigation - role-based menu items -->
         <div class="col-2 bg-light min-vh-100 p-3 pt-4 d-flex flex-column">
           <h6 class="text-muted">MENU</h6>
 
          <ul class="nav flex-column">
   {% if user.groups.all.0.name == 'Accounts Admin' %}
     <li class="nav-item mb-3">
-      <a href="{% url 'accounts_dashboard' %}" class="nav-link text-dark">📊 Accounts Dashboard</a>
+      <a href="{% url 'accounts_dashboard' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-line me-2"></i> Accounts Dashboard</a>
     </li>
     <li class="nav-item mb-3">
-      <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
+      <a href="{% url 'suppliers' %}" class="nav-link text-dark"><i class="fa-solid fa-building me-2"></i> Suppliers</a>
     </li>
     <li class="nav-item mb-3">
-      <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
+      <a href="{% url 'customers' %}" class="nav-link text-dark"><i class="fa-solid fa-users me-2"></i> Customers</a>
     </li>
     <li class="nav-item mb-3">
-      <a href="{% url 'deposits' %}" class="nav-link text-dark">💰 Deposits</a>
+      <a href="{% url 'deposits' %}" class="nav-link text-dark"><i class="fa-solid fa-coins me-2"></i> Deposits</a>
     </li>
     <li class="nav-item mb-3">
-      <a href="{% url 'reports' %}" class="nav-link active">📈 Reports</a>
+      <a href="{% url 'reports' %}" class="nav-link active"><i class="fa-solid fa-chart-simple me-2"></i> Reports</a>
     </li>
 
   {% else %}
     <li class="nav-item mb-3">
-      <a href="{% url 'dashboard' %}" class="nav-link text-dark">📊 Dashboard</a>
+      <a href="{% url 'dashboard' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-line me-2"></i> Dashboard</a>
     </li>
     <li class="nav-item mb-3">
-      <a href="{% url 'stock' %}" class="nav-link text-dark">📦 Stock</a>
+      <a href="{% url 'stock' %}" class="nav-link text-dark"><i class="fa-solid fa-boxes me-2"></i> Stock</a>
     </li>
     <li class="nav-item mb-3">
-      <a href="{% url 'sales_list' %}" class="nav-link text-dark">🛒 Sales</a>
+      <a href="{% url 'sales_list' %}" class="nav-link text-dark"><i class="fa-solid fa-cart-shopping me-2"></i> Sales</a>
     </li>
     <li class="nav-item mb-3">
-      <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
+      <a href="{% url 'suppliers' %}" class="nav-link text-dark"><i class="fa-solid fa-building me-2"></i> Suppliers</a>
     </li>
     <li class="nav-item mb-3">
-      <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
+      <a href="{% url 'customers' %}" class="nav-link text-dark"><i class="fa-solid fa-users me-2"></i> Customers</a>
     </li>
     <li class="nav-item mb-3">
-      <a href="{% url 'deposits' %}" class="nav-link text-dark">💰 Deposits</a>
+      <a href="{% url 'deposits' %}" class="nav-link text-dark"><i class="fa-solid fa-coins me-2"></i> Deposits</a>
     </li>
     <li class="nav-item mb-3">
-      <a href="{% url 'reports' %}" class="nav-link active">📈 Reports</a>
+      <a href="{% url 'reports' %}" class="nav-link active"><i class="fa-solid fa-chart-simple me-2"></i> Reports</a>
     </li>
   {% endif %}
 </ul>
 
+          <!-- Sidebar footer with system version and date -->
           <div class="sidebar-footer mt-auto pt-3">
             <hr />
-            <small class="text-muted d-block mb-1">📦 NyondoStock v1.0</small>
-            <small class="text-muted d-block mb-1">🏪 NYONDO General Hardware</small>
-            <small class="text-muted d-block">📅 {{ now|date:"F Y" }}</small>
+            <small class="text-muted d-block mb-1"><i class="fa-solid fa-box me-1"></i> NyondoStock v1.0</small>
+            <small class="text-muted d-block mb-1"><i class="fa-solid fa-store me-1"></i> NYONDO General Hardware</small>
+            <small class="text-muted d-block"><i class="fa-solid fa-calendar me-1"></i> {{ now|date:"F Y" }}</small>
           </div>
         </div>
 
-        <!-- MAIN CONTENT -->
+        <!-- Main content area - reports section -->
         <div class="col-10 reports-page">
 
-          <!-- PAGE HEADER -->
+          <!-- Page header with title and print button -->
           <div class="reports-header">
             <div>
               <h4>Reports</h4>
@@ -109,61 +110,61 @@
             </div>
           </div>
 
-          <!-- SUMMARY STAT CARDS -->
+          <!-- Summary statistics cards showing key financial metrics -->
           <div class="row mb-4 g-3">
             <div class="col-12 col-sm-6 col-md-3">
               <div class="report-stat-card soft">
-                <div class="report-stat-label">💰 Total Revenue</div>
+                <div class="report-stat-label"><i class="fa-solid fa-coins me-1"></i> Total Revenue</div>
                 <div class="report-stat-value">UGX {{ total_revenue|floatformat:0 }}</div>
                 <div class="report-stat-sub">all paid sales</div>
               </div>
             </div>
             <div class="col-12 col-sm-6 col-md-3">
               <div class="report-stat-card warn">
-                <div class="report-stat-label">🚚 Transport Absorbed</div>
+                <div class="report-stat-label"><i class="fa-solid fa-truck me-1"></i> Transport Absorbed</div>
                 <div class="report-stat-value">UGX {{ total_transport|floatformat:0 }}</div>
                 <div class="report-stat-sub">company paid deliveries</div>
               </div>
             </div>
             <div class="col-12 col-sm-6 col-md-3">
               <div class="report-stat-card">
-                <div class="report-stat-label">🏦 Total Deposits</div>
+                <div class="report-stat-label"><i class="fa-solid fa-building-columns me-1"></i> Total Deposits</div>
                 <div class="report-stat-value">UGX {{ total_deposits|floatformat:0 }}</div>
                 <div class="report-stat-sub">customer deposits held</div>
               </div>
             </div>
             <div class="col-12 col-sm-6 col-md-3">
               <div class="report-stat-card danger">
-                <div class="report-stat-label">⚠️ Supplier Credit Owed</div>
+                <div class="report-stat-label"><i class="fa-solid fa-triangle-exclamation me-1"></i> Supplier Credit Owed</div>
                 <div class="report-stat-value">UGX {{ total_supplier_credit|floatformat:0 }}</div>
                 <div class="report-stat-sub">outstanding balance</div>
               </div>
             </div>
           </div>
 
-          <!-- REPORT TYPE TABS + FILTERS -->
+          <!-- Report type tabs and date filters -->
           <div class="report-filter-card">
-            <!-- TABS -->
+            <!-- Tab navigation for different report types -->
             <div class="report-tabs mb-3">
              <a href="?report_type=sales&date_from={{ date_from|date:'Y-m-d' }}&date_to={{ date_to|date:'Y-m-d' }}"
   class="report-tab {% if report_type == 'sales' %}active{% endif %}">
-  🛒 Sales
+  <i class="fa-solid fa-cart-shopping me-1"></i> Sales
 </a>
 <a href="?report_type=transport&date_from={{ date_from|date:'Y-m-d' }}&date_to={{ date_to|date:'Y-m-d' }}"
   class="report-tab {% if report_type == 'transport' %}active{% endif %}">
-  🚚 Transport Costs
+  <i class="fa-solid fa-truck me-1"></i> Transport Costs
 </a>
 <a href="?report_type=deposits&date_from={{ date_from|date:'Y-m-d' }}&date_to={{ date_to|date:'Y-m-d' }}"
   class="report-tab {% if report_type == 'deposits' %}active{% endif %}">
-  🏦 Deposits
+  <i class="fa-solid fa-building-columns me-1"></i> Deposits
 </a>
 <a href="?report_type=supplier_credits&date_from={{ date_from|date:'Y-m-d' }}&date_to={{ date_to|date:'Y-m-d' }}"
   class="report-tab {% if report_type == 'supplier_credits' %}active{% endif %}">
-  🏭 Supplier Credits
+  <i class="fa-solid fa-building me-1"></i> Supplier Credits
 </a>
             </div>
 
-            <!-- FILTERS -->
+            <!-- Date range filter form -->
             <form method="GET" action="{% url 'reports' %}">
               <input type="hidden" name="report_type" value="{{ report_type }}" />
               <div class="row g-3 align-items-end">
@@ -249,7 +250,7 @@
               </table>
             </div>
           </div>
-          <!-- SALES TOTALS -->
+          <!-- Sales totals summary cards -->
           <div class="row g-3 mt-1 mb-4">
             <div class="col-md-4">
               <div class="report-total-card soft">
@@ -311,7 +312,7 @@
                         <span class="status-badge b-red">Credit</span>
                       {% endif %}
                     </td>
-                  </tr>
+                  </table>
                   {% empty %}
                   <tr>
                     <td colspan="6" class="text-muted text-center py-4">No free delivery sales found for this period.</td>
@@ -321,7 +322,7 @@
               </table>
             </div>
           </div>
-          <!-- TRANSPORT TOTALS -->
+          <!-- Transport costs summary -->
           <div class="row g-3 mt-1 mb-4">
             <div class="col-md-6">
               <div class="report-total-card warn">
@@ -404,7 +405,7 @@
               </table>
             </div>
           </div>
-          <!-- DEPOSITS TOTALS -->
+          <!-- Deposits summary totals -->
           <div class="row g-3 mt-1 mb-4">
             <div class="col-md-6">
               <div class="report-total-card soft">
@@ -473,7 +474,7 @@
               </table>
             </div>
           </div>
-          <!-- SUPPLIER CREDITS TOTALS -->
+          <!-- Supplier credits summary totals -->
           <div class="row g-3 mt-1 mb-4">
             <div class="col-md-4">
               <div class="report-total-card">

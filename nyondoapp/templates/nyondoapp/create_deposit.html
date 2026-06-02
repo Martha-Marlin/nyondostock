@@ -14,7 +14,7 @@
 </head>
 <body>
 
-    <!-- TOPBAR -->
+    <!-- Main top navigation bar with branding -->
     <nav class="topbar">
         <div class="topbar-left">
             <div class="logo">
@@ -39,81 +39,83 @@
     <div class="container-fluid">
         <div class="row">
 
-            <!-- SIDEBAR -->
+            <!-- Sidebar navigation - role-based menu items -->
             <aside class="col-lg-2 col-md-3 bg-light min-vh-100 p-3 pt-4 position-relative">
                 <h6 class="text-muted">MENU</h6>
                 <ul class="nav flex-column">
                     {% if user.groups.all.0.name == 'Accounts Admin' %}
                         <li class="nav-item mb-3">
-                            <a href="{% url 'accounts_dashboard' %}" class="nav-link text-dark">📊 Accounts Dashboard</a>
+                            <a href="{% url 'accounts_dashboard' %}" class="nav-link text-dark"><i class="fas fa-chart-line me-2"></i> Accounts Dashboard</a>
                         </li>
                         <li class="nav-item mb-3">
-                            <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
+                            <a href="{% url 'suppliers' %}" class="nav-link text-dark"><i class="fas fa-building me-2"></i> Suppliers</a>
                         </li>
                         <li class="nav-item mb-3">
-                            <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
+                            <a href="{% url 'customers' %}" class="nav-link text-dark"><i class="fas fa-users me-2"></i> Customers</a>
                         </li>
                         <li class="nav-item mb-3">
-                            <a href="{% url 'deposits' %}" class="nav-link active">💰 Deposits</a>
+                            <a href="{% url 'deposits' %}" class="nav-link active"><i class="fas fa-coins me-2"></i> Deposits</a>
                         </li>
                         <li class="nav-item mb-3">
-                            <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
+                            <a href="{% url 'reports' %}" class="nav-link text-dark"><i class="fas fa-chart-simple me-2"></i> Reports</a>
                         </li>
                     {% else %}
                         <li class="nav-item mb-3">
-                            <a href="{% url 'dashboard' %}" class="nav-link text-dark">📊 Dashboard</a>
+                            <a href="{% url 'dashboard' %}" class="nav-link text-dark"><i class="fas fa-chart-line me-2"></i> Dashboard</a>
                         </li>
                         <li class="nav-item mb-3">
-                            <a href="{% url 'stock' %}" class="nav-link text-dark">📦 Stock</a>
+                            <a href="{% url 'stock' %}" class="nav-link text-dark"><i class="fas fa-boxes me-2"></i> Stock</a>
                         </li>
                         <li class="nav-item mb-3">
-                            <a href="{% url 'sales_list' %}" class="nav-link text-dark">🛒 Sales</a>
+                            <a href="{% url 'sales_list' %}" class="nav-link text-dark"><i class="fas fa-shopping-cart me-2"></i> Sales</a>
                         </li>
                         <li class="nav-item mb-3">
-                            <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
+                            <a href="{% url 'suppliers' %}" class="nav-link text-dark"><i class="fas fa-building me-2"></i> Suppliers</a>
                         </li>
                         <li class="nav-item mb-3">
-                            <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
+                            <a href="{% url 'customers' %}" class="nav-link text-dark"><i class="fas fa-users me-2"></i> Customers</a>
                         </li>
                         <li class="nav-item mb-3">
-                            <a href="{% url 'deposits' %}" class="nav-link active">💰 Deposits</a>
+                            <a href="{% url 'deposits' %}" class="nav-link active"><i class="fas fa-coins me-2"></i> Deposits</a>
                         </li>
                         <li class="nav-item mb-3">
-                            <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
+                            <a href="{% url 'reports' %}" class="nav-link text-dark"><i class="fas fa-chart-simple me-2"></i> Reports</a>
                         </li>
                     {% endif %}
                 </ul>
 
+                <!-- Low stock alert widget for quick awareness -->
                 <div class="ns-alert-box mt-4">
-                    <div class="ns-alert-title">⚠ Low Stock</div>
+                    <div class="ns-alert-title"><i class="fas fa-exclamation-triangle me-1"></i> Low Stock</div>
                     <div class="ns-alert-body">{{ low_stock_count }} items need attention</div>
-                    <a href="{% url 'stock' %}" class="ns-alert-link">View →</a>
+                    <a href="{% url 'stock' %}" class="ns-alert-link">View <i class="fas fa-arrow-right ms-1"></i></a>
                 </div>
 
+                <!-- Footer info with system details -->
                 <div class="position-absolute bottom-0 start-0 p-3 w-100">
                     <hr />
-                    <small class="text-muted d-block mb-1">📦 NyondoStock v1.0</small>
-                    <small class="text-muted d-block mb-1">🏪 NYONDO General Hardware</small>
-                    <small class="text-muted d-block">📅 {% now "F Y" %}</small>
+                    <small class="text-muted d-block mb-1"><i class="fas fa-box me-1"></i> NyondoStock v1.0</small>
+                    <small class="text-muted d-block mb-1"><i class="fas fa-store me-1"></i> NYONDO General Hardware</small>
+                    <small class="text-muted d-block"><i class="far fa-calendar me-1"></i> {% now "F Y" %}</small>
                 </div>
             </aside>
 
-            <!-- MAIN CONTENT -->
+            <!-- Main content area - deposit creation form -->
             <main class="col-lg-10 col-md-9 p-4 p-lg-5">
 
-                <a href="{% url 'deposits' %}" class="ns-back-link">&lt; Back to Deposits</a>
+                <a href="{% url 'deposits' %}" class="ns-back-link"><i class="fas fa-arrow-left me-2"></i> Back to Deposits</a>
 
                 <div class="ns-page-heading">
                     <h4>Create New Deposit</h4>
                     <small>Open a salary-earner deposit account. Goods are calculated from total paid on collection day.</small>
                 </div>
 
-                <!-- MESSAGES -->
+                <!-- User feedback messages -->
                 {% if messages %}
                 <div class="mb-3">
                     {% for message in messages %}
                     <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'success' in message.tags %}alert-success{% elif 'warning' in message.tags %}alert-warning{% endif %} alert-dismissible fade show d-flex align-items-center gap-2" role="alert">
-                        {% if 'error' in message.tags %}⚠️{% elif 'success' in message.tags %}✅{% endif %}
+                        {% if 'error' in message.tags %}<i class="fas fa-exclamation-triangle me-1"></i>{% elif 'success' in message.tags %}<i class="fas fa-check-circle me-1"></i>{% endif %}
                         <span>{{ message }}</span>
                         <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
                     </div>
@@ -121,23 +123,25 @@
                 </div>
                 {% endif %}
 
+                <!-- Important notice about eligible deposit items -->
                 <div class="lock-note mt-3 mb-4">
+                    <i class="fas fa-info-circle me-2"></i>
                     The deposit scheme is only available for <strong>Cement CEM II N</strong>,
                     <strong>Cement CEM III N</strong>, <strong>Iron Sheets</strong>, and
                     <strong>Iron Bars 10mm, 12mm, and 16mm</strong>.
                     These are the only products eligible for instalment payments at NYONDO General Hardware.
                 </div>
 
-                <!-- FORM -->
+                <!-- Main deposit creation form -->
                 <form method="POST" action="{% url 'create_deposit' %}">
                     {% csrf_token %}
 
                     <div class="ns-form-card">
 
-                        <!-- SECTION 1: CUSTOMER -->
+                        <!-- Customer selection section -->
                         <div class="ns-section-header">
                             <div class="ns-section-dot"></div>
-                            <div class="ns-section-title">Customer</div>
+                            <div class="ns-section-title"><i class="fas fa-user me-2"></i>Customer</div>
                         </div>
                         <div class="ns-section-body">
                             <div class="row g-3">
@@ -158,10 +162,10 @@
 
                         <div class="ns-divider"></div>
 
-                        <!-- SECTION 2: ORDER DETAILS -->
+                        <!-- Product order details section -->
                         <div class="ns-section-header">
                             <div class="ns-section-dot"></div>
-                            <div class="ns-section-title">Order Details</div>
+                            <div class="ns-section-title"><i class="fas fa-shopping-cart me-2"></i>Order Details</div>
                         </div>
                         <div class="ns-section-body">
                             <div class="row g-3 mb-3">
@@ -239,10 +243,10 @@
 
                         <div class="ns-divider"></div>
 
-                        <!-- SECTION 3: COLLECTION NOTICE -->
+                        <!-- Important collection rule notice -->
                         <div class="ns-section-header" style="border-bottom: none;">
                             <div class="ns-section-dot"></div>
-                            <div class="ns-section-title">Collection Rule</div>
+                            <div class="ns-section-title"><i class="fas fa-gavel me-2"></i>Collection Rule</div>
                         </div>
                         <div class="ns-section-body" style="padding-top: 12px;">
                             <div class="ns-deposit-panel" style="background: #fffbe6; border: 1px solid #f5c842; border-radius: 10px; padding: 14px 18px;">
@@ -254,13 +258,13 @@
                             </div>
                         </div>
 
-                        <!-- FORM ACTIONS -->
+                        <!-- Form submission buttons -->
                         <div class="ns-form-actions">
                             <a href="{% url 'deposits' %}" class="ns-btn-cancel">
-                                <i class="fa-solid fa-arrow-left"></i> Back to Deposits
+                                <i class="fa-solid fa-arrow-left me-2"></i> Back to Deposits
                             </a>
                             <button type="submit" class="ns-btn-primary">
-                                <i class="fa-solid fa-plus"></i> Create Deposit
+                                <i class="fa-solid fa-plus me-2"></i> Create Deposit
                             </button>
                         </div>
 

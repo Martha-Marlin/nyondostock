@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{ supplier.supplier_name }} - Credit Detail | NyondoStock</title>
 
-    <!-- BOOTSTRAP CSS CDN -->
+    <!-- Bootstrap CSS CDN -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -14,24 +14,24 @@
       crossorigin="anonymous"
     />
 
-    <!-- FONT AWESOME ICONS -->
+    <!-- Font Awesome 6 icons -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
 
-    <!-- GOOGLE FONTS - DM SANS -->
+    <!-- Google Fonts - DM Sans -->
     <link
       href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
 
-    <!-- BASE CSS -->
+    <!-- Base CSS -->
     <link rel="stylesheet" href="{% static 'base.css' %}" />
 
-    <!-- PAGE-SPECIFIC STYLES -->
+    <!-- Page-specific styles for credit cards and status badges -->
     <style>
-      /* STAT CARDS */
+      /* Summary statistics cards */
       .stat-card { background: #fff; border-radius: 10px; padding: 20px; border-top: 4px solid #1D9E75; box-shadow: 0 1px 6px rgba(0,0,0,0.07); }
       .stat-card.warn { border-top-color: #f59e0b; }
       .stat-card.danger { border-top-color: #ef4444; }
@@ -39,7 +39,7 @@
       .stat-value { font-size: 1.5rem; font-weight: 700; color: #111827; margin: 4px 0; }
       .stat-sub { font-size: 0.75rem; color: #9ca3af; }
 
-      /* CREDIT CARDS - one per credit entry, color coded by status */
+      /* Credit cards - color coded by payment status */
       .credit-card { background: #fff; border-radius: 10px; box-shadow: 0 1px 6px rgba(0,0,0,0.07); margin-bottom: 16px; border-left: 4px solid #1D9E75; }
       .credit-card.unpaid { border-left-color: #ef4444; }
       .credit-card.partial { border-left-color: #f59e0b; }
@@ -47,34 +47,34 @@
       .credit-card-header { padding: 16px 20px; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center; }
       .credit-card-body { padding: 16px 20px; }
 
-      /* PROGRESS BAR */
+      /* Payment progress bar */
       .progress { height: 8px; border-radius: 4px; }
 
-      /* STATUS BADGES */
+      /* Status badge styles */
       .badge-unpaid { background: #fee2e2; color: #dc2626; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
       .badge-partial { background: #fef3c7; color: #d97706; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
       .badge-cleared { background: #d1fae5; color: #059669; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
 
-      /* PAYMENT HISTORY ROWS */
+      /* Payment history rows */
       .payment-row { font-size: 0.85rem; padding: 8px 0; border-bottom: 1px solid #f9fafb; }
       .payment-row:last-child { border-bottom: none; }
 
-      /* BACK LINK */
+      /* Back navigation link */
       .back-link { color: #1D9E75; text-decoration: none; font-size: 0.85rem; display: inline-block; margin-bottom: 16px; }
       .back-link:hover { color: #157a5a; }
 
-      /* PAGE TITLE */
+      /* Page title section */
       .page-title { margin-bottom: 24px; }
       .page-title h4 { font-weight: 700; color: #111827; margin-bottom: 2px; }
 
-      /* SUPPLIER META CARD - shows supplier contact info at the top */
+      /* Supplier contact information card */
       .supplier-meta { background: #fff; border-radius: 10px; padding: 16px 20px; box-shadow: 0 1px 6px rgba(0,0,0,0.07); margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
       .supplier-meta-left { display: flex; flex-direction: column; gap: 4px; }
     </style>
   </head>
   <body>
 
-    <!-- TOPBAR WITH LOGO, NAME, USER INFO AND LOGOUT -->
+    <!-- Main navigation bar with branding and user info -->
     <nav class="topbar">
       <div class="topbar-left">
         <div class="logo">
@@ -96,106 +96,106 @@
       </div>
     </nav>
 
-    <!-- MAIN LAYOUT: SIDEBAR + CONTENT -->
+    <!-- Main layout with sidebar and content area -->
     <div class="container-fluid">
       <div class="row">
 
-        <!-- SIDEBAR - role-based navigation -->
+        <!-- Sidebar navigation - role-based menu items -->
         <aside class="col-2 bg-light min-vh-100 p-3 pt-4 position-relative">
           <h6 class="text-muted">MENU</h6>
 
-          <!-- ROLE-BASED NAVIGATION - each role only sees what they need -->
+          <!-- Navigation menu - shows different options based on user role -->
           <ul class="nav flex-column">
             {% if user.groups.all.0.name == 'Sales Attendant' %}
               <li class="nav-item mb-3">
-                <a href="{% url 'sales_dashboard' %}" class="nav-link text-dark">📊 Sales Dashboard</a>
+                <a href="{% url 'sales_dashboard' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-line me-2"></i> Sales Dashboard</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'stock' %}" class="nav-link text-dark">📦 Stock</a>
+                <a href="{% url 'stock' %}" class="nav-link text-dark"><i class="fa-solid fa-boxes me-2"></i> Stock</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'sales_list' %}" class="nav-link text-dark">🛒 Sales</a>
+                <a href="{% url 'sales_list' %}" class="nav-link text-dark"><i class="fa-solid fa-cart-shopping me-2"></i> Sales</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
+                <a href="{% url 'customers' %}" class="nav-link text-dark"><i class="fa-solid fa-users me-2"></i> Customers</a>
               </li>
 
             {% elif user.groups.all.0.name == 'Store Manager' %}
               <li class="nav-item mb-3">
-                <a href="{% url 'store_manager_dashboard' %}" class="nav-link text-dark">📊 Dashboard</a>
+                <a href="{% url 'store_manager_dashboard' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-line me-2"></i> Dashboard</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'stock' %}" class="nav-link text-dark">📦 Stock</a>
+                <a href="{% url 'stock' %}" class="nav-link text-dark"><i class="fa-solid fa-boxes me-2"></i> Stock</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'suppliers' %}" class="nav-link active">🏭 Suppliers</a>
+                <a href="{% url 'suppliers' %}" class="nav-link active"><i class="fa-solid fa-building me-2"></i> Suppliers</a>
               </li>
 
             {% elif user.groups.all.0.name == 'Accounts Admin' %}
               <li class="nav-item mb-3">
-                <a href="{% url 'accounts_dashboard' %}" class="nav-link text-dark">📊 Accounts Dashboard</a>
+                <a href="{% url 'accounts_dashboard' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-line me-2"></i> Accounts Dashboard</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'suppliers' %}" class="nav-link active">🏭 Suppliers</a>
+                <a href="{% url 'suppliers' %}" class="nav-link active"><i class="fa-solid fa-building me-2"></i> Suppliers</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
+                <a href="{% url 'customers' %}" class="nav-link text-dark"><i class="fa-solid fa-users me-2"></i> Customers</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'deposits' %}" class="nav-link text-dark">💰 Deposits</a>
+                <a href="{% url 'deposits' %}" class="nav-link text-dark"><i class="fa-solid fa-coins me-2"></i> Deposits</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
+                <a href="{% url 'reports' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-simple me-2"></i> Reports</a>
               </li>
 
             {% else %}
-              <!-- FALLBACK - superuser or unassigned role sees everything -->
+              <!-- Superuser or unassigned role sees all modules -->
               <li class="nav-item mb-3">
-                <a href="{% url 'dashboard' %}" class="nav-link text-dark">📊 Dashboard</a>
+                <a href="{% url 'dashboard' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-line me-2"></i> Dashboard</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'stock' %}" class="nav-link text-dark">📦 Stock</a>
+                <a href="{% url 'stock' %}" class="nav-link text-dark"><i class="fa-solid fa-boxes me-2"></i> Stock</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'sales_list' %}" class="nav-link text-dark">🛒 Sales</a>
+                <a href="{% url 'sales_list' %}" class="nav-link text-dark"><i class="fa-solid fa-cart-shopping me-2"></i> Sales</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'suppliers' %}" class="nav-link active">🏭 Suppliers</a>
+                <a href="{% url 'suppliers' %}" class="nav-link active"><i class="fa-solid fa-building me-2"></i> Suppliers</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
+                <a href="{% url 'customers' %}" class="nav-link text-dark"><i class="fa-solid fa-users me-2"></i> Customers</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'deposits' %}" class="nav-link text-dark">💰 Deposits</a>
+                <a href="{% url 'deposits' %}" class="nav-link text-dark"><i class="fa-solid fa-coins me-2"></i> Deposits</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
+                <a href="{% url 'reports' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-simple me-2"></i> Reports</a>
               </li>
             {% endif %}
           </ul>
 
-          <!-- SIDEBAR FOOTER -->
+          <!-- Sidebar footer with system version and date -->
           <div class="position-absolute bottom-0 start-0 p-3 w-100">
             <hr />
-            <small class="text-muted d-block mb-1">📦 NyondoStock v1.0</small>
-            <small class="text-muted d-block mb-1">🏪 NYONDO General Hardware</small>
-            <small class="text-muted d-block">📅 {% now "F Y" %}</small>
+            <small class="text-muted d-block mb-1"><i class="fa-solid fa-box me-1"></i> NyondoStock v1.0</small>
+            <small class="text-muted d-block mb-1"><i class="fa-solid fa-store me-1"></i> NYONDO General Hardware</small>
+            <small class="text-muted d-block"><i class="fa-solid fa-calendar me-1"></i> {% now "F Y" %}</small>
           </div>
         </aside>
 
-        <!-- MAIN CONTENT -->
+        <!-- Main content area - supplier credit details -->
         <main class="col-10 p-4 p-lg-5">
 
-          <!-- BACK LINK TO SUPPLIERS LIST -->
-          <a href="{% url 'suppliers' %}" class="back-link">← Back to Suppliers</a>
+          <!-- Back link to suppliers list -->
+          <a href="{% url 'suppliers' %}" class="back-link"><i class="fas fa-arrow-left me-2"></i> Back to Suppliers</a>
 
-          <!-- PAGE TITLE -->
+          <!-- Page header with supplier name -->
           <div class="page-title">
             <h4>{{ supplier.supplier_name }}</h4>
             <small class="text-muted">Credit Detail</small>
           </div>
 
-          <!-- SUPPLIER META CARD - contact info and status -->
+          <!-- Supplier contact information card -->
           <div class="supplier-meta">
             <div class="supplier-meta-left">
               <span><i class="fa-solid fa-phone me-2 text-muted"></i>{{ supplier.phone }}</span>
@@ -214,7 +214,7 @@
             </div>
           </div>
 
-          <!-- DJANGO MESSAGES -->
+          <!-- Flash messages for user feedback -->
           {% if messages %}
           <div class="mb-3">
             {% for message in messages %}
@@ -226,51 +226,51 @@
           </div>
           {% endif %}
 
-          <!-- STAT CARDS - summary of all credits for this supplier -->
+          <!-- Summary statistics cards for all supplier credits -->
           <div class="row g-3 mb-4">
             <div class="col-md-3">
               <div class="stat-card">
-                <div class="stat-label">📋 Total Credits</div>
+                <div class="stat-label"><i class="fa-solid fa-list me-1"></i> Total Credits</div>
                 <div class="stat-value">{{ credits.count }}</div>
                 <div class="stat-sub">all time</div>
               </div>
             </div>
             <div class="col-md-3">
               <div class="stat-card danger">
-                <div class="stat-label">💸 Total Owed</div>
+                <div class="stat-label"><i class="fa-solid fa-coins me-1"></i> Total Owed</div>
                 <div class="stat-value">UGX {{ total_owed|floatformat:0 }}</div>
                 <div class="stat-sub">across all credits</div>
               </div>
             </div>
             <div class="col-md-3">
               <div class="stat-card warn">
-                <div class="stat-label">⏳ Outstanding</div>
+                <div class="stat-label"><i class="fa-solid fa-hourglass-half me-1"></i> Outstanding</div>
                 <div class="stat-value">UGX {{ total_outstanding|floatformat:0 }}</div>
                 <div class="stat-sub">{{ unpaid_count }} unpaid · {{ partial_count }} partial</div>
               </div>
             </div>
             <div class="col-md-3">
               <div class="stat-card">
-                <div class="stat-label">✅ Total Paid</div>
+                <div class="stat-label"><i class="fa-solid fa-circle-check me-1"></i> Total Paid</div>
                 <div class="stat-value">UGX {{ total_paid|floatformat:0 }}</div>
                 <div class="stat-sub">across all credits</div>
               </div>
             </div>
           </div>
 
-          <!-- CREDIT HISTORY HEADER + ADD BUTTON -->
+          <!-- Credit history header with add credit button -->
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="mb-0">Credit History</h5>
+            <h5 class="mb-0"><i class="fa-solid fa-file-invoice me-2"></i>Credit History</h5>
             <button class="btn btn-success btn-sm px-3" data-bs-toggle="modal" data-bs-target="#addCreditModal">
-              + Add Credit
+              <i class="fas fa-plus me-1"></i> Add Credit
             </button>
           </div>
 
-          <!-- CREDITS LIST - one card per credit entry -->
+          <!-- Credits list - one card per credit entry -->
           {% for credit in credits %}
           <div class="credit-card {{ credit.status|lower }}">
 
-            <!-- CREDIT CARD HEADER - id, date, due date, status badge -->
+            <!-- Credit card header with ID, date, due date, and status -->
             <div class="credit-card-header">
               <div>
                 <strong>Credit #{{ credit.id }}</strong>
@@ -288,13 +288,13 @@
               </div>
             </div>
 
-            <!-- CREDIT CARD BODY - description, progress, balance, payment history -->
+            <!-- Credit card body with description and payment details -->
             <div class="credit-card-body">
 
-              <!-- DESCRIPTION OF GOODS TAKEN ON CREDIT -->
+              <!-- Description of goods taken on credit -->
               <p class="text-muted mb-3" style="font-size: 0.9rem">{{ credit.description }}</p>
 
-              <!-- PAYMENT PROGRESS BAR -->
+              <!-- Payment progress bar -->
               <div class="d-flex justify-content-between mb-1" style="font-size: 0.8rem">
                 <span>Paid: UGX {{ credit.amount_paid|floatformat:0 }}</span>
                 <span>Total: UGX {{ credit.total_amount|floatformat:0 }}</span>
@@ -305,20 +305,20 @@
               </div>
               {% endif %}
 
-              <!-- BALANCE DUE + RECORD PAYMENT BUTTON -->
+              <!-- Balance due and record payment button -->
               <div class="d-flex justify-content-between align-items-center">
                 <span style="font-size: 0.85rem">Balance Due: <strong class="text-danger">UGX {{ credit.balance_due|floatformat:0 }}</strong></span>
                 {% if credit.status != 'Cleared' %}
                 <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#payModal{{ credit.id }}">
-                  Record Payment
+                  <i class="fas fa-money-bill-wave me-1"></i> Record Payment
                 </button>
                 {% endif %}
               </div>
 
-              <!-- PAYMENT HISTORY - all payments made against this credit -->
+              <!-- Payment history - all payments made against this credit -->
               {% if credit.payments.all %}
               <div class="mt-3 pt-3 border-top">
-                <small class="text-muted fw-semibold d-block mb-2">Payment History</small>
+                <small class="text-muted fw-semibold d-block mb-2"><i class="fas fa-history me-1"></i>Payment History</small>
                 {% for payment in credit.payments.all %}
                 <div class="payment-row d-flex justify-content-between align-items-center">
                   <span class="text-muted">{{ payment.paid_at|date:"d M Y" }} · {{ payment.payment_method }}{% if payment.reference_number %} · Ref: {{ payment.reference_number }}{% endif %}{% if payment.note %} · {{ payment.note }}{% endif %}</span>
@@ -331,12 +331,12 @@
             </div>
           </div>
 
-          <!-- RECORD PAYMENT MODAL - one per credit -->
+          <!-- Record payment modal - one per credit -->
           <div class="modal fade" id="payModal{{ credit.id }}" tabindex="-1">
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title">Record Payment — Credit #{{ credit.id }}</h5>
+                  <h5 class="modal-title"><i class="fas fa-money-bill-wave me-2"></i>Record Payment — Credit #{{ credit.id }}</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <form method="POST" action="{% url 'record_credit_payment' credit.id %}">
@@ -366,8 +366,8 @@
                     </div>
                   </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success">Save Payment</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Cancel</button>
+                    <button type="submit" class="btn btn-success"><i class="fas fa-save me-1"></i>Save Payment</button>
                   </div>
                 </form>
               </div>
@@ -375,12 +375,12 @@
           </div>
 
           {% empty %}
-          <!-- EMPTY STATE - no credits recorded yet -->
+          <!-- Empty state - no credits recorded yet -->
           <div class="text-center text-muted py-5">
             <i class="fa-solid fa-file-invoice fa-2x mb-3 d-block"></i>
             <p>No credits recorded for this supplier yet.</p>
             <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addCreditModal">
-              + Add First Credit
+              <i class="fas fa-plus me-1"></i> Add First Credit
             </button>
           </div>
           {% endfor %}
@@ -389,12 +389,12 @@
       </div>
     </div>
 
-    <!-- ADD CREDIT MODAL -->
+    <!-- Add Credit modal - for creating new supplier credits -->
     <div class="modal fade" id="addCreditModal" tabindex="-1">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Add Credit — {{ supplier.supplier_name }}</h5>
+            <h5 class="modal-title"><i class="fas fa-plus-circle me-2"></i>Add Credit — {{ supplier.supplier_name }}</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <form method="POST" action="{% url 'add_supplier_credit' supplier.id %}">
@@ -414,15 +414,15 @@
               </div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-              <button type="submit" class="btn btn-success">Save Credit</button>
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Cancel</button>
+              <button type="submit" class="btn btn-success"><i class="fas fa-save me-1"></i>Save Credit</button>
             </div>
           </form>
         </div>
       </div>
     </div>
 
-    <!-- BOOTSTRAP JAVASCRIPT -->
+    <!-- Bootstrap JavaScript bundle for interactive components -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>
 

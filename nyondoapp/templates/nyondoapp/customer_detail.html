@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="{% static 'register_customer.css' %}" />
   </head>
   <body>
-    <!-- TOPBAR -->
+    <!-- Main navigation bar with branding and user info -->
     <nav class="topbar">
       <div class="topbar-left">
        <div class="logo">
@@ -51,7 +51,7 @@
 
     <div class="container-fluid">
       <div class="row">
-        <!-- SIDEBAR -->
+        <!-- Sidebar navigation - shows different menus based on user role -->
         <aside
           class="col-lg-2 col-md-3 bg-light min-vh-100 p-3 pt-4 position-relative"
         >
@@ -59,96 +59,96 @@
           <ul class="nav flex-column">
   {% if user.groups.all.0.name == 'Sales Attendant' %}
     <li class="nav-item mb-3">
-      <a href="{% url 'sales_dashboard' %}" class="nav-link text-dark">📊 Sales Dashboard</a>
+      <a href="{% url 'sales_dashboard' %}" class="nav-link text-dark"><i class="fas fa-chart-line me-2"></i> Sales Dashboard</a>
     </li>
     <li class="nav-item mb-3">
-      <a href="{% url 'stock' %}" class="nav-link text-dark">📦 Stock</a>
+      <a href="{% url 'stock' %}" class="nav-link text-dark"><i class="fas fa-boxes me-2"></i> Stock</a>
     </li>
     <li class="nav-item mb-3">
-      <a href="{% url 'sales_list' %}" class="nav-link text-dark">🛒 Sales</a>
+      <a href="{% url 'sales_list' %}" class="nav-link text-dark"><i class="fas fa-shopping-cart me-2"></i> Sales</a>
     </li>
     <li class="nav-item mb-3">
-      <a href="{% url 'customers' %}" class="nav-link active">👤 Customers</a>
+      <a href="{% url 'customers' %}" class="nav-link active"><i class="fas fa-users me-2"></i> Customers</a>
     </li>
 
   {% elif user.groups.all.0.name == 'Accounts Admin' %}
     <li class="nav-item mb-3">
-      <a href="{% url 'accounts_dashboard' %}" class="nav-link text-dark">📊 Accounts Dashboard</a>
+      <a href="{% url 'accounts_dashboard' %}" class="nav-link text-dark"><i class="fas fa-chart-line me-2"></i> Accounts Dashboard</a>
     </li>
     <li class="nav-item mb-3">
-      <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
+      <a href="{% url 'suppliers' %}" class="nav-link text-dark"><i class="fas fa-building me-2"></i> Suppliers</a>
     </li>
     <li class="nav-item mb-3">
-      <a href="{% url 'customers' %}" class="nav-link active">👤 Customers</a>
+      <a href="{% url 'customers' %}" class="nav-link active"><i class="fas fa-users me-2"></i> Customers</a>
     </li>
     <li class="nav-item mb-3">
-      <a href="{% url 'deposits' %}" class="nav-link text-dark">💰 Deposits</a>
+      <a href="{% url 'deposits' %}" class="nav-link text-dark"><i class="fas fa-coins me-2"></i> Deposits</a>
     </li>
     <li class="nav-item mb-3">
-      <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
+      <a href="{% url 'reports' %}" class="nav-link text-dark"><i class="fas fa-chart-simple me-2"></i> Reports</a>
     </li>
 
   {% else %}
     <li class="nav-item mb-3">
-      <a href="{% url 'dashboard' %}" class="nav-link text-dark">📊 Dashboard</a>
+      <a href="{% url 'dashboard' %}" class="nav-link text-dark"><i class="fas fa-chart-line me-2"></i> Dashboard</a>
     </li>
     <li class="nav-item mb-3">
-      <a href="{% url 'stock' %}" class="nav-link text-dark">📦 Stock</a>
+      <a href="{% url 'stock' %}" class="nav-link text-dark"><i class="fas fa-boxes me-2"></i> Stock</a>
     </li>
     <li class="nav-item mb-3">
-      <a href="{% url 'sales_list' %}" class="nav-link text-dark">🛒 Sales</a>
+      <a href="{% url 'sales_list' %}" class="nav-link text-dark"><i class="fas fa-shopping-cart me-2"></i> Sales</a>
     </li>
     <li class="nav-item mb-3">
-      <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
+      <a href="{% url 'suppliers' %}" class="nav-link text-dark"><i class="fas fa-building me-2"></i> Suppliers</a>
     </li>
     <li class="nav-item mb-3">
-      <a href="{% url 'customers' %}" class="nav-link active">👤 Customers</a>
+      <a href="{% url 'customers' %}" class="nav-link active"><i class="fas fa-users me-2"></i> Customers</a>
     </li>
     <li class="nav-item mb-3">
-      <a href="{% url 'deposits' %}" class="nav-link text-dark">💰 Deposits</a>
+      <a href="{% url 'deposits' %}" class="nav-link text-dark"><i class="fas fa-coins me-2"></i> Deposits</a>
     </li>
     <li class="nav-item mb-3">
-      <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
+      <a href="{% url 'reports' %}" class="nav-link text-dark"><i class="fas fa-chart-simple me-2"></i> Reports</a>
     </li>
   {% endif %}
 </ul>
 
+          <!-- Low stock warning alert for quick action -->
           <div class="ns-alert-box mt-4">
-            <div class="ns-alert-title">⚠ Low Stock</div>
+            <div class="ns-alert-title"><i class="fas fa-exclamation-triangle me-1"></i> Low Stock</div>
             <div class="ns-alert-body">{{ low_stock_count }} items need attention</div>
-            <a href="{% url 'stock' %}" class="ns-alert-link">View →</a>
+            <a href="{% url 'stock' %}" class="ns-alert-link">View <i class="fas fa-arrow-right ms-1"></i></a>
           </div>
 
+          <!-- Sidebar footer with system version and date -->
           <div class="position-absolute bottom-0 start-0 p-3 w-100">
             <hr />
-            <small class="text-muted d-block mb-1">📦 NyondoStock v1.0</small>
-            <small class="text-muted d-block mb-1"
-              >🏪 NYONDO General Hardware</small
-            >
-            <small class="text-muted d-block">📅 {% now "F Y" %}</small>
+            <small class="text-muted d-block mb-1"><i class="fas fa-box me-1"></i> NyondoStock v1.0</small>
+            <small class="text-muted d-block mb-1"><i class="fas fa-store me-1"></i> NYONDO General Hardware</small>
+            <small class="text-muted d-block"><i class="far fa-calendar me-1"></i> {% now "F Y" %}</small>
           </div>
         </aside>
 
-        <!-- MAIN CONTENT -->
+        <!-- Main content area - customer details and credit history -->
         <main class="col-lg-10 col-md-9 p-4 p-lg-5">
-          <!-- BREADCRUMB -->
+          <!-- Navigation breadcrumb for context -->
           <div class="ns-breadcrumb">
             <a href="{% url 'customers' %}">Customers</a> /
             <span>{{ customer.full_name }}</span>
           </div>
 
-          <!-- PAGE HEADER -->
+          <!-- Page header with customer name and back button -->
           <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
               <h4 class="mb-0">{{ customer.full_name }}</h4>
               <small class="text-muted">Customer detail</small>
             </div>
             <a href="{% url 'customers' %}" class="ns-btn-cancel">
-              <i class="fa-solid fa-arrow-left"></i> Back to Customers
+              <i class="fa-solid fa-arrow-left me-2"></i> Back to Customers
             </a>
           </div>
 
-          <!-- MESSAGES -->
+          <!-- System feedback messages display area -->
           {% if messages %}
           <div class="mb-3">
             {% for message in messages %}
@@ -167,11 +167,11 @@
           </div>
           {% endif %}
 
-          <!-- CUSTOMER INFO CARD -->
+          <!-- Customer personal information card -->
           <div class="ns-form-card mb-4">
             <div class="ns-section-header">
               <div class="ns-section-dot"></div>
-              <div class="ns-section-title">Customer Information</div>
+              <div class="ns-section-title"><i class="fas fa-user-circle me-2"></i>Customer Information</div>
             </div>
             <div class="ns-section-body">
               <div class="row g-3">
@@ -219,10 +219,10 @@
             </div>
           </div>
 
-          <!-- CREDIT HISTORY -->
+          <!-- Customer credit history section -->
           <section class="stock-list-card mt-4">
             <div class="stock-list-header">
-              <h5>Credit History</h5>
+              <h5><i class="fas fa-file-invoice-dollar me-2"></i>Credit History</h5>
               <span class="text-muted" style="font-size: 13px"
                 >Goods taken on credit by this customer</span
               >
@@ -269,7 +269,7 @@
                       <small class="text-muted"
                         >{{ entry.percent_paid }}% paid</small
                       >
-                    </td>
+                     </td>
                     <td>{{ entry.sale.sale_date|date:"d M Y" }}</td>
                     <td>
                       {% if entry.balance_due == 0 %}
@@ -277,8 +277,8 @@
                       {% else %}
                       <span class="badge bg-warning text-dark">Owing</span>
                       {% endif %}
-                    </td>
-                   <td>
+                     </td>
+                    <td>
     {% if entry.balance_due > 0 %}
         {% if user.groups.all.0.name == 'Accounts Admin' %}
         <button
@@ -286,7 +286,7 @@
             data-bs-toggle="modal"
             data-bs-target="#paymentModal{{ entry.sale.id }}"
         >
-            Record Payment
+            <i class="fas fa-money-bill-wave me-1"></i> Record Payment
         </button>
         {% else %}
         <span class="text-muted">—</span>
@@ -300,13 +300,14 @@
                   <tr>
                     <td colspan="9" class="text-center text-muted py-4">
                       No credit sales recorded for this customer.
-                    </td>
+                     </td>
                   </tr>
                   {% endfor %}
                 </tbody>
               </table>
             </div>
 
+            <!-- Footer showing total credit sales count -->
             <div class="stock-list-footer">
               <span
                 >{{ credit_sales_data|length }} credit sale{{credit_sales_data|length|pluralize }}</span
@@ -314,7 +315,7 @@
             </div>
           </section>
 
-          <!-- CREDIT PAYMENT MODALS -->
+          <!-- Modal popups for recording credit payments -->
           {% for entry in credit_sales_data %}
           <div
             class="modal fade"
@@ -402,7 +403,7 @@
                       Cancel
                     </button>
                     <button type="submit" class="btn btn-success">
-                      Record Payment
+                      <i class="fas fa-save me-1"></i> Record Payment
                     </button>
                   </div>
                 </form>

@@ -14,7 +14,7 @@
   </head>
   <body>
 
-    <!-- TOPBAR -->
+    <!-- Main navigation bar with branding and user info -->
     <nav class="topbar">
       <div class="topbar-left">
         <div class="logo">
@@ -36,64 +36,65 @@
       </div>
     </nav>
 
-    <!-- MAIN LAYOUT -->
+    <!-- Main dashboard layout with sidebar and content area -->
     <div class="container-fluid">
       <div class="row">
 
-        <!-- SIDEBAR -->
+        <!-- Sidebar navigation menu -->
         <div class="col-2 bg-light min-vh-100 p-3 pt-4 d-flex flex-column">
           <h6 class="text-muted">MENU</h6>
           <ul class="nav flex-column">
             <li class="nav-item mb-3">
-              <a href="{% url 'sales_dashboard' %}" class="nav-link active">📊 Sales Dashboard</a>
+              <a href="{% url 'sales_dashboard' %}" class="nav-link active"><i class="fa-solid fa-chart-line me-2"></i> Sales Dashboard</a>
             </li>
             <li class="nav-item mb-3">
-              <a href="{% url 'stock' %}" class="nav-link text-dark">📦 Stock</a>
+              <a href="{% url 'stock' %}" class="nav-link text-dark"><i class="fa-solid fa-boxes me-2"></i> Stock</a>
             </li>
             <li class="nav-item mb-3">
-              <a href="{% url 'sales_list' %}" class="nav-link text-dark">🛒 Sales</a>
+              <a href="{% url 'sales_list' %}" class="nav-link text-dark"><i class="fa-solid fa-cart-shopping me-2"></i> Sales</a>
             </li>
             <li class="nav-item mb-3">
-              <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
+              <a href="{% url 'customers' %}" class="nav-link text-dark"><i class="fa-solid fa-users me-2"></i> Customers</a>
             </li>
 
           </ul>
 
-          <!-- LOW STOCK ALERT BOX -->
+          <!-- Low stock warning alert - only shown when there are low stock items -->
 {% if low_stock_count > 0 %}
 <div class="ns-alert-box mt-4">
-  <div class="ns-alert-title">⚠️ Low Stock</div>
+  <div class="ns-alert-title"><i class="fa-solid fa-triangle-exclamation me-1"></i> Low Stock</div>
   <div class="ns-alert-body">{{ low_stock_count }} items need attention</div>
-  <a href="{% url 'stock' %}" class="ns-alert-link">View →</a>
+  <a href="{% url 'stock' %}" class="ns-alert-link">View <i class="fas fa-arrow-right ms-1"></i></a>
 </div>
 {% endif %}
 
+          <!-- Sidebar footer with system information -->
           <div class="sidebar-footer mt-auto pt-3">
             <hr />
-            <small class="text-muted d-block mb-1">📦 NyondoStock v1.0</small>
-            <small class="text-muted d-block mb-1">🏪 NYONDO General Hardware</small>
-            <small class="text-muted d-block">📅 {{ now|date:"F Y" }}</small>
+            <small class="text-muted d-block mb-1"><i class="fa-solid fa-box me-1"></i> NyondoStock v1.0</small>
+            <small class="text-muted d-block mb-1"><i class="fa-solid fa-store me-1"></i> NYONDO General Hardware</small>
+            <small class="text-muted d-block"><i class="fa-solid fa-calendar me-1"></i> {{ now|date:"F Y" }}</small>
           </div>
         </div>
 
-        <!-- MAIN CONTENT -->
+        <!-- Main content area -->
         <div class="sales-dashboard-main col-10 p-5">
 
-          <!-- PAGE HEADER -->
+          <!-- Page header with title and record sale button -->
           <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
               <h4 class="mb-0">Sales Dashboard</h4>
               <small class="text-muted">{{ now|date:"l, d F Y" }}</small>
             </div>
-            <a href="{% url 'record_sales' %}" class="btn btn-success btn-sm px-3">+ Record Sale</a>
+            <a href="{% url 'record_sales' %}" class="btn btn-success btn-sm px-3"><i class="fas fa-plus me-1"></i> Record Sale</a>
           </div>
 
-          <!-- STAT CARDS -->
+          <!-- Key metrics statistic cards -->
           <div class="row mb-4 g-3">
 
             <div class="col-12 col-sm-6 col-md-3">
               <div class="stat-card">
-                <div class="stat-label">🛒 Sales Today</div>
+                <div class="stat-label"><i class="fa-solid fa-cart-shopping me-1"></i> Sales Today</div>
                 <div class="stat-value">{{ sales_today_count }}</div>
                 <div class="stat-sub">transactions today</div>
               </div>
@@ -101,7 +102,7 @@
 
             <div class="col-12 col-sm-6 col-md-3">
               <div class="stat-card warn">
-                <div class="stat-label">⏳ Pending Credits</div>
+                <div class="stat-label"><i class="fa-solid fa-hourglass-half me-1"></i> Pending Credits</div>
                 <div class="stat-value">{{ pending_credits }}</div>
                 <div class="stat-sub">credits outstanding</div>
               </div>
@@ -109,7 +110,7 @@
 
             <div class="col-12 col-sm-6 col-md-3">
               <div class="stat-card danger">
-                <div class="stat-label">⚠️ Low Stock Alerts</div>
+                <div class="stat-label"><i class="fa-solid fa-triangle-exclamation me-1"></i> Low Stock Alerts</div>
                 <div class="stat-value">{{ low_stock_count }}</div>
                 <div class="stat-sub">items need restocking</div>
               </div>
@@ -117,7 +118,7 @@
 
             <div class="col-12 col-sm-6 col-md-3">
               <div class="stat-card soft">
-                <div class="stat-label">💰 Revenue Today</div>
+                <div class="stat-label"><i class="fa-solid fa-coins me-1"></i> Revenue Today</div>
                 <div class="stat-value">UGX {{ revenue_today|floatformat:0 }}</div>
                 <div class="stat-sub">total sales value</div>
               </div>
@@ -125,15 +126,15 @@
 
           </div>
 
-          <!-- TWO COLUMN: Sales Table + Stock Table -->
+          <!-- Two column layout: My Sales + Stock Check -->
           <div class="row g-3">
 
-            <!-- MY SALES TODAY -->
+            <!-- Current user's sales for today -->
             <div class="col-md-6">
               <div class="dashboard-list-card">
                 <div class="dashboard-list-header">
                   <h5>My Sales Today</h5>
-                  <a href="{% url 'sales_list' %}" class="small text-success fw-semibold">View all →</a>
+                  <a href="{% url 'sales_list' %}" class="small text-success fw-semibold">View all <i class="fas fa-arrow-right ms-1"></i></a>
                 </div>
                 <div class="table-responsive">
                   <table class="table dashboard-table mb-0">
@@ -170,12 +171,12 @@
               </div>
             </div>
 
-            <!-- STOCK CHECK -->
+            <!-- Current stock status overview -->
             <div class="col-md-6">
               <div class="dashboard-list-card">
                 <div class="dashboard-list-header">
                   <h5>Stock Check</h5>
-                  <a href="{% url 'stock' %}" class="small text-success fw-semibold">View all →</a>
+                  <a href="{% url 'stock' %}" class="small text-success fw-semibold">View all <i class="fas fa-arrow-right ms-1"></i></a>
                 </div>
                 <div class="table-responsive">
                   <table class="table dashboard-table mb-0">
@@ -214,27 +215,27 @@
 
           </div>
 
-          <!-- QUICK ACTIONS -->
+          <!-- Quick action buttons for common tasks -->
           <div class="mt-4">
             <h6 class="text-muted mb-3">QUICK ACTIONS</h6>
             <div class="row g-3">
               <div class="col">
-                <a href="{% url 'record_sales' %}" class="ns-qa-btn primary">+ Record Sale</a>
+                <a href="{% url 'record_sales' %}" class="ns-qa-btn primary"><i class="fas fa-plus me-2"></i>Record Sale</a>
               </div>
               <div class="col">
-                <a href="{% url 'sales_list' %}" class="ns-qa-btn">View Sales</a>
+                <a href="{% url 'sales_list' %}" class="ns-qa-btn"><i class="fas fa-list me-2"></i>View Sales</a>
               </div>
               <div class="col">
-                <a href="{% url 'stock' %}" class="ns-qa-btn">Check Stock</a>
+                <a href="{% url 'stock' %}" class="ns-qa-btn"><i class="fas fa-boxes me-2"></i>Check Stock</a>
               </div>
             </div>
           </div>
 
-          <!-- RECENT ACTIVITY + TODAY'S SUMMARY -->
+          <!-- Recent activity and daily summary section -->
           <div class="mt-4">
             <div class="row g-3">
 
-              <!-- RECENT ACTIVITY -->
+              <!-- All sales recorded today by all attendants -->
               <div class="col-md-8">
                 <div class="dashboard-list-card">
                   <div class="dashboard-list-header">
@@ -269,14 +270,14 @@
                 </div>
               </div>
 
-              <!-- TODAY'S SUMMARY -->
+              <!-- Daily summary statistics -->
               <div class="col-md-4">
                 <div class="dashboard-list-card d-flex flex-column justify-content-center">
                   <h6 class="text-muted mb-3">TODAY'S SUMMARY</h6>
-                  <p class="mb-2">🛒 <strong>{{ sales_today_count }} sales</strong></p>
-                  <p class="mb-2">💰 <strong>UGX {{ revenue_today|floatformat:0 }} revenue</strong></p>
-                  <p class="mb-2">⚠️ <strong>{{ low_stock_count }} low stock items</strong></p>
-                  <p class="mb-0">🔴 <strong>{{ out_of_stock_count }} out of stock</strong></p>
+                  <p class="mb-2"><i class="fa-solid fa-cart-shopping me-2"></i> <strong>{{ sales_today_count }} sales</strong></p>
+                  <p class="mb-2"><i class="fa-solid fa-coins me-2"></i> <strong>UGX {{ revenue_today|floatformat:0 }} revenue</strong></p>
+                  <p class="mb-2"><i class="fa-solid fa-triangle-exclamation me-2"></i> <strong>{{ low_stock_count }} low stock items</strong></p>
+                  <p class="mb-0"><i class="fa-solid fa-circle-exclamation me-2"></i> <strong>{{ out_of_stock_count }} out of stock</strong></p>
                 </div>
               </div>
 

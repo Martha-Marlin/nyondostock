@@ -13,29 +13,29 @@
 </head>
 <body>
 
-    <!-- NAVBAR -->
-<nav class="lp-nav">
-    <div class="lp-nav-left">
-        <div class="lp-logo">
-            <svg width="46" height="46" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <polygon points="50,6 90,28 90,72 50,94 10,72 10,28" fill="#1d9e75"/>
-                <polygon points="50,14 82,32 82,68 50,86 18,68 18,32" fill="none" stroke="#9fe1cb" stroke-width="2"/>
-                <text x="50" y="64" text-anchor="middle" font-family="DM Sans, Arial, sans-serif" font-weight="900" font-size="42" fill="#ffffff">N</text>
-            </svg>
+    <!-- Main navigation bar with branding and sign in button -->
+    <nav class="lp-nav">
+        <div class="lp-nav-left">
+            <div class="lp-logo">
+                <svg width="46" height="46" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="50,6 90,28 90,72 50,94 10,72 10,28" fill="#1d9e75"/>
+                    <polygon points="50,14 82,32 82,68 50,86 18,68 18,32" fill="none" stroke="#9fe1cb" stroke-width="2"/>
+                    <text x="50" y="64" text-anchor="middle" font-family="DM Sans, Arial, sans-serif" font-weight="900" font-size="42" fill="#ffffff">N</text>
+                </svg>
+            </div>
+            <div>
+                <div class="lp-brand">NyondoStock</div>
+                <div class="lp-brand-sub">NYONDO General Hardware LTD</div>
+            </div>
         </div>
-        <div>
-            <div class="lp-brand">NyondoStock</div>
-            <div class="lp-brand-sub">NYONDO General Hardware LTD</div>
-        </div>
-    </div>
-    <a href="{% url 'login' %}" class="lp-nav-btn">Sign In →</a>
-</nav>
+        <a href="{% url 'login' %}" class="lp-nav-btn">Sign In <i class="fas fa-arrow-right ms-1"></i></a>
+    </nav>
 
-    <!-- HERO SECTION -->
+    <!-- Hero section with main heading and dashboard preview -->
     <section class="lp-hero" id="top">
         <div class="lp-hero-inner">
 
-            <!-- LEFT TEXT -->
+            <!-- Left side - main marketing text -->
             <div class="lp-hero-text">
                 <div class="lp-hero-badge">
                     <span class="lp-badge-dot"></span>
@@ -50,10 +50,10 @@
                     NyondoStock brings your inventory, sales, credits, and deposits
                     into one system. No confusion. Just control.
                 </p>
-                <a href="{% url 'login' %}" class="lp-hero-btn-primary">→ Sign In</a>
+                <a href="{% url 'login' %}" class="lp-hero-btn-primary"><i class="fas fa-arrow-right me-2"></i>Sign In</a>
             </div>
 
-            <!-- DASHBOARD PREVIEW -->
+            <!-- Dashboard preview mockup showing key metrics -->
             <div class="lp-dashboard-preview">
                 <div class="lp-dp-topbar">
                     <div class="lp-dp-dot" style="background:#ff5f57;"></div>
@@ -103,7 +103,7 @@
         </div>
     </section>
 
-    <!-- STATS BAR -->
+    <!-- Key features statistics bar -->
     <div class="lp-stats">
         <div class="lp-stat">
             <div class="lp-stat-num">Real-time</div>
@@ -119,17 +119,21 @@
         </div>
     </div>
 
-    <!-- CTA -->
+    <!-- Call to action section encouraging sign up -->
     <section style="background:#f4faf6; text-align:center; padding: 48px 2.5rem; border-top: 1px solid #e0e8e0;">
         <p style="font-size:20px; font-weight:700; color:#142e1a; margin-bottom:20px;">Ready to get started?</p>
-        <a href="{% url 'login' %}" class="lp-nav-btn">→ Sign In</a>
+        <a href="{% url 'login' %}" class="lp-nav-btn"><i class="fas fa-arrow-right me-2"></i>Sign In</a>
     </section>
 
-    <!-- FOOTER -->
+    <!-- Footer with branding and copyright info - logo now matches navbar -->
     <footer class="lp-footer">
         <div class="lp-footer-brand">
             <div class="lp-footer-logo">
-                <img src="{% static 'images/logo-edit.png' %}" alt="NyondoStock" />
+                <svg width="46" height="46" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="50,6 90,28 90,72 50,94 10,72 10,28" fill="#1d9e75"/>
+                    <polygon points="50,14 82,32 82,68 50,86 18,68 18,32" fill="none" stroke="#9fe1cb" stroke-width="2"/>
+                    <text x="50" y="64" text-anchor="middle" font-family="DM Sans, Arial, sans-serif" font-weight="900" font-size="42" fill="#ffffff">N</text>
+                </svg>
             </div>
             <div>
                 <div class="lp-footer-name">NyondoStock</div>

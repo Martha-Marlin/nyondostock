@@ -327,7 +327,7 @@ def stock_view(request):
             messages.success(request, 'Stock item deleted successfully.')
             return redirect('stock')
 
-        if action == 'create':
+        elif action == 'create':
             item_name = request.POST.get('item_name', '').strip()
             category = request.POST.get('category', 'Cement')
             unit = request.POST.get('unit', 'Pieces')
@@ -335,82 +335,78 @@ def stock_view(request):
             quantity_raw = request.POST.get('quantity', '').strip()
             selling_price_raw = request.POST.get('selling_price', '').strip()
             buying_price_raw = request.POST.get('buying_price', '').strip()
+            minimum_stock_raw = request.POST.get('minimum_stock', '0').strip()
 
-            # ---- SERVER-SIDE VALIDATION ----
             if not item_name:
-                messages.error(request, 'Item name is required.')
-                return redirect('stock')
-
-            if not quantity_raw or int(quantity_raw or 0) < 0:
-                messages.error(request, 'Quantity must be zero or greater.')
-                return redirect('stock')
-
-            if not selling_price_raw or Decimal(selling_price_raw or 0) <= 0:
-                messages.error(request, 'Selling price must be greater than zero.')
-                return redirect('stock')
-
-            if not buying_price_raw or Decimal(buying_price_raw or 0) <= 0:
-                messages.error(request, 'Buying price must be greater than zero.')
-                return redirect('stock')
-
-            if Decimal(buying_price_raw) > Decimal(selling_price_raw):
-                messages.error(request, 'Buying price cannot be greater than selling price.')
-                return redirect('stock')
-            # ---- END VALIDATION ----
-
-            existing_item = StockItem.objects.filter(
-                item_name=item_name,
-                category=category,
-                unit=unit,
-                supplier=supplier
-            ).first()
-
-            if existing_item:
-                additional_quantity = int(quantity_raw or 0)
-                existing_item.quantity += additional_quantity
-                existing_item.buying_price = buying_price_raw
-                existing_item.selling_price = selling_price_raw
-                existing_item.minimum_stock = int(request.POST.get('minimum_stock', 0) or 0)
-                existing_item.save()
-                messages.success(request, f'Added {additional_quantity} to existing {item_name}. New total: {existing_item.quantity}')
+                messages.error(request, 'Item name is required.', extra_tags='add_item_name_error')
+            elif not quantity_raw or int(quantity_raw or 0) < 0:
+                messages.error(request, 'Quantity must be zero or greater.', extra_tags='add_quantity_error')
+            elif not selling_price_raw or Decimal(selling_price_raw or 0) <= 0:
+                messages.error(request, 'Selling price must be greater than zero.', extra_tags='add_selling_price_error')
+            elif not buying_price_raw or Decimal(buying_price_raw or 0) <= 0:
+                messages.error(request, 'Buying price must be greater than zero.', extra_tags='add_buying_price_error')
+            elif Decimal(buying_price_raw) > Decimal(selling_price_raw):
+                messages.error(request, 'Buying price cannot be greater than selling price.', extra_tags='add_buying_price_error')
             else:
-                StockItem.objects.create(
-                    item_name=item_name,
-                    category=category,
-                    quantity=int(quantity_raw or 0),
-                    unit=unit,
-                    minimum_stock=int(request.POST.get('minimum_stock', 0) or 0),
-                    buying_price=buying_price_raw,
-                    selling_price=selling_price_raw,
-                    supplier=supplier,
-                )
-                messages.success(request, 'New stock item added successfully.')
+                existing_item = StockItem.objects.filter(item_name=item_name, category=category, unit=unit, supplier=supplier).first()
+                if existing_item:
+                    additional_quantity = int(quantity_raw or 0)
+                    existing_item.quantity += additional_quantity
+                    existing_item.buying_price = buying_price_raw
+                    existing_item.selling_price = selling_price_raw
+                    existing_item.minimum_stock = int(minimum_stock_raw or 0)
+                    existing_item.save()
+                    messages.success(request, f'Added {additional_quantity} to existing {item_name}. New total: {existing_item.quantity}')
+                else:
+                    StockItem.objects.create(item_name=item_name, category=category, quantity=int(quantity_raw or 0), unit=unit, minimum_stock=int(minimum_stock_raw or 0), buying_price=buying_price_raw, selling_price=selling_price_raw, supplier=supplier)
+                    messages.success(request, 'New stock item added successfully.')
+                return redirect('stock')
 
-            return redirect('stock')
+            # Validation error — render with posted data
+            items = StockItem.objects.all().order_by('-id')
+            total_items = items.count()
+            out_of_stock_count = items.filter(quantity=0).count()
+            low_stock_count = items.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count()
+            in_stock_count = total_items - low_stock_count - out_of_stock_count
+            return render(request, 'nyondoapp/stock.html', {
+                'items': items,
+                'total_items': total_items,
+                'in_stock': in_stock_count,
+                'low_stock': low_stock_count,
+                'out_of_stock': out_of_stock_count,
+                'stock_filter': '',
+                'search': '',
+                'low_stock_count': low_stock_count,
+                'suppliers': Supplier.objects.all().order_by('supplier_name'),
+                'add_error': True,
+                'posted_item_name': item_name,
+                'posted_category': category,
+                'posted_quantity': quantity_raw,
+                'posted_unit': unit,
+                'posted_minimum_stock': minimum_stock_raw,
+                'posted_buying_price': buying_price_raw,
+                'posted_selling_price': selling_price_raw,
+                'posted_supplier': supplier,
+            })
 
-        if action == 'update':
+        elif action == 'update':
             item = get_object_or_404(StockItem, id=request.POST.get('item_id'))
             item_name = request.POST.get('item_name', '').strip()
             selling_price_raw = request.POST.get('selling_price', '').strip()
             buying_price_raw = request.POST.get('buying_price', '').strip()
 
-            # ---- SERVER-SIDE VALIDATION ----
             if not item_name:
                 messages.error(request, 'Item name is required.')
                 return redirect('stock')
-
             if not selling_price_raw or Decimal(selling_price_raw or 0) <= 0:
                 messages.error(request, 'Selling price must be greater than zero.')
                 return redirect('stock')
-
             if not buying_price_raw or Decimal(buying_price_raw or 0) <= 0:
                 messages.error(request, 'Buying price must be greater than zero.')
                 return redirect('stock')
-
             if Decimal(buying_price_raw) > Decimal(selling_price_raw):
                 messages.error(request, 'Buying price cannot be greater than selling price.')
                 return redirect('stock')
-            # ---- END VALIDATION ----
 
             item.item_name = item_name
             item.category = request.POST.get('category', 'Cement')
@@ -424,6 +420,7 @@ def stock_view(request):
             messages.success(request, 'Stock item updated successfully.')
             return redirect('stock')
 
+    # GET request — normal page load
     stock_filter = request.GET.get('filter', '')
     search = request.GET.get('search', '')
     items = StockItem.objects.all()
@@ -787,6 +784,7 @@ def suppliers_view(request):
         'credits_due': suppliers.filter(status='Credits Due').count(),
         'overdue': suppliers.filter(status='Overdue').count(),
         'total_owed': suppliers.aggregate(total=Sum('balance'))['total'] or 0,
+        'low_stock_count': StockItem.objects.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count(),
     }
     return render(request, 'nyondoapp/suppliers.html', context)
 
@@ -801,34 +799,69 @@ def add_supplier_view(request):
     if request.method == 'POST':
         supplier_name = request.POST.get('supplier_name', '').strip()
         phone = request.POST.get('phone', '').strip()
+        tin_number = request.POST.get('tin_number', '').strip()
+        email = request.POST.get('email', '').strip()
+        location = request.POST.get('location', '').strip()
+        initial_balance = request.POST.get('initial_balance', '0').strip()
+        payment_terms = request.POST.get('payment_terms', '30')
+        notes = request.POST.get('notes', '').strip()
+
+        def error_render(extra_tags=''):
+            suppliers = Supplier.objects.all().order_by('supplier_name')
+            return render(request, 'nyondoapp/suppliers.html', {
+                'suppliers': suppliers,
+                'search': '',
+                'status': '',
+                'total_suppliers': suppliers.count(),
+                'credits_due': suppliers.filter(status='Credits Due').count(),
+                'overdue': suppliers.filter(status='Overdue').count(),
+                'total_owed': suppliers.aggregate(total=Sum('balance'))['total'] or 0,
+                'low_stock_count': StockItem.objects.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count(),
+                'add_error': True,
+                'posted_supplier_name': supplier_name,
+                'posted_phone': phone,
+                'posted_tin': tin_number,
+                'posted_email': email,
+                'posted_location': location,
+                'posted_balance': initial_balance,
+                'posted_payment_terms': payment_terms,
+                'posted_notes': notes,
+            })
 
         # ---- SERVER-SIDE VALIDATION ----
         if not supplier_name:
-            messages.error(request, 'Supplier name is required.')
-            return redirect('suppliers')
+            messages.error(request, 'Supplier name is required.', extra_tags='supplier_name_error')
+            return error_render('supplier_name_error')
 
         if not phone:
-            messages.error(request, 'Phone number is required.')
-            return redirect('suppliers')
+            messages.error(request, 'Phone number is required.', extra_tags='phone_error')
+            return error_render('phone_error')
 
         if not re.match(r'^(07|03)\d{8}$', phone.replace(' ', '')):
-            messages.error(request, 'Enter a valid Ugandan phone number (e.g. 0701234567).')
-            return redirect('suppliers')
+            messages.error(request, 'Enter a valid Ugandan phone number (e.g. 0701234567).', extra_tags='phone_error')
+            return error_render('phone_error')
 
         if Supplier.objects.filter(phone=phone).exists():
-            messages.error(request, 'A supplier with this phone number already exists.')
-            return redirect('suppliers')
-        # ---- END VALIDATION ----
+            messages.error(request, 'A supplier with this phone number already exists.', extra_tags='phone_error')
+            return error_render('phone_error')
+
+        if not tin_number:
+            messages.error(request, 'TIN number is required.', extra_tags='tin_error')
+            return error_render('tin_error')
+        if not tin_number.isdigit() or len(tin_number) != 10:
+            messages.error(request, 'TIN number must be exactly 10 digits (numbers only).', extra_tags='tin_error')
+            return error_render('tin_error')
+        # END VALIDATION 
 
         Supplier.objects.create(
             supplier_name=supplier_name,
             phone=phone,
-            tin_number=request.POST.get('tin_number', '').strip() or None,
-            email=request.POST.get('email', '').strip() or None,
-            location=request.POST.get('location', '').strip() or None,
-            balance=Decimal(request.POST.get('initial_balance', 0) or 0),
-            payment_terms=int(request.POST.get('payment_terms', 30)),
-            notes=request.POST.get('notes', '').strip() or None,
+            tin_number=tin_number or None,
+            email=email or None,
+            location=location or None,
+            balance=Decimal(initial_balance or 0),
+            payment_terms=int(payment_terms),
+            notes=notes or None,
             created_by=request.user,
         )
         messages.success(request, f'{supplier_name} added successfully!')
@@ -846,33 +879,69 @@ def edit_supplier_view(request, supplier_id):
     if request.method == 'POST':
         supplier_name = request.POST.get('supplier_name', '').strip()
         phone = request.POST.get('phone', '').strip()
+        tin_number = request.POST.get('tin_number', '').strip()
+        email = request.POST.get('email', '').strip()
+        location = request.POST.get('location', '').strip()
+        payment_terms = request.POST.get('payment_terms', '30')
+        status = request.POST.get('status', 'Active')
+        notes = request.POST.get('notes', '').strip()
+
+        def error_render(extra_tags=''):
+            suppliers = Supplier.objects.all().order_by('supplier_name')
+            return render(request, 'nyondoapp/suppliers.html', {
+                'suppliers': suppliers,
+                'search': '',
+                'status': '',
+                'total_suppliers': suppliers.count(),
+                'credits_due': suppliers.filter(status='Credits Due').count(),
+                'overdue': suppliers.filter(status='Overdue').count(),
+                'total_owed': suppliers.aggregate(total=Sum('balance'))['total'] or 0,
+                'low_stock_count': StockItem.objects.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count(),
+                'edit_error': True,
+                'edit_supplier_id': supplier_id,
+                'posted_edit_supplier_name': supplier_name,
+                'posted_edit_phone': phone,
+                'posted_edit_tin': tin_number,
+                'posted_edit_email': email,
+                'posted_edit_location': location,
+                'posted_edit_payment_terms': payment_terms,
+                'posted_edit_status': status,
+                'posted_edit_notes': notes,
+            })
 
         # ---- SERVER-SIDE VALIDATION ----
         if not supplier_name:
-            messages.error(request, 'Supplier name is required.')
-            return redirect('suppliers')
+            messages.error(request, 'Supplier name is required.', extra_tags='edit_supplier_name_error')
+            return error_render('edit_supplier_name_error')
 
         if not phone:
-            messages.error(request, 'Phone number is required.')
-            return redirect('suppliers')
+            messages.error(request, 'Phone number is required.', extra_tags='edit_phone_error')
+            return error_render('edit_phone_error')
 
         if not re.match(r'^(07|03)\d{8}$', phone.replace(' ', '')):
-            messages.error(request, 'Enter a valid Ugandan phone number (e.g. 0701234567).')
-            return redirect('suppliers')
+            messages.error(request, 'Enter a valid Ugandan phone number (e.g. 0701234567).', extra_tags='edit_phone_error')
+            return error_render('edit_phone_error')
 
         if Supplier.objects.filter(phone=phone).exclude(id=supplier_id).exists():
-            messages.error(request, 'Another supplier with this phone number already exists.')
-            return redirect('suppliers')
+            messages.error(request, 'Another supplier with this phone number already exists.', extra_tags='edit_phone_error')
+            return error_render('edit_phone_error')
+
+        if not tin_number:
+            messages.error(request, 'TIN number is required.', extra_tags='tin_error')
+            return error_render('tin_error')
+        if not tin_number.isdigit() or len(tin_number) != 10:
+            messages.error(request, 'TIN number must be exactly 10 digits (numbers only).', extra_tags='tin_error')
+            return error_render('tin_error')
         # ---- END VALIDATION ----
 
         supplier.supplier_name = supplier_name
         supplier.phone = phone
-        supplier.tin_number = request.POST.get('tin_number', '').strip() or None
-        supplier.email = request.POST.get('email', '').strip() or None
-        supplier.location = request.POST.get('location', '').strip() or None
-        supplier.payment_terms = int(request.POST.get('payment_terms', 30))
-        supplier.status = request.POST.get('status', 'Active')
-        supplier.notes = request.POST.get('notes', '').strip() or None
+        supplier.tin_number = tin_number or None
+        supplier.email = email or None
+        supplier.location = location or None
+        supplier.payment_terms = int(payment_terms)
+        supplier.status = status
+        supplier.notes = notes or None
         supplier.save()
         messages.success(request, f'{supplier_name} updated successfully.')
     return redirect('suppliers')
@@ -1095,7 +1164,7 @@ def customers_view(request):
     return render(request, 'nyondoapp/customers_list.html', context)
 
 
-# REGISTER CUSTOMER VIEW
+# REGISTER CUSTOMER VIEW 
 @login_required(login_url='login')
 def register_customer_view(request):
     denied = require_roles(request, ACCOUNTS_ROLE)
@@ -1103,7 +1172,6 @@ def register_customer_view(request):
         return denied
 
     low_stock_count = StockItem.objects.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count()
-    context = {'low_stock_count': low_stock_count}
 
     if request.method == 'POST':
         full_name = request.POST.get('full_name', '').strip()
@@ -1112,43 +1180,71 @@ def register_customer_view(request):
         area = request.POST.get('area', '').strip() or None
         notes = request.POST.get('notes', '').strip() or None
 
-        # ---- SERVER-SIDE VALIDATION ----
-        if not full_name:
-            messages.error(request, 'Full name is required.')
-            return render(request, 'nyondoapp/register_customer.html', context)
+        def error_render():
+            return render(request, 'nyondoapp/register_customer.html', {
+                'low_stock_count': low_stock_count,
+                'posted_full_name': full_name,
+                'posted_phone': phone_number,
+                'posted_nin': nin,
+                'posted_area': area or '',
+                'posted_notes': notes or '',
+            })
 
+        # Full name validation
+        if not full_name:
+            messages.error(request, 'Full name is required.', extra_tags='full_name_error')
+            return error_render()
+
+        # Phone number validation
         if not phone_number:
-            messages.error(request, 'Phone number is required.')
-            return render(request, 'nyondoapp/register_customer.html', context)
+            messages.error(request, 'Phone number is required.', extra_tags='phone_error')
+            return error_render()
 
         if not re.match(r'^(07|03)\d{8}$', phone_number.replace(' ', '')):
-            messages.error(request, 'Enter a valid Ugandan phone number (e.g. 0701234567).')
-            return render(request, 'nyondoapp/register_customer.html', context)
+            messages.error(request, 'Enter a valid Ugandan phone number (e.g. 0701234567).', extra_tags='phone_error')
+            return error_render()
 
+        # NIN validation - CORRECTED for alphanumeric NIN
         if not nin:
-            messages.error(request, 'NIN is required.')
-            return render(request, 'nyondoapp/register_customer.html', context)
+            messages.error(request, 'NIN is required.', extra_tags='nin_error')
+            return error_render()
 
         if len(nin) != 14:
-            messages.error(request, 'NIN must be exactly 14 characters.')
-            return render(request, 'nyondoapp/register_customer.html', context)
+            messages.error(request, 'NIN must be exactly 14 characters.', extra_tags='nin_error')
+            return error_render()
 
         nin_prefix = nin[:2]
-        if nin_prefix not in ['CM', 'CF']:
-            messages.error(request, 'Invalid NIN format. Must start with CM (Male) or CF (Female).')
-            return render(request, 'nyondoapp/register_customer.html', context)
-        # ---- END VALIDATION ----
+        nin_suffix = nin[2:]  # Remaining 12 characters (can be letters AND numbers)
 
+        if nin_prefix not in ['CM', 'CF']:
+            messages.error(request, 'Invalid NIN format. Must start with CM (Male) or CF (Female).', extra_tags='nin_error')
+            return error_render()
+
+        
+        # NIN should only contain letters and numbers, no special characters
+        if not nin_suffix.isalnum():
+            messages.error(request, 'NIN can only contain letters and numbers (no special characters like @, #, $, etc.).', extra_tags='nin_error')
+            return error_render()
+
+        # Check for duplicate NIN in database
+        if Customer.objects.filter(nin=nin).exists():
+            messages.error(request, f'A customer with NIN {nin} is already registered.', extra_tags='nin_error')
+            return error_render()
+
+        # Check for duplicate full name (case-insensitive)
+        if Customer.objects.filter(full_name__iexact=full_name).exists():
+            messages.error(request, f'A customer named "{full_name}" is already registered. Please verify this is a different person.', extra_tags='full_name_error')
+            return error_render()
+
+        # Check for duplicate phone number
+        if Customer.objects.filter(phone_number=phone_number).exists():
+            messages.error(request, 'A customer with this phone number is already registered.', extra_tags='phone_error')
+            return error_render()
+
+        # Auto-detect gender from NIN prefix
         gender = 'M' if nin_prefix == 'CM' else 'F'
 
-        if Customer.objects.filter(nin=nin).exists():
-            messages.error(request, f'A customer with NIN {nin} is already registered.')
-            return render(request, 'nyondoapp/register_customer.html', context)
-
-        if Customer.objects.filter(phone_number=phone_number).exists():
-            messages.error(request, 'A customer with this phone number is already registered.')
-            return render(request, 'nyondoapp/register_customer.html', context)
-
+        # Create the customer
         Customer.objects.create(
             full_name=full_name,
             phone_number=phone_number,
@@ -1161,10 +1257,10 @@ def register_customer_view(request):
         messages.success(request, f'{full_name} registered successfully!')
         return redirect('customers')
 
-    return render(request, 'nyondoapp/register_customer.html', context)
+    return render(request, 'nyondoapp/register_customer.html', {'low_stock_count': low_stock_count})
 
 
-# EDIT CUSTOMER VIEW
+# EDIT CUSTOMER VIEW (CORRECTED - NIN can have letters and numbers)
 @login_required(login_url='login')
 def edit_customer_view(request, customer_id):
     customer = get_object_or_404(Customer, id=customer_id)
@@ -1175,21 +1271,36 @@ def edit_customer_view(request, customer_id):
         area = request.POST.get('area', '').strip() or None
         notes = request.POST.get('notes', '').strip() or None
 
+        # NIN validation
+        if not nin:
+            messages.error(request, 'NIN is required.')
+            return redirect('customers')
+
         if len(nin) != 14:
             messages.error(request, 'NIN must be exactly 14 characters.')
             return redirect('customers')
 
         nin_prefix = nin[:2]
+        nin_suffix = nin[2:]
+
         if nin_prefix not in ['CM', 'CF']:
             messages.error(request, 'Invalid NIN format. Must start with CM (Male) or CF (Female).')
             return redirect('customers')
 
+        # Check for invalid special characters
+        if not nin_suffix.isalnum():
+            messages.error(request, 'NIN can only contain letters and numbers (no special characters).')
+            return redirect('customers')
+
+        # Check for duplicate NIN (excluding current customer)
         if Customer.objects.filter(nin=nin).exclude(id=customer.id).exists():
             messages.error(request, f'A customer with NIN {nin} is already registered.')
             return redirect('customers')
 
+        # Auto-detect gender from NIN prefix
         gender = 'M' if nin_prefix == 'CM' else 'F'
 
+        # Update customer
         customer.full_name = full_name
         customer.phone_number = phone_number
         customer.nin = nin

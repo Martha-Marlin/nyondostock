@@ -15,7 +15,7 @@
   </head>
   <body>
 
-    <!-- TOPBAR -->
+    <!-- Top navigation bar with logo and user info -->
     <nav class="topbar">
       <div class="topbar-left">
         <div class="logo">
@@ -37,50 +37,50 @@
       </div>
     </nav>
 
-    <!-- MAIN LAYOUT -->
+    <!-- Main dashboard layout with sidebar and content area -->
     <div class="container-fluid">
       <div class="row">
 
-        <!-- SIDEBAR -->
+        <!-- Sidebar navigation menu -->
         <aside class="col-2 bg-light min-vh-100 p-3 pt-4 position-relative">
           <h6 class="text-muted">MENU</h6>
           <ul class="nav flex-column">
   <li class="nav-item mb-3">
-    <a href="{% url 'accounts_dashboard' %}" class="nav-link active">📊 Accounts Dashboard</a>
+    <a href="{% url 'accounts_dashboard' %}" class="nav-link active"><i class="fas fa-chart-line me-2"></i> Accounts Dashboard</a>
   </li>
   <li class="nav-item mb-3">
-    <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
+    <a href="{% url 'suppliers' %}" class="nav-link text-dark"><i class="fas fa-building me-2"></i> Suppliers</a>
   </li>
   <li class="nav-item mb-3">
-    <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
+    <a href="{% url 'customers' %}" class="nav-link text-dark"><i class="fas fa-users me-2"></i> Customers</a>
   </li>
   <li class="nav-item mb-3">
-    <a href="{% url 'deposits' %}" class="nav-link text-dark">💰 Deposits</a>
+    <a href="{% url 'deposits' %}" class="nav-link text-dark"><i class="fas fa-coins me-2"></i> Deposits</a>
   </li>
   <li class="nav-item mb-3">
-    <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
+    <a href="{% url 'reports' %}" class="nav-link text-dark"><i class="fas fa-chart-simple me-2"></i> Reports</a>
   </li>
 </ul>
         </aside>
 
-        <!-- MAIN CONTENT -->
+        <!-- Main content area -->
         <main class="col-10 p-5">
 
-          <!-- PAGE HEADER -->
+          <!-- Page header with title, date, and action button -->
           <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
               <h4 class="mb-0">Accounts Dashboard</h4>
               <small class="text-muted">{{ now|date:"l, d F Y" }}</small>
             </div>
-            <a href="{% url 'reports' %}" class="btn btn-success btn-sm px-3">+ Generate Report</a>
+            <a href="{% url 'reports' %}" class="btn btn-success btn-sm px-3"><i class="fas fa-plus me-1"></i> Generate Report</a>
           </div>
 
-          <!-- MESSAGES -->
+          <!-- Alert messages for user feedback -->
           {% if messages %}
 <div class="mb-3">
   {% for message in messages %}
   <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'success' in message.tags %}alert-success{% elif 'warning' in message.tags %}alert-warning{% endif %} alert-dismissible fade show d-flex align-items-center gap-2" role="alert">
-    {% if 'error' in message.tags %}⚠️{% elif 'success' in message.tags %}✅{% endif %}
+    {% if 'error' in message.tags %}<i class="fas fa-exclamation-triangle me-1"></i>{% elif 'success' in message.tags %}<i class="fas fa-check-circle me-1"></i>{% endif %}
     <span>{{ message }}</span>
     <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
   </div>
@@ -88,7 +88,7 @@
 </div>
 {% endif %}
 
-          <!-- STAT CARDS -->
+          <!-- Key financial metrics displayed as stat cards -->
           <div class="row mb-4 g-3">
             <div class="col-12 col-sm-6 col-md-3">
               <div class="stat-card">
@@ -120,10 +120,10 @@
             </div>
           </div>
 
-          <!-- ROW 1: Recent Sales + Supplier Credits -->
+          <!-- First row: Recent sales and supplier credits sections -->
           <div class="row g-3">
 
-            <!-- Recent Sales -->
+            <!-- Recent sales transactions table -->
             <div class="col-md-6">
               <div class="stock-list-card h-100">
                 <div class="stock-list-header d-flex justify-content-between">
@@ -152,20 +152,20 @@
                             {% else %}
                               <span class="status-badge b-red">Credit</span>
                             {% endif %}
-                          </td>
-                        </tr>
+                           </td>
+                         </tr>
                       {% empty %}
                         <tr>
                           <td colspan="3" class="text-center text-muted py-3">No sales recorded yet.</td>
-                        </tr>
+                         </tr>
                       {% endfor %}
                     </tbody>
-                  </table>
+                   </table>
                 </div>
               </div>
             </div>
 
-            <!-- Supplier Credits Due -->
+            <!-- Supplier credits that need attention -->
             <div class="col-md-6">
               <div class="stock-list-card h-100">
                 <div class="stock-list-header d-flex justify-content-between">
@@ -179,7 +179,7 @@
                         <th>Supplier</th>
                         <th class="text-end">Balance Due</th>
                         <th>Status</th>
-                      </tr>
+                       </tr>
                     </thead>
                     <tbody>
                       {% for credit in supplier_credits_due %}
@@ -192,24 +192,24 @@
                             {% else %}
                               <span class="status-badge b-yellow">Partial</span>
                             {% endif %}
-                          </td>
-                        </tr>
+                           </td>
+                         </tr>
                       {% empty %}
                         <tr>
                           <td colspan="3" class="text-center text-muted py-3">No outstanding supplier credits.</td>
-                        </tr>
+                         </tr>
                       {% endfor %}
                     </tbody>
-                  </table>
+                   </table>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- ROW 2: Deposit Activity + Financial Summary -->
+          <!-- Second row: Deposit activity and financial summary -->
           <div class="row g-3 mt-2">
 
-            <!-- Deposit Scheme Activity -->
+            <!-- Customer deposit scheme tracking -->
             <div class="col-md-8">
               <div class="stock-list-card h-100">
                 <div class="stock-list-header d-flex justify-content-between">
@@ -225,7 +225,7 @@
                         <th class="text-end">Total</th>
                         <th class="text-end">Paid</th>
                         <th>Progress</th>
-                      </tr>
+                       </tr>
                     </thead>
                     <tbody>
                       {% for deposit in recent_deposits %}
@@ -242,20 +242,20 @@
   aria-valuemin="0" aria-valuemax="100">
 </div>
 <small class="text-muted">UGX {{ deposit.amount_paid|floatformat:0 }}</small>
-                          </td>
-                        </tr>
+                           </td>
+                         </tr>
                       {% empty %}
                         <tr>
                           <td colspan="5" class="text-center text-muted py-3">No active deposits.</td>
-                        </tr>
+                         </tr>
                       {% endfor %}
                     </tbody>
-                  </table>
+                   </table>
                 </div>
               </div>
             </div>
 
-            <!-- Financial Summary -->
+            <!-- Quick financial overview -->
             <div class="col-md-4">
               <div class="stock-list-card h-100">
                 <div class="stock-list-header d-flex justify-content-between">
@@ -288,21 +288,21 @@
             </div>
           </div>
 
-          <!-- QUICK ACTIONS -->
+          <!-- Quick action buttons for common tasks -->
           <div class="mt-4">
             <h6 class="text-muted mb-3">QUICK ACTIONS</h6>
             <div class="row g-3 align-items-stretch">
               <div class="col">
-                <a href="{% url 'suppliers' %}" class="ns-qa-btn">Record Payment</a>
+                <a href="{% url 'suppliers' %}" class="ns-qa-btn"><i class="fas fa-money-bill-wave me-2"></i>Record Payment</a>
               </div>
               <div class="col">
-                <a href="{% url 'reports' %}" class="ns-qa-btn primary">Generate Report</a>
+                <a href="{% url 'reports' %}" class="ns-qa-btn primary"><i class="fas fa-chart-line me-2"></i>Generate Report</a>
               </div>
               <div class="col">
-                <a href="{% url 'suppliers' %}" class="ns-qa-btn">Add Supplier</a>
+                <a href="{% url 'suppliers' %}" class="ns-qa-btn"><i class="fas fa-truck me-2"></i>Add Supplier</a>
               </div>
               <div class="col">
-                <a href="{% url 'deposits' %}" class="ns-qa-btn">View Deposits</a>
+                <a href="{% url 'deposits' %}" class="ns-qa-btn"><i class="fas fa-eye me-2"></i>View Deposits</a>
               </div>
             </div>
           </div>

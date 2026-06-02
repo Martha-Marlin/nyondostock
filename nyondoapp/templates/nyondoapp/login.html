@@ -11,16 +11,17 @@
       integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
       crossorigin="anonymous"
     />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="{% static 'login.css' %}" />
   </head>
   <body
     class="bg-light d-flex justify-content-center align-items-center vh-100"
   >
-    <!-- Success alert (shown after redirect - displays briefly at top) -->
+    <!-- Success alert - appears briefly after redirect at the top right corner -->
     {% for message in messages %}{% if 'success' in message.tags %}
     <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999">
       <div class="alert alert-success alert-dismissible" role="alert">
-        ✅ {{ message }}
+        <i class="fa-solid fa-circle-check me-1"></i> {{ message }}
         <button
           type="button"
           class="btn-close"
@@ -30,8 +31,10 @@
     </div>
     {% endif %}{% endfor %}
 
+    <!-- Main login card container -->
     <div class="card p-4 shadow" style="max-width: 400px; width: 100%">
       <div class="text-center">
+        <!-- Company logo displayed at the top of login form -->
         <img
           src="{% static 'images/logo-edit.png' %}"
           alt="NyondoStock Logo"
@@ -42,37 +45,38 @@
       <h2 class="text-center">NyondoStock</h2>
       <h6 class="text-center">NYONDO General Hardware LTD</h6>
 
+      <!-- Login form - submits credentials to authenticate user -->
       <form method="POST" action="{% url 'login' %}">
   {% csrf_token %}
 
-  <!-- Username field -->
+  <!-- Username input field -->
   <div class="mb-3">
     <label for="username" class="form-label">Username</label>
     <input type="text" id="username" name="username" placeholder="Enter your username" value="{{ request.POST.username }}" class="form-control {% for message in messages %}{% if 'username_error' in message.tags %}is-invalid{% endif %}{% endfor %}" />
     {% for message in messages %}{% if 'username_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
   </div>
 
-  <!-- Password field -->
+  <!-- Password input field -->
   <div class="mb-3">
     <label for="password" class="form-label">Password</label>
     <input type="password" id="password" name="password" placeholder="Enter your password" class="form-control {% for message in messages %}{% if 'password_error' in message.tags or 'credentials_error' in message.tags %}is-invalid{% endif %}{% endfor %}" />
     {% for message in messages %}{% if 'password_error' in message.tags or 'credentials_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
   </div>
 
-  <!-- General error (both fields empty) -->
-  {% for message in messages %}{% if 'error' in message.tags and 'username_error' not in message.tags and 'password_error' not in message.tags and 'credentials_error' not in message.tags %}<div class="alert alert-danger py-2 small mb-3">{{ message }}</div>{% endif %}{% endfor %}
+  <!-- General error message for empty fields or other validation issues -->
+  {% for message in messages %}{% if 'error' in message.tags and 'username_error' not in message.tags and 'password_error' not in message.tags and 'credentials_error' not in message.tags %}<div class="alert alert-danger py-2 small mb-3"><i class="fa-solid fa-triangle-exclamation me-1"></i> {{ message }}</div>{% endif %}{% endfor %}
 
-  <button type="submit" class="btn btn-success w-100">Login</button>
+  <button type="submit" class="btn btn-success w-100"><i class="fa-solid fa-right-to-bracket me-2"></i>Login</button>
   <a href="#" class="d-block text-center mt-2" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">
-    Forgot password? Contact admin
+    <i class="fa-solid fa-key me-1"></i> Forgot password? Contact admin
   </a>
-  <p class="text-center mb-0">No account? Contact your administrator.</p>
+  <p class="text-center mb-0 mt-2"><i class="fa-solid fa-user-plus me-1"></i> No account? Contact your administrator.</p>
 </form>
 
        
     </div>
 
-    <!-- Forgot Password Modal -->
+    <!-- Modal popup for password reset instructions -->
     <div
       class="modal fade"
       id="forgotPasswordModal"
@@ -82,7 +86,7 @@
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Forgot Password?</h5>
+            <h5 class="modal-title"><i class="fa-solid fa-circle-question me-2"></i>Forgot Password?</h5>
             <button
               type="button"
               class="btn-close"
@@ -100,14 +104,14 @@
               class="btn btn-success"
               data-bs-dismiss="modal"
             >
-              Okay, Got it
+              <i class="fa-solid fa-check me-1"></i> Okay, Got it
             </button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Bootstrap JS only needed for the modal and alert dismiss button -->
+    <!-- Bootstrap JS bundle required for modal interactions and alert dismissals -->
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I"

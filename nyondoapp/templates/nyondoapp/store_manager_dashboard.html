@@ -14,7 +14,7 @@
   </head>
   <body>
 
-    <!-- TOPBAR -->
+    <!-- Main navigation bar with branding and user info -->
     <nav class="topbar">
       <div class="topbar-left">
         <div class="logo">
@@ -34,70 +34,70 @@
         <span class="role">
           {% if user.groups.all %}{{ user.groups.first.name }}{% else %}Store Manager{% endif %}
         </span>
-        <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+        <a href="{% url 'logout' %}" class="btn btn-danger"><i class="fas fa-sign-out-alt me-1"></i>Logout</a>
       </div>
     </nav>
 
-    <!-- MAIN LAYOUT -->
+    <!-- Main dashboard layout with sidebar and content area -->
     <div class="container-fluid">
       <div class="row">
 
-        <!-- SIDEBAR -->
-<div class="col-2 bg-light ns-sidebar p-3 pt-4 position-relative">
-  <h6 class="text-muted">MENU</h6>
-  <ul class="nav flex-column">
-    <li class="nav-item mb-3">
-      <a href="{% url 'store_manager_dashboard' %}" class="nav-link active">📊 Dashboard</a>
-    </li>
-    <li class="nav-item mb-3">
-      <a href="{% url 'stock' %}" class="nav-link text-dark">📦 Stock</a>
-    </li>
-    <li class="nav-item mb-3">
-      <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
-    </li>
-  </ul>
+        <!-- Sidebar navigation menu -->
+        <div class="col-2 bg-light ns-sidebar p-3 pt-4 position-relative">
+          <h6 class="text-muted">MENU</h6>
+          <ul class="nav flex-column">
+            <li class="nav-item mb-3">
+              <a href="{% url 'store_manager_dashboard' %}" class="nav-link active"><i class="fa-solid fa-chart-line me-2"></i> Dashboard</a>
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'stock' %}" class="nav-link text-dark"><i class="fa-solid fa-boxes me-2"></i> Stock</a>
+            </li>
+            <li class="nav-item mb-3">
+              <a href="{% url 'suppliers' %}" class="nav-link text-dark"><i class="fa-solid fa-building me-2"></i> Suppliers</a>
+            </li>
+          </ul>
 
-          <!-- Low stock warning -->
+          <!-- Stock warning alerts - shown when items are low or out of stock -->
           {% if low_stock > 0 or out_of_stock > 0 %}
           <div class="ns-alert-box mt-4">
-            <div class="ns-alert-title">⚠ Stock Alerts</div>
+            <div class="ns-alert-title"><i class="fa-solid fa-triangle-exclamation me-1"></i> Stock Alerts</div>
             {% if out_of_stock > 0 %}
-              <div class="ns-alert-body">{{ out_of_stock }} item{{ out_of_stock|pluralize }} out of stock</div>
+              <div class="ns-alert-body"><i class="fa-solid fa-circle-exclamation me-1"></i> {{ out_of_stock }} item{{ out_of_stock|pluralize }} out of stock</div>
             {% endif %}
             {% if low_stock > 0 %}
-              <div class="ns-alert-body">{{ low_stock }} item{{ low_stock|pluralize }} running low</div>
+              <div class="ns-alert-body"><i class="fa-solid fa-exclamation-triangle me-1"></i> {{ low_stock }} item{{ low_stock|pluralize }} running low</div>
             {% endif %}
-            <a href="{% url 'stock' %}" class="ns-alert-link">View Stock →</a>
+            <a href="{% url 'stock' %}" class="ns-alert-link">View Stock <i class="fas fa-arrow-right ms-1"></i></a>
           </div>
           {% endif %}
 
-          <!-- Sidebar footer -->
+          <!-- Sidebar footer with system information -->
           <div class="position-absolute bottom-0 start-0 p-3 w-100">
             <hr />
-            <small class="text-muted d-block mb-1">📦 NyondoStock v1.0</small>
-            <small class="text-muted d-block mb-1">🏪 NYONDO General Hardware</small>
-            <small class="text-muted d-block">📅 {{ now|date:"F Y" }}</small>
+            <small class="text-muted d-block mb-1"><i class="fa-solid fa-box me-1"></i> NyondoStock v1.0</small>
+            <small class="text-muted d-block mb-1"><i class="fa-solid fa-store me-1"></i> NYONDO General Hardware</small>
+            <small class="text-muted d-block"><i class="fa-solid fa-calendar me-1"></i> {{ now|date:"F Y" }}</small>
           </div>
         </div>
 
-        <!-- MAIN CONTENT -->
+        <!-- Main content area -->
         <div class="col-10 p-5">
 
-          <!-- PAGE HEADER -->
+          <!-- Page header with title and add stock button -->
           <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
               <h4 class="mb-0">Store Manager Dashboard</h4>
               <small class="text-muted">{{ now|date:"l, d F Y" }}</small>
             </div>
-            <a href="{% url 'stock' %}" class="btn btn-success">+ Add Stock</a>
+            <a href="{% url 'stock' %}" class="btn btn-success"><i class="fas fa-plus me-1"></i> Add Stock</a>
           </div>
 
-          <!-- MESSAGES -->
+          <!-- Flash messages for user feedback -->
           {% if messages %}
 <div class="mb-3">
   {% for message in messages %}
   <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'success' in message.tags %}alert-success{% elif 'warning' in message.tags %}alert-warning{% endif %} alert-dismissible fade show d-flex align-items-center gap-2" role="alert">
-    {% if 'error' in message.tags %}⚠️{% elif 'success' in message.tags %}✅{% endif %}
+    {% if 'error' in message.tags %}<i class="fa-solid fa-triangle-exclamation me-1"></i>{% elif 'success' in message.tags %}<i class="fa-solid fa-circle-check me-1"></i>{% endif %}
     <span>{{ message }}</span>
     <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
   </div>
@@ -105,46 +105,46 @@
 </div>
 {% endif %}
 
-          <!-- STAT CARDS -->
+          <!-- Key metrics statistic cards -->
           <div class="row mb-4 g-3">
             <div class="col-12 col-sm-6 col-md-3">
               <div class="stat-card soft">
-                <div class="stat-label">📦 Total Stock Items</div>
+                <div class="stat-label"><i class="fa-solid fa-boxes me-1"></i> Total Stock Items</div>
                 <div class="stat-value">{{ total_items }}</div>
                 <div class="stat-sub">{{ in_stock }} in stock</div>
               </div>
             </div>
             <div class="col-12 col-sm-6 col-md-3">
               <div class="stat-card danger">
-                <div class="stat-label">⚠ Low Stock</div>
+                <div class="stat-label"><i class="fa-solid fa-triangle-exclamation me-1"></i> Low Stock</div>
                 <div class="stat-value">{{ low_stock }}</div>
                 <div class="stat-sub">items below minimum</div>
               </div>
             </div>
             <div class="col-12 col-sm-6 col-md-3">
               <div class="stat-card warn">
-                <div class="stat-label">🚫 Out of Stock</div>
+                <div class="stat-label"><i class="fa-solid fa-circle-exclamation me-1"></i> Out of Stock</div>
                 <div class="stat-value">{{ out_of_stock }}</div>
                 <div class="stat-sub">items need restocking</div>
               </div>
             </div>
             <div class="col-12 col-sm-6 col-md-3">
               <div class="stat-card">
-                <div class="stat-label">💰 Stock Value</div>
+                <div class="stat-label"><i class="fa-solid fa-coins me-1"></i> Stock Value</div>
                 <div class="stat-value" style="font-size: 1.1rem;">UGX {{ stock_value|floatformat:0 }}</div>
                 <div class="stat-sub">at buying price</div>
               </div>
             </div>
           </div>
 
-          <!-- ROW 1: Low Stock + Out of Stock -->
+          <!-- First row: Low Stock and Out of Stock tables -->
           <div class="row mt-4">
 
-            <!-- Low Stock Alerts -->
+            <!-- Low Stock Alerts table -->
             <div class="col-md-6">
               <div class="card shadow border-0 p-3">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                  <h5 class="fw-semibold mb-0">⚠ Low Stock Alerts</h5>
+                  <h5 class="fw-semibold mb-0"><i class="fa-solid fa-triangle-exclamation me-2"></i>Low Stock Alerts</h5>
                   <a href="{% url 'stock' %}" class="btn btn-sm btn-outline-success">Manage Stock</a>
                 </div>
                 <table class="table table-hover">
@@ -174,12 +174,12 @@
               </div>
             </div>
 
-            <!-- Out of Stock -->
+            <!-- Out of Stock items table -->
             <div class="col-md-6">
               <div class="card shadow border-0 p-3">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                  <h5 class="fw-semibold mb-0">🚫 Out of Stock</h5>
-                  <a href="{% url 'stock' %}" class="text-success small">View all</a>
+                  <h5 class="fw-semibold mb-0"><i class="fa-solid fa-circle-exclamation me-2"></i>Out of Stock</h5>
+                  <a href="{% url 'stock' %}" class="text-success small">View all <i class="fas fa-arrow-right ms-1"></i></a>
                 </div>
                 <table class="table table-hover">
                   <thead class="table-light">
@@ -209,15 +209,15 @@
             </div>
           </div>
 
-          <!-- ROW 2: Recent Stock Updates + Supplier Credits -->
+          <!-- Second row: Recent Stock Updates and Supplier Credits -->
           <div class="row mt-4">
 
-            <!-- Recent Stock Updates -->
+            <!-- Recent Stock Updates table -->
             <div class="col-md-6">
               <div class="card shadow border-0 p-3">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                  <h5 class="fw-semibold mb-0">🕐 Recent Stock Updates</h5>
-                  <a href="{% url 'stock' %}" class="text-success small">View all</a>
+                  <h5 class="fw-semibold mb-0"><i class="fa-solid fa-clock me-2"></i>Recent Stock Updates</h5>
+                  <a href="{% url 'stock' %}" class="text-success small">View all <i class="fas fa-arrow-right ms-1"></i></a>
                 </div>
                 <table class="table table-hover">
                   <thead class="table-light">
@@ -246,12 +246,12 @@
               </div>
             </div>
 
-            <!-- Supplier Credits Due -->
+            <!-- Supplier Credits Due table -->
             <div class="col-md-6">
               <div class="card shadow border-0 p-3">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                  <h5 class="fw-semibold mb-0">🏭 Supplier Credits Due</h5>
-                  <a href="{% url 'suppliers' %}" class="text-success small">View all</a>
+                  <h5 class="fw-semibold mb-0"><i class="fa-solid fa-building me-2"></i>Supplier Credits Due</h5>
+                  <a href="{% url 'suppliers' %}" class="text-success small">View all <i class="fas fa-arrow-right ms-1"></i></a>
                 </div>
                 <table class="table table-hover">
                   <thead class="table-light">
@@ -287,24 +287,24 @@
             </div>
           </div>
 
-          <!-- QUICK ACTIONS -->
+          <!-- Quick action buttons for common tasks -->
           <div class="row mt-5">
             <div class="col-12">
               <h6 class="text-muted mb-3">QUICK ACTIONS</h6>
               <div class="row g-3">
-  <div class="col">
-    <a href="{% url 'stock' %}" class="btn btn-outline-success w-100 py-3">+ Add Stock</a>
-  </div>
-  <div class="col">
-    <a href="{% url 'stock' %}?filter=in_stock" class="btn btn-outline-success w-100 py-3">Update Prices</a>
-  </div>
-  <div class="col">
-    <a href="{% url 'stock' %}?filter=low" class="btn btn-outline-warning w-100 py-3">⚠ Low Stock</a>
-  </div>
-  <div class="col">
-    <a href="{% url 'stock' %}?filter=out" class="btn btn-outline-danger w-100 py-3">🚫 Out of Stock</a>
-  </div>
-</div>
+                <div class="col">
+                  <a href="{% url 'stock' %}" class="btn btn-outline-success w-100 py-3"><i class="fas fa-plus me-2"></i>Add Stock</a>
+                </div>
+                <div class="col">
+                  <a href="{% url 'stock' %}?filter=in_stock" class="btn btn-outline-success w-100 py-3"><i class="fas fa-edit me-2"></i>Update Prices</a>
+                </div>
+                <div class="col">
+                  <a href="{% url 'stock' %}?filter=low" class="btn btn-outline-warning w-100 py-3"><i class="fas fa-triangle-exclamation me-2"></i>Low Stock</a>
+                </div>
+                <div class="col">
+                  <a href="{% url 'stock' %}?filter=out" class="btn btn-outline-danger w-100 py-3"><i class="fas fa-circle-exclamation me-2"></i>Out of Stock</a>
+                </div>
+              </div>
             </div>
           </div>
 

@@ -9,10 +9,12 @@
       href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="{% static 'deposit_receipt.css' %}" />
   </head>
   <body>
     <div class="receipt">
+      <!-- Receipt header with company details and document type -->
       <div class="receipt-header receipt-header-complete">
         <div class="store-name">NYONDO General Hardware LTD</div>
         <div class="store-sub">Kampala, Uganda</div>
@@ -22,6 +24,7 @@
       </div>
 
       <div class="receipt-body">
+        <!-- Main highlighted amount section -->
         <div class="receipt-highlight receipt-highlight-complete">
           <div class="paid-label">Total Amount</div>
           <span
@@ -32,8 +35,9 @@
           <div class="paid-date">{{ sale.sale_date|date:"d M Y, H:i" }}</div>
         </div>
 
+        <!-- Customer information section -->
         <div class="receipt-section">
-          <div class="receipt-section-title">Customer</div>
+          <div class="receipt-section-title"><i class="fas fa-user me-2"></i>Customer</div>
           <div class="receipt-row">
             <span class="label">Name</span>
             <span class="value">{{ sale.customer_name }}</span>
@@ -50,15 +54,16 @@
             <span class="label">Payment Method</span>
             <span class="value">{{ sale.payment_method }}</span>
           </div>
-          <!-- STAFF ACCOUNTABILITY - who recorded this sale -->
+          <!-- Staff accountability - shows which employee processed the sale -->
           <div class="receipt-row">
             <span class="label">Served By</span>
             <span class="value">{{ sale.sold_by.username|default:"-" }}</span>
           </div>
         </div>
 
+        <!-- Items purchased section with quantities and prices -->
         <div class="receipt-section">
-          <div class="receipt-section-title">Items</div>
+          <div class="receipt-section-title"><i class="fas fa-shopping-bag me-2"></i>Items</div>
           {% for item in items %}
           <div class="receipt-row">
             <span class="label">
@@ -75,8 +80,9 @@
           {% endfor %}
         </div>
 
+        <!-- Financial totals summary -->
         <div class="receipt-section">
-          <div class="receipt-section-title">Totals</div>
+          <div class="receipt-section-title"><i class="fas fa-calculator me-2"></i>Totals</div>
           <div class="receipt-row">
             <span class="label">Subtotal</span>
             <span class="value">UGX {{ sale.subtotal|floatformat:0 }}</span>
@@ -97,34 +103,37 @@
           </div>
         </div>
 
+        <!-- Any additional notes or special instructions -->
         {% if sale.notes %}
-        <div class="receipt-notice">{{ sale.notes }}</div>
+        <div class="receipt-notice"><i class="fas fa-pencil-alt me-2"></i>{{ sale.notes }}</div>
         {% endif %}
       </div>
 
+      <!-- Receipt footer with identifiers and action buttons -->
       <div class="receipt-footer">
-        <div class="receipt-id">Sale #{{ sale.id }}</div>
-        <div class="receipt-date">Printed: {% now "d M Y, H:i" %}</div>
+        <div class="receipt-id"><i class="fas fa-hashtag me-1"></i>Sale #{{ sale.id }}</div>
+        <div class="receipt-date"><i class="far fa-calendar-alt me-1"></i>Printed: {% now "d M Y, H:i" %}</div>
         <div class="receipt-actions">
           <button class="receipt-action-btn" onclick="printReceipt()">
-            Print Receipt
+            <i class="fas fa-print me-2"></i>Print Receipt
           </button>
           {% if request.GET.from == 'sales_list' %}
           <a
             class="receipt-action-btn receipt-action-secondary"
             href="{% url 'sales_list' %}"
-            >← Back to Sales</a
+            ><i class="fas fa-arrow-left me-2"></i>Back to Sales</a
           >
           {% else %}
           <a
             class="receipt-action-btn receipt-action-secondary"
             href="{% url 'record_sales' %}"
-            >← New Sale</a
+            ><i class="fas fa-arrow-left me-2"></i>New Sale</a
           >
           {% endif %}
         </div>
 
         <script>
+          // Simple print function for the receipt
           function printReceipt() {
             window.print();
             return false;

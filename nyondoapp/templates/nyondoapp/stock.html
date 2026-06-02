@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Stock - NyondoStock</title>
 
-    <!-- BOOTSTRAP CSS CDN -->
+    <!-- Bootstrap CSS CDN for responsive layout -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -14,25 +14,25 @@
       crossorigin="anonymous"
     />
 
-    <!-- FONT AWESOME ICONS -->
+    <!-- Font Awesome 6 icons for visual enhancements -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
 
-    <!-- GOOGLE FONTS - DM SANS -->
+    <!-- Google Fonts - DM Sans for clean typography -->
     <link
       href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
 
-    <!-- BASE AND PAGE CSS -->
+    <!-- Base and page-specific CSS styles -->
     <link rel="stylesheet" href="{% static 'base.css' %}" />
     <link rel="stylesheet" href="{% static 'stock.css' %}" />
   </head>
   <body>
 
-    <!-- TOPBAR WITH LOGO, NAME, USER INFO AND LOGOUT -->
+    <!-- Main top navigation bar with branding and user info -->
     <nav class="topbar">
       <div class="topbar-left">
         <div class="logo">
@@ -54,102 +54,102 @@
       </div>
     </nav>
 
-    <!-- MAIN LAYOUT: SIDEBAR + CONTENT -->
+    <!-- Main layout with sidebar and content area -->
     <div class="container-fluid">
       <div class="row">
 
-        <!-- SIDEBAR - role-based navigation -->
+        <!-- Sidebar navigation - role-based menu items -->
         <aside class="col-2 bg-light min-vh-100 p-3 pt-4 position-relative">
           <h6 class="text-muted">MENU</h6>
           <ul class="nav flex-column">
             {% if user.groups.all.0.name == 'Sales Attendant' %}
               <li class="nav-item mb-3">
-                <a href="{% url 'sales_dashboard' %}" class="nav-link text-dark">📊 Sales Dashboard</a>
+                <a href="{% url 'sales_dashboard' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-line me-2"></i> Sales Dashboard</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'stock' %}" class="nav-link active">📦 Stock</a>
+                <a href="{% url 'stock' %}" class="nav-link active"><i class="fa-solid fa-boxes me-2"></i> Stock</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'sales_list' %}" class="nav-link text-dark">🛒 Sales</a>
+                <a href="{% url 'sales_list' %}" class="nav-link text-dark"><i class="fa-solid fa-cart-shopping me-2"></i> Sales</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
+                <a href="{% url 'customers' %}" class="nav-link text-dark"><i class="fa-solid fa-users me-2"></i> Customers</a>
               </li>
 
             {% elif user.groups.all.0.name == 'Store Manager' %}
               <li class="nav-item mb-3">
-                <a href="{% url 'store_manager_dashboard' %}" class="nav-link text-dark">📊 Dashboard</a>
+                <a href="{% url 'store_manager_dashboard' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-line me-2"></i> Dashboard</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'stock' %}" class="nav-link active">📦 Stock</a>
+                <a href="{% url 'stock' %}" class="nav-link active"><i class="fa-solid fa-boxes me-2"></i> Stock</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
+                <a href="{% url 'suppliers' %}" class="nav-link text-dark"><i class="fa-solid fa-building me-2"></i> Suppliers</a>
               </li>
 
             {% elif user.groups.all.0.name == 'Accounts Admin' %}
               <li class="nav-item mb-3">
-                <a href="{% url 'accounts_dashboard' %}" class="nav-link text-dark">📊 Accounts Dashboard</a>
+                <a href="{% url 'accounts_dashboard' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-line me-2"></i> Accounts Dashboard</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
+                <a href="{% url 'suppliers' %}" class="nav-link text-dark"><i class="fa-solid fa-building me-2"></i> Suppliers</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
+                <a href="{% url 'customers' %}" class="nav-link text-dark"><i class="fa-solid fa-users me-2"></i> Customers</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'deposits' %}" class="nav-link text-dark">💰 Deposits</a>
+                <a href="{% url 'deposits' %}" class="nav-link text-dark"><i class="fa-solid fa-coins me-2"></i> Deposits</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
+                <a href="{% url 'reports' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-simple me-2"></i> Reports</a>
               </li>
 
             {% else %}
-              <!-- Superuser or unassigned role sees everything -->
+              <!-- Superuser or unassigned role sees all available modules -->
               <li class="nav-item mb-3">
-                <a href="{% url 'dashboard' %}" class="nav-link text-dark">📊 Dashboard</a>
+                <a href="{% url 'dashboard' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-line me-2"></i> Dashboard</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'stock' %}" class="nav-link active">📦 Stock</a>
+                <a href="{% url 'stock' %}" class="nav-link active"><i class="fa-solid fa-boxes me-2"></i> Stock</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'sales_list' %}" class="nav-link text-dark">🛒 Sales</a>
+                <a href="{% url 'sales_list' %}" class="nav-link text-dark"><i class="fa-solid fa-cart-shopping me-2"></i> Sales</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
+                <a href="{% url 'suppliers' %}" class="nav-link text-dark"><i class="fa-solid fa-building me-2"></i> Suppliers</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
+                <a href="{% url 'customers' %}" class="nav-link text-dark"><i class="fa-solid fa-users me-2"></i> Customers</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'deposits' %}" class="nav-link text-dark">💰 Deposits</a>
+                <a href="{% url 'deposits' %}" class="nav-link text-dark"><i class="fa-solid fa-coins me-2"></i> Deposits</a>
               </li>
               <li class="nav-item mb-3">
-                <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
+                <a href="{% url 'reports' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-simple me-2"></i> Reports</a>
               </li>
             {% endif %}
           </ul>
 
-          <!-- LOW STOCK ALERT -->
+          <!-- Low stock warning alert -->
           <div class="ns-alert-box mt-4">
-            <div class="ns-alert-title">⚠ Low Stock</div>
+            <div class="ns-alert-title"><i class="fa-solid fa-triangle-exclamation me-1"></i> Low Stock</div>
             <div class="ns-alert-body">{{ low_stock_count }} items need attention</div>
-            <a href="{% url 'stock' %}" class="ns-alert-link">View →</a>
+            <a href="{% url 'stock' %}" class="ns-alert-link">View <i class="fas fa-arrow-right ms-1"></i></a>
           </div>
 
-          <!-- SIDEBAR FOOTER -->
+          <!-- Sidebar footer with system version and date -->
           <div class="position-absolute bottom-0 start-0 p-3 w-100">
             <hr />
-            <small class="text-muted d-block mb-1">📦 NyondoStock v1.0</small>
-            <small class="text-muted d-block mb-1">🏪 NYONDO General Hardware</small>
-            <small class="text-muted d-block">📅 {% now "F Y" %}</small>
+            <small class="text-muted d-block mb-1"><i class="fa-solid fa-box me-1"></i> NyondoStock v1.0</small>
+            <small class="text-muted d-block mb-1"><i class="fa-solid fa-store me-1"></i> NYONDO General Hardware</small>
+            <small class="text-muted d-block"><i class="fa-solid fa-calendar me-1"></i> {% now "F Y" %}</small>
           </div>
         </aside>
 
-        <!-- MAIN CONTENT -->
+        <!-- Main content area - stock management -->
         <main class="col-10 p-5">
 
-          <!-- DJANGO MESSAGES -->
+          <!-- Django flash messages for user feedback -->
           {% if messages %}
           <div class="mb-3">
             {% for message in messages %}
@@ -161,13 +161,13 @@
           </div>
           {% endif %}
 
-          <!-- PAGE HEADER -->
+          <!-- Page header with title and add stock button -->
           <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
               <h4 class="mb-0">Stock</h4>
               <small class="text-muted">{% now "l, d F Y" %}</small>
             </div>
-            <!-- Add Stock button - only shown to managers -->
+            <!-- Add Stock button - only visible to managers and superusers -->
             {% if user.groups.all.0.name == 'Store Manager' or user.is_superuser %}
             <button
               type="button"
@@ -175,44 +175,44 @@
               data-bs-toggle="modal"
               data-bs-target="#addStockModal"
             >
-              + Add Stock Item
+              <i class="fas fa-plus me-1"></i> Add Stock Item
             </button>
             {% endif %}
           </div>
 
-          <!-- STAT CARDS -->
+          <!-- Stock statistics summary cards -->
           <div class="row mb-4 g-3">
             <div class="col-12 col-sm-6 col-md-3">
               <div class="stat-card soft">
-                <div class="stat-label">📦 Total Items</div>
+                <div class="stat-label"><i class="fa-solid fa-boxes me-1"></i> Total Items</div>
                 <div class="stat-value">{{ total_items }}</div>
                 <div class="stat-sub">items in inventory</div>
               </div>
             </div>
             <div class="col-12 col-sm-6 col-md-3">
               <div class="stat-card">
-                <div class="stat-label">✅ In Stock</div>
+                <div class="stat-label"><i class="fa-solid fa-circle-check me-1"></i> In Stock</div>
                 <div class="stat-value">{{ in_stock }}</div>
                 <div class="stat-sub">sufficient quantity</div>
               </div>
             </div>
             <div class="col-12 col-sm-6 col-md-3">
               <div class="stat-card warn">
-                <div class="stat-label">⚠ Low Stock</div>
+                <div class="stat-label"><i class="fa-solid fa-triangle-exclamation me-1"></i> Low Stock</div>
                 <div class="stat-value">{{ low_stock }}</div>
                 <div class="stat-sub">items need restocking</div>
               </div>
             </div>
             <div class="col-12 col-sm-6 col-md-3">
               <div class="stat-card danger">
-                <div class="stat-label">🚫 Out of Stock</div>
+                <div class="stat-label"><i class="fa-solid fa-circle-exclamation me-1"></i> Out of Stock</div>
                 <div class="stat-value">{{ out_of_stock }}</div>
                 <div class="stat-sub">items unavailable</div>
               </div>
             </div>
           </div>
 
-          <!-- SEARCH BAR -->
+          <!-- Search bar for filtering stock items -->
           <form method="GET" action="{% url 'stock' %}" class="stock-filter bg-body-tertiary p-3 rounded mb-4">
             <div class="row g-2 align-items-end">
               <div class="col-md-5">
@@ -226,13 +226,13 @@
                 />
               </div>
               <div class="col-md-auto">
-                <button type="submit" class="btn btn-success btn-sm">Search</button>
-                <a href="{% url 'stock' %}" class="btn btn-outline-secondary btn-sm ms-2">Clear</a>
+                <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-search me-1"></i>Search</button>
+                <a href="{% url 'stock' %}" class="btn btn-outline-secondary btn-sm ms-2"><i class="fas fa-times me-1"></i>Clear</a>
               </div>
             </div>
           </form>
 
-          <!-- STOCK LIST TABLE -->
+          <!-- Stock items data table -->
           <section class="stock-list-card mt-4">
             <div class="stock-list-header">
               <h5>Stock List</h5>
@@ -279,9 +279,10 @@
   {% else %}
     <span class="status-badge b-red">Out of Stock</span>
   {% endif %}
+</div>
 </td>
                     <td class="actions d-flex gap-1">
-                      <!-- Edit button - only for managers -->
+                      <!-- Edit button - only visible to managers and superusers -->
                       {% if user.groups.all.0.name == 'Store Manager' or user.is_superuser %}
 <button
   class="btn btn-sm btn-outline-success"
@@ -315,6 +316,7 @@
               </table>
             </div>
 
+            <!-- Table footer showing record count -->
             <div class="stock-list-footer">
               <span>Showing {{ total_items }} items</span>
             </div>
@@ -323,92 +325,98 @@
       </div>
     </div>
 
-    <!-- ADD STOCK MODAL -->
+    <!-- Add Stock Item Modal -->
     <div class="modal fade add-stock-modal" id="addStockModal" tabindex="-1" aria-labelledby="addStockModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="addStockModalLabel">+ Add New Stock Item</h5>
+            <h5 class="modal-title" id="addStockModalLabel"><i class="fas fa-plus-circle me-2"></i>Add New Stock Item</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <form method="POST" action="{% url 'stock' %}">
             {% csrf_token %}
             <input type="hidden" name="action" value="create" />
             <div class="modal-body">
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <label for="itemName" class="form-label">Item Name *</label>
-                  <input type="text" class="form-control" id="itemName" name="item_name" placeholder="e.g. CEM II N Cement, 10mm Iron Bars" required />
-                </div>
-                <div class="col-md-6">
-                  <label for="itemCategory" class="form-label">Category *</label>
-                  <select class="form-select" id="itemCategory" name="category" required>
-                    <option value="" selected>Select category...</option>
-                    <option>Cement</option>
-                    <option>Iron Bars</option>
-                    <option>Iron Sheets</option>
-                    <option>Nails</option>
-                    <option>Wheelbarrows</option>
-                    <option>Wire Mesh</option>
-                    <option>Barbed Wire</option>
-                  </select>
-                </div>
-                <div class="col-md-4">
-                  <label for="itemQuantity" class="form-label">Quantity *</label>
-                  <input type="number" class="form-control" id="itemQuantity" name="quantity" placeholder="0" min="0" required />
-                </div>
-                <div class="col-md-4">
-                  <label for="unitMeasure" class="form-label">Unit of Measure *</label>
-                  <select class="form-select" id="unitMeasure" name="unit" required>
-                    <option selected>Pieces</option>
-                    <option>Bags</option>
-                    <option>Sheets</option>
-                    <option>Packs</option>
-                    <option>Rolls</option>
-                    <option>Bundles</option>
-                    <option>Kilograms</option>
-                    <option>Metres</option>
-                  </select>
-                </div>
-                <div class="col-md-4">
-                  <label for="minimumStock" class="form-label">Minimum Stock Level</label>
-                  <input type="number" class="form-control" id="minimumStock" name="minimum_stock" placeholder="e.g. 10" min="0" />
-                </div>
-                <div class="col-md-6">
-                  <label for="buyingPrice" class="form-label">Buying Price (UGX) *</label>
-                  <input type="number" class="form-control" id="buyingPrice" name="buying_price" placeholder="0" min="0" required />
-                </div>
-                <div class="col-md-6">
-                  <label for="sellingPrice" class="form-label">Selling Price (UGX) *</label>
-                  <input type="number" class="form-control" id="sellingPrice" name="selling_price" placeholder="0" min="0" required />
-                </div>
-                <!-- Supplier dropdown pulls from actual Supplier model -->
-                <div class="col-12">
-                  <label for="supplierName" class="form-label">Supplier (optional)</label>
-                  <select class="form-select" id="supplierName" name="supplier">
-                    <option value="" selected>Select supplier...</option>
-                    {% for supplier in suppliers %}
-                    <option value="{{ supplier.supplier_name }}">{{ supplier.supplier_name }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
-            </div>
+  <!-- Error summary displayed inside modal -->
+  {% for message in messages %}{% if 'add_' in message.tags %}<div class="alert alert-danger py-2 small mb-3"><i class="fa-solid fa-triangle-exclamation me-1"></i> {{ message }}</div>{% endif %}{% endfor %}
+
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label class="form-label">Item Name *</label>
+      <input type="text" class="form-control {% for message in messages %}{% if 'add_item_name_error' in message.tags %}is-invalid{% endif %}{% endfor %}" name="item_name" value="{{ posted_item_name }}" placeholder="e.g. CEM II N Cement" />
+      {% for message in messages %}{% if 'add_item_name_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Category *</label>
+      <select class="form-select" name="category">
+  <option value="" {% if not posted_category %}selected{% endif %}>Select category...</option>
+  <option {% if posted_category == 'Cement' %}selected{% endif %}>Cement</option>
+  <option {% if posted_category == 'Iron Bars' %}selected{% endif %}>Iron Bars</option>
+  <option {% if posted_category == 'Iron Sheets' %}selected{% endif %}>Iron Sheets</option>
+  <option {% if posted_category == 'Nails' %}selected{% endif %}>Nails</option>
+  <option {% if posted_category == 'Wheelbarrows' %}selected{% endif %}>Wheelbarrows</option>
+  <option {% if posted_category == 'Wire Mesh' %}selected{% endif %}>Wire Mesh</option>
+  <option {% if posted_category == 'Barbed Wire' %}selected{% endif %}>Barbed Wire</option>
+</select>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Quantity *</label>
+      <input type="number" class="form-control {% for message in messages %}{% if 'add_quantity_error' in message.tags %}is-invalid{% endif %}{% endfor %}" name="quantity" value="{{ posted_quantity }}" min="0" placeholder="0" />
+      {% for message in messages %}{% if 'add_quantity_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Unit of Measure *</label>
+      <select class="form-select" name="unit">
+  <option {% if posted_unit == 'Pieces' or not posted_unit %}selected{% endif %}>Pieces</option>
+  <option {% if posted_unit == 'Bags' %}selected{% endif %}>Bags</option>
+  <option {% if posted_unit == 'Sheets' %}selected{% endif %}>Sheets</option>
+  <option {% if posted_unit == 'Packs' %}selected{% endif %}>Packs</option>
+  <option {% if posted_unit == 'Rolls' %}selected{% endif %}>Rolls</option>
+  <option {% if posted_unit == 'Bundles' %}selected{% endif %}>Bundles</option>
+  <option {% if posted_unit == 'Kilograms' %}selected{% endif %}>Kilograms</option>
+  <option {% if posted_unit == 'Metres' %}selected{% endif %}>Metres</option>
+</select>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Minimum Stock Level</label>
+      <input type="number" class="form-control" name="minimum_stock" value="{{ posted_minimum_stock }}" min="0" placeholder="e.g. 10" />
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Buying Price (UGX) *</label>
+      <input type="number" class="form-control {% for message in messages %}{% if 'add_buying_price_error' in message.tags %}is-invalid{% endif %}{% endfor %}" name="buying_price" value="{{ posted_buying_price }}" min="0" placeholder="0" />
+      {% for message in messages %}{% if 'add_buying_price_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Selling Price (UGX) *</label>
+      <input type="number" class="form-control {% for message in messages %}{% if 'add_selling_price_error' in message.tags %}is-invalid{% endif %}{% endfor %}" name="selling_price" value="{{ posted_selling_price }}" min="0" placeholder="0" />
+      {% for message in messages %}{% if 'add_selling_price_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
+    </div>
+    <div class="col-12">
+      <label class="form-label">Supplier (optional)</label>
+      <select class="form-select" name="supplier">
+        <option value="">Select supplier...</option>
+        {% for supplier in suppliers %}
+        <option value="{{ supplier.supplier_name }}" {% if posted_supplier == supplier.supplier_name %}selected{% endif %}>{{ supplier.supplier_name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+</div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-              <button type="submit" class="btn btn-success">Save Stock Item</button>
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Cancel</button>
+              <button type="submit" class="btn btn-success"><i class="fas fa-save me-1"></i>Save Stock Item</button>
             </div>
           </form>
         </div>
       </div>
     </div>
 
-    <!-- EDIT STOCK MODAL -->
+    <!-- Edit Stock Item Modal -->
     <div class="modal fade add-stock-modal" id="editStockModal" tabindex="-1" aria-labelledby="editStockModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="editStockModalLabel">✏ Edit Stock Item</h5>
+            <h5 class="modal-title" id="editStockModalLabel"><i class="fas fa-pen me-2"></i>Edit Stock Item</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <form method="POST" action="{% url 'stock' %}" id="editStockForm">
@@ -478,19 +486,19 @@
               </div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-              <button type="submit" class="btn btn-success">Update Stock Item</button>
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Cancel</button>
+              <button type="submit" class="btn btn-success"><i class="fas fa-save me-1"></i>Update Stock Item</button>
             </div>
           </form>
         </div>
       </div>
     </div>
 
-    <!-- BOOTSTRAP JAVASCRIPT -->
+    <!-- Bootstrap JavaScript bundle for interactive components -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>
 
-    <!-- EDIT MODAL - auto-fills fields from the clicked row's data attributes -->
+    <!-- Edit modal JavaScript - auto-fills fields from the clicked row's data attributes -->
     <script>
       const editStockModal = document.getElementById("editStockModal");
       if (editStockModal) {
@@ -511,6 +519,15 @@
         });
       }
     </script>
+    <!-- Auto-reopen add modal if there was a validation error -->
+{% if add_error %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var modal = new bootstrap.Modal(document.getElementById('addStockModal'));
+    modal.show();
+  });
+</script>
+{% endif %}
 
   </body>
 </html>

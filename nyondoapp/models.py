@@ -144,7 +144,7 @@ class Supplier(models.Model):
 
     supplier_name = models.CharField(max_length=200)
     phone = models.CharField(max_length=20, unique=True)
-    tin_number = models.CharField(max_length=20, blank=True, null=True, unique=True)  # Tax Identification Number, optional
+    tin_number = models.CharField(max_length=20, blank=True, null=True, unique=True, verbose_name="TIN Number")  # Tax Identification Number, optional
     email = models.EmailField(blank=True, null=True)
     location = models.CharField(max_length=200, blank=True, null=True)
 

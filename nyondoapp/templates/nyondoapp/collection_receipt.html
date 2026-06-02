@@ -17,6 +17,7 @@
 
     <div class="receipt">
 
+        <!-- Receipt header with company and document info -->
         <div class="receipt-header receipt-header-complete">
             <div class="store-name">NYONDO General Hardware LTD</div>
             <div class="store-sub">Kampala, Uganda</div>
@@ -24,14 +25,16 @@
         </div>
 
         <div class="receipt-body">
+            <!-- Main highlight showing the total deposited amount -->
             <div class="receipt-highlight receipt-highlight-complete">
                 <div class="paid-label">Total Deposited</div>
                 <div class="paid-amount">UGX {{ deposit.amount_paid|floatformat:0 }}</div>
                 <div class="paid-date">Goods calculated using pickup-day selling price</div>
             </div>
 
+            <!-- Customer information section -->
             <div class="receipt-section">
-                <div class="receipt-section-title">Customer</div>
+                <div class="receipt-section-title"><i class="fas fa-user me-2"></i>Customer</div>
                 <div class="receipt-row">
                     <span class="label">Name</span>
                     <span class="value">{{ deposit.customer.full_name }}</span>
@@ -46,8 +49,9 @@
                 </div>
             </div>
 
+            <!-- Order details section -->
             <div class="receipt-section">
-                <div class="receipt-section-title">Order</div>
+                <div class="receipt-section-title"><i class="fas fa-shopping-cart me-2"></i>Order</div>
                 <div class="receipt-row">
                     <span class="label">Item</span>
                     <span class="value">{{ deposit.item_type }}</span>
@@ -66,8 +70,9 @@
                 </div>
             </div>
 
+            <!-- Payment history breakdown -->
             <div class="receipt-section">
-                <div class="receipt-section-title">Payment Summary</div>
+                <div class="receipt-section-title"><i class="fas fa-receipt me-2"></i>Payment Summary</div>
                 {% for payment in payments %}
                     <div class="receipt-row">
                         <span class="label">{{ payment.paid_at|date:"d M Y" }} - {{ payment.payment_method }}</span>
@@ -76,10 +81,12 @@
                 {% endfor %}
             </div>
 
+            <!-- Official stamp indicating clearance status -->
             <div class="receipt-stamp">
                 GOODS CLEARED FOR COLLECTION
             </div>
 
+            <!-- Signature section for authorization -->
             <div class="receipt-signature">
                 <div class="receipt-signature-line">
                     <div class="sig-box"></div>
@@ -93,23 +100,25 @@
 
         </div>
 
-       <div class="receipt-footer">
-    {% if deposit.receipt_number %}
-        <div class="receipt-id">Receipt No. {{ deposit.receipt_number }}</div>
-    {% endif %}
-    <div class="receipt-id">Deposit #{{ deposit.id }}</div>
-    <div class="receipt-date">Printed: {% now "d M Y, H:i" %}</div>
-    <div class="receipt-actions">
-        <button class="receipt-action-btn" onclick="printReceipt()">Print Receipt</button>
-        <a class="receipt-action-btn receipt-action-secondary" href="{% url 'deposits' %}">← Back to Deposits</a>
-    </div>
-    <script>
-        function printReceipt() {
-            window.print();
-            return false;
-        }
-    </script>
-</div>
+        <!-- Footer with receipt identifiers and actions -->
+        <div class="receipt-footer">
+            {% if deposit.receipt_number %}
+                <div class="receipt-id"><i class="fas fa-hashtag me-1"></i>Receipt No. {{ deposit.receipt_number }}</div>
+            {% endif %}
+            <div class="receipt-id"><i class="fas fa-ticket-alt me-1"></i>Deposit #{{ deposit.id }}</div>
+            <div class="receipt-date"><i class="far fa-calendar-alt me-1"></i>Printed: {% now "d M Y, H:i" %}</div>
+            <div class="receipt-actions">
+                <button class="receipt-action-btn" onclick="printReceipt()"><i class="fas fa-print me-2"></i>Print Receipt</button>
+                <a class="receipt-action-btn receipt-action-secondary" href="{% url 'deposits' %}"><i class="fas fa-arrow-left me-2"></i>Back to Deposits</a>
+            </div>
+            <script>
+                // Simple print function for the receipt
+                function printReceipt() {
+                    window.print();
+                    return false;
+                }
+            </script>
+        </div>
 
     </div>
 

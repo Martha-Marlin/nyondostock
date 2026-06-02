@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="{% static 'register_customer.css' %}" />
   </head>
   <body>
-    <!-- TOPBAR -->
+    <!-- Main top navigation bar with branding and user info -->
     <nav class="topbar">
       <div class="topbar-left">
         <div class="logo">
@@ -73,7 +73,7 @@
 
     <div class="container-fluid">
       <div class="row">
-        <!-- SIDEBAR -->
+        <!-- Sidebar navigation - role-based menu items -->
         <aside
           class="col-lg-2 col-md-3 bg-light min-vh-100 p-3 pt-4 position-relative"
         >
@@ -82,22 +82,22 @@
             {% if user.groups.all.0.name == 'Sales Attendant' %}
             <li class="nav-item mb-3">
               <a href="{% url 'sales_dashboard' %}" class="nav-link text-dark"
-                >📊 Sales Dashboard</a
+                ><i class="fa-solid fa-chart-line me-2"></i> Sales Dashboard</a
               >
             </li>
             <li class="nav-item mb-3">
               <a href="{% url 'stock' %}" class="nav-link text-dark"
-                >📦 Stock</a
+                ><i class="fa-solid fa-boxes me-2"></i> Stock</a
               >
             </li>
             <li class="nav-item mb-3">
               <a href="{% url 'sales_list' %}" class="nav-link text-dark"
-                >🛒 Sales</a
+                ><i class="fa-solid fa-cart-shopping me-2"></i> Sales</a
               >
             </li>
             <li class="nav-item mb-3">
               <a href="{% url 'customers' %}" class="nav-link active"
-                >👤 Customers</a
+                ><i class="fa-solid fa-users me-2"></i> Customers</a
               >
             </li>
             {% elif user.groups.all.0.name == 'Accounts Admin' %}
@@ -105,87 +105,89 @@
               <a
                 href="{% url 'accounts_dashboard' %}"
                 class="nav-link text-dark"
-                >📊 Accounts Dashboard</a
+                ><i class="fa-solid fa-chart-line me-2"></i> Accounts Dashboard</a
               >
             </li>
             <li class="nav-item mb-3">
               <a href="{% url 'suppliers' %}" class="nav-link text-dark"
-                >🏭 Suppliers</a
+                ><i class="fa-solid fa-building me-2"></i> Suppliers</a
               >
             </li>
             <li class="nav-item mb-3">
               <a href="{% url 'customers' %}" class="nav-link active"
-                >👤 Customers</a
+                ><i class="fa-solid fa-users me-2"></i> Customers</a
               >
             </li>
             <li class="nav-item mb-3">
               <a href="{% url 'deposits' %}" class="nav-link text-dark"
-                >💰 Deposits</a
+                ><i class="fa-solid fa-coins me-2"></i> Deposits</a
               >
             </li>
             <li class="nav-item mb-3">
               <a href="{% url 'reports' %}" class="nav-link text-dark"
-                >📈 Reports</a
+                ><i class="fa-solid fa-chart-simple me-2"></i> Reports</a
               >
             </li>
             {% else %}
             <li class="nav-item mb-3">
               <a href="{% url 'dashboard' %}" class="nav-link text-dark"
-                >📊 Dashboard</a
+                ><i class="fa-solid fa-chart-line me-2"></i> Dashboard</a
               >
             </li>
             <li class="nav-item mb-3">
               <a href="{% url 'stock' %}" class="nav-link text-dark"
-                >📦 Stock</a
+                ><i class="fa-solid fa-boxes me-2"></i> Stock</a
               >
             </li>
             <li class="nav-item mb-3">
               <a href="{% url 'sales_list' %}" class="nav-link text-dark"
-                >🛒 Sales</a
+                ><i class="fa-solid fa-cart-shopping me-2"></i> Sales</a
               >
             </li>
             <li class="nav-item mb-3">
               <a href="{% url 'suppliers' %}" class="nav-link text-dark"
-                >🏭 Suppliers</a
+                ><i class="fa-solid fa-building me-2"></i> Suppliers</a
               >
             </li>
             <li class="nav-item mb-3">
               <a href="{% url 'customers' %}" class="nav-link active"
-                >👤 Customers</a
+                ><i class="fa-solid fa-users me-2"></i> Customers</a
               >
             </li>
             <li class="nav-item mb-3">
               <a href="{% url 'deposits' %}" class="nav-link text-dark"
-                >💰 Deposits</a
+                ><i class="fa-solid fa-coins me-2"></i> Deposits</a
               >
             </li>
             <li class="nav-item mb-3">
               <a href="{% url 'reports' %}" class="nav-link text-dark"
-                >📈 Reports</a
+                ><i class="fa-solid fa-chart-simple me-2"></i> Reports</a
               >
             </li>
             {% endif %}
           </ul>
 
+          <!-- Low stock warning alert -->
           <div class="ns-alert-box mt-4">
-            <div class="ns-alert-title">⚠ Low Stock</div>
+            <div class="ns-alert-title"><i class="fa-solid fa-triangle-exclamation me-1"></i> Low Stock</div>
             <div class="ns-alert-body">
               {{ low_stock_count }} items need attention
             </div>
-            <a href="{% url 'stock' %}" class="ns-alert-link">View →</a>
+            <a href="{% url 'stock' %}" class="ns-alert-link">View <i class="fas fa-arrow-right ms-1"></i></a>
           </div>
 
+          <!-- Sidebar footer with system info -->
           <div class="position-absolute bottom-0 start-0 p-3 w-100">
             <hr />
-            <small class="text-muted d-block mb-1">📦 NyondoStock v1.0</small>
+            <small class="text-muted d-block mb-1"><i class="fa-solid fa-box me-1"></i> NyondoStock v1.0</small>
             <small class="text-muted d-block mb-1"
-              >🏪 NYONDO General Hardware</small
+              ><i class="fa-solid fa-store me-1"></i> NYONDO General Hardware</small
             >
-            <small class="text-muted d-block">📅 {% now "F Y" %}</small>
+            <small class="text-muted d-block"><i class="fa-solid fa-calendar me-1"></i> {% now "F Y" %}</small>
           </div>
         </aside>
 
-        <!-- MAIN CONTENT -->
+        <!-- Main content area - customer registration form -->
         <main class="col-lg-10 col-md-9 p-4 p-lg-5">
           <div class="ns-breadcrumb">
             <a href="{% url 'customers' %}">Customers</a> /
@@ -197,28 +199,25 @@
             Only customers requiring the deposit scheme need to be registered.
           </div>
 
-          <!-- MESSAGES -->
+          <!-- Flash messages for user feedback -->
           {% if messages %}
           <div class="mb-3 mt-3">
             {% for message in messages %}
+            {% if 'full_name_error' not in message.tags and 'phone_error' not in message.tags and 'nin_error' not in message.tags %}
             <div
               class="alert {% if 'error' in message.tags %}alert-error{% elif 'success' in message.tags %}alert-success{% elif 'warning' in message.tags %}alert-warning{% endif %} alert-dismissible fade show d-flex align-items-center gap-2"
               role="alert"
             >
-              {% if 'error' in message.tags %}⚠️{% elif 'success' in
-              message.tags %}✅{% endif %}
+              {% if 'error' in message.tags %}<i class="fa-solid fa-triangle-exclamation me-1"></i>{% elif 'success' in message.tags %}<i class="fa-solid fa-circle-check me-1"></i>{% endif %}
               <span>{{ message }}</span>
-              <button
-                type="button"
-                class="btn-close ms-auto"
-                data-bs-dismiss="alert"
-              ></button>
+              <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
             </div>
+            {% endif %}
             {% endfor %}
           </div>
           {% endif %}
 
-          <!-- REGISTRATION FORM -->
+          <!-- Main registration form - all validation happens server-side -->
           <form method="POST" action="{% url 'register_customer' %}">
             {% csrf_token %}
 
@@ -226,77 +225,65 @@
               <!-- SECTION 1: PERSONAL DETAILS -->
               <div class="ns-section-header">
                 <div class="ns-section-dot"></div>
-                <div class="ns-section-title">Personal Details</div>
+                <div class="ns-section-title"><i class="fa-solid fa-user-circle me-2"></i>Personal Details</div>
               </div>
               <div class="ns-section-body">
-                <!-- ROW 1: Full Name + Phone -->
+                <!-- Row 1: Full Name + Phone Number -->
                 <div class="row g-3 mb-3">
                   <div class="col-md-6">
                     <label class="ns-field-label" for="full_name">
                       Full Name <span class="req">*</span>
                     </label>
-                    <input
-                      type="text"
-                      id="full_name"
-                      name="full_name"
-                      class="ns-input"
-                      placeholder="e.g. John Okello"
-                    />
+                    <input type="text" id="full_name" name="full_name"
+  class="ns-input {% for message in messages %}{% if 'full_name_error' in message.tags %}is-invalid{% endif %}{% endfor %}"
+  placeholder="e.g. John Okello"
+  value="{{ posted_full_name|default:'' }}" />
+{% for message in messages %}{% if 'full_name_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
                   </div>
                   <div class="col-md-6">
                     <label class="ns-field-label" for="phone_number">
                       Phone Number <span class="req">*</span>
                     </label>
-                    <input
-                      type="tel"
-                      id="phone_number"
+                    <input 
+                      type="tel" 
+                      id="phone_number" 
                       name="phone_number"
-                      class="ns-input"
-                      placeholder="07XX XXX XXX"
+                      class="ns-input {% for message in messages %}{% if 'phone_error' in message.tags %}is-invalid{% endif %}{% endfor %}"
+                      placeholder="0701234567"
+                      value="{{ posted_phone|default:'' }}"
+                      inputmode="numeric"
+                      pattern="[0-9]{10}"
+                      title="Please enter 10 digits only"
                     />
-                    <div class="ns-hint">Must be a valid Ugandan number</div>
+{% for message in messages %}{% if 'phone_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
+                    <div class="ns-hint">Must be a valid Ugandan number (10 digits, starts with 07 or 03)</div>
                   </div>
                 </div>
 
-                <!-- ROW 2: NIN -->
+                <!-- Row 2: NIN (National Identification Number) -->
                 <div class="row g-3 mb-3">
                   <div class="col-12">
                     <label class="ns-field-label" for="nin">
                       National Identification Number (NIN)
                       <span class="req">*</span>
                     </label>
-                    <input
-                      type="text"
-                      id="nin"
+                    <input 
+                      type="text" 
+                      id="nin" 
                       name="nin"
-                      class="ns-input"
+                      class="ns-input {% for message in messages %}{% if 'nin_error' in message.tags %}is-invalid{% endif %}{% endfor %}"
                       placeholder="e.g. CM123456789012 or CF123456789012"
                       maxlength="14"
+                      value="{{ posted_nin|default:'' }}"
                     />
-                    <div class="ns-char-row">
-                      <div class="ns-hint">
-                        Must start with CM (Male) or CF (Female) + 12 digits (14
-                        total)
-                      </div>
-                      <div class="ns-hint" id="nin-counter">0 / 14</div>
-                    </div>
-                    <div
-                      id="genderPreview"
-                      style="
-                        display: none;
-                        margin-top: 8px;
-                        padding: 6px 12px;
-                        border-radius: 6px;
-                        font-size: 13px;
-                      "
-                    >
-                      <i class="fa-solid fa-venus-mars"></i> Detected gender:
-                      <span id="detectedGender"></span>
+{% for message in messages %}{% if 'nin_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
+                    <div class="ns-hint">
+                      Must start with CM (Male) or CF (Female) + 12 digits (14 total)
                     </div>
                   </div>
                 </div>
 
-                <!-- ROW 2.5: Gender (Auto-detected) -->
+                <!-- Row 2.5: Gender - Auto-detected from NIN on server side -->
                 <div class="row g-3 mb-3">
                   <div class="col-12">
                     <label class="ns-field-label">Gender</label>
@@ -304,42 +291,30 @@
                       type="text"
                       id="genderDisplay"
                       class="ns-input"
-                      value="Auto-detected from NIN"
+                      value="{% if posted_nin and posted_nin|length >= 2 %}{% if posted_nin|slice:':2' == 'CM' %}Male (Auto-detected from NIN){% elif posted_nin|slice:':2' == 'CF' %}Female (Auto-detected from NIN){% else %}Will be auto-detected from NIN{% endif %}{% else %}Will be auto-detected from NIN{% endif %}"
                       readonly
                       disabled
                       style="background-color: #f0f4f0; cursor: not-allowed"
                     />
                     <div class="ns-hint">
-                      Gender is automatically detected from NIN prefix (CM =
-                      Male, CF = Female)
+                      Gender is automatically detected from NIN prefix (CM = Male, CF = Female)
                     </div>
                   </div>
                 </div>
 
-                <!-- ROW 3: Area + Notes -->
+                <!-- Row 3: Area / Location + Notes -->
                 <div class="row g-3">
                   <div class="col-md-6">
-                    <label class="ns-field-label" for="area"
-                      >Area / Location</label
-                    >
-                    <input
-                      type="text"
-                      id="area"
-                      name="area"
-                      class="ns-input"
+                    <label class="ns-field-label" for="area">Area / Location</label>
+                    <input type="text" id="area" name="area" class="ns-input"
                       placeholder="e.g. Bweyogerere"
-                    />
-                    <div class="ns-hint">Optional</div>
+                      value="{{ posted_area|default:'' }}" />
                   </div>
                   <div class="col-md-6">
                     <label class="ns-field-label" for="notes">Notes</label>
-                    <input
-                      type="text"
-                      id="notes"
-                      name="notes"
-                      class="ns-input"
+                    <input type="text" id="notes" name="notes" class="ns-input"
                       placeholder="Any additional details"
-                    />
+                      value="{{ posted_notes|default:'' }}" />
                     <div class="ns-hint">Optional</div>
                   </div>
                 </div>
@@ -347,11 +322,11 @@
 
               <div class="ns-divider"></div>
 
-              <!-- SECTION 2: DEPOSIT ELIGIBILITY -->
+              <!-- SECTION 2: DEPOSIT ELIGIBILITY INFORMATION -->
               <div class="ns-section-header" style="border-bottom: none">
                 <div class="ns-section-dot"></div>
                 <div class="ns-section-title">
-                  Deposit Eligibility
+                  <i class="fa-solid fa-piggy-bank me-2"></i>Deposit Eligibility
                   <span class="ns-auto-badge">Auto-set on registration</span>
                 </div>
               </div>
@@ -370,13 +345,13 @@
                 </div>
               </div>
 
-              <!-- FORM ACTIONS -->
+              <!-- Form submission buttons -->
               <div class="ns-form-actions">
                 <a href="{% url 'customers' %}" class="ns-btn-cancel">
-                  <i class="fa-solid fa-arrow-left"></i> Back to Customers
+                  <i class="fa-solid fa-arrow-left me-2"></i> Back to Customers
                 </a>
                 <button type="submit" class="ns-btn-primary">
-                  <i class="fa-solid fa-user-plus"></i> Register Customer
+                  <i class="fa-solid fa-user-plus me-2"></i> Register Customer
                 </button>
               </div>
             </div>
@@ -385,6 +360,7 @@
       </div>
     </div>
 
+    <!-- Bootstrap JS only - no custom JavaScript for gender detection -->
     <script
       src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
       integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
@@ -396,75 +372,5 @@
       crossorigin="anonymous"
     ></script>
 
-    <script>
-      // NIN CHARACTER COUNTER AND GENDER DETECTION
-      const ninInput = document.getElementById("nin");
-      const ninCounter = document.getElementById("nin-counter");
-      const genderPreview = document.getElementById("genderPreview");
-      const detectedGenderSpan = document.getElementById("detectedGender");
-      const genderDisplay = document.getElementById("genderDisplay");
-
-      function validateNIN() {
-        const nin = ninInput.value.toUpperCase();
-        const len = nin.length;
-        const prefix = nin.substring(0, 2);
-
-        ninCounter.textContent = len + " / 14";
-        if (len === 14) {
-          ninCounter.style.color = "#0f6e56";
-        } else if (len > 0) {
-          ninCounter.style.color = "#e24b4a";
-        } else {
-          ninCounter.style.color = "#a0b8a0";
-        }
-
-        if (len >= 2) {
-          if (prefix === "CM") {
-            detectedGenderSpan.innerHTML =
-              '<strong style="color: #0f6e56;">Male</strong> (CM prefix)';
-            genderPreview.style.display = "block";
-            genderPreview.style.backgroundColor = "#e8f5e9";
-            genderPreview.style.color = "#2e7d32";
-            genderDisplay.value = "Male (Auto-detected from NIN)";
-            genderDisplay.style.backgroundColor = "#e8f5e9";
-          } else if (prefix === "CF") {
-            detectedGenderSpan.innerHTML =
-              '<strong style="color: #0f6e56;">Female</strong> (CF prefix)';
-            genderPreview.style.display = "block";
-            genderPreview.style.backgroundColor = "#e8f5e9";
-            genderPreview.style.color = "#2e7d32";
-            genderDisplay.value = "Female (Auto-detected from NIN)";
-            genderDisplay.style.backgroundColor = "#e8f5e9";
-          } else {
-            detectedGenderSpan.innerHTML =
-              '<strong style="color: #d32f2f;">Invalid</strong> — Must start with CM or CF';
-            genderPreview.style.display = "block";
-            genderPreview.style.backgroundColor = "#ffebee";
-            genderPreview.style.color = "#c62828";
-            genderDisplay.value = "Invalid NIN Format";
-            genderDisplay.style.backgroundColor = "#ffebee";
-          }
-        } else {
-          genderPreview.style.display = "none";
-          genderDisplay.value = "Auto-detected from NIN";
-          genderDisplay.style.backgroundColor = "#f0f4f0";
-        }
-
-        ninInput.value = nin;
-      }
-
-      ninInput.addEventListener("input", validateNIN);
-      ninInput.addEventListener("blur", validateNIN);
-
-      // PHONE: digits and spaces only
-      const phoneInput = document.getElementById("phone_number");
-      if (phoneInput) {
-        phoneInput.addEventListener("input", function () {
-          this.value = this.value.replace(/[^0-9 ]/g, "");
-        });
-      }
-
-      validateNIN();
-    </script>
   </body>
 </html>

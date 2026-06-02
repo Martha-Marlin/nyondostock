@@ -15,7 +15,7 @@
 </head>
 <body>
 
-    <!-- TOPBAR -->
+    <!-- Main navigation bar with branding and user info -->
     <nav class="topbar">
         <div class="topbar-left">
             <div class="logo">
@@ -40,75 +40,77 @@
     <div class="container-fluid">
         <div class="row">
 
-           <!-- SIDEBAR -->
-<aside class="col-lg-2 col-md-3 bg-light min-vh-100 p-3 pt-4 position-relative">
-    <h6 class="text-muted">MENU</h6>
-    <ul class="nav flex-column">
-        {% if user.groups.all.0.name == 'Accounts Admin' %}
-            <li class="nav-item mb-3">
-                <a href="{% url 'accounts_dashboard' %}" class="nav-link text-dark">📊 Accounts Dashboard</a>
-            </li>
-            <li class="nav-item mb-3">
-                <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
-            </li>
-            <li class="nav-item mb-3">
-                <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
-            </li>
-            <li class="nav-item mb-3">
-                <a href="{% url 'deposits' %}" class="nav-link active">💰 Deposits</a>
-            </li>
-            <li class="nav-item mb-3">
-                <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
-            </li>
-        {% else %}
-            <li class="nav-item mb-3">
-                <a href="{% url 'dashboard' %}" class="nav-link text-dark">📊 Dashboard</a>
-            </li>
-            <li class="nav-item mb-3">
-                <a href="{% url 'stock' %}" class="nav-link text-dark">📦 Stock</a>
-            </li>
-            <li class="nav-item mb-3">
-                <a href="{% url 'sales_list' %}" class="nav-link text-dark">🛒 Sales</a>
-            </li>
-            <li class="nav-item mb-3">
-                <a href="{% url 'suppliers' %}" class="nav-link text-dark">🏭 Suppliers</a>
-            </li>
-            <li class="nav-item mb-3">
-                <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
-            </li>
-            <li class="nav-item mb-3">
-                <a href="{% url 'deposits' %}" class="nav-link active">💰 Deposits</a>
-            </li>
-            <li class="nav-item mb-3">
-                <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
-            </li>
-        {% endif %}
-    </ul>
+            <!-- Sidebar navigation - role-based menu items -->
+            <aside class="col-lg-2 col-md-3 bg-light min-vh-100 p-3 pt-4 position-relative">
+                <h6 class="text-muted">MENU</h6>
+                <ul class="nav flex-column">
+                    {% if user.groups.all.0.name == 'Accounts Admin' %}
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'accounts_dashboard' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-line me-2"></i> Accounts Dashboard</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'suppliers' %}" class="nav-link text-dark"><i class="fa-solid fa-building me-2"></i> Suppliers</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'customers' %}" class="nav-link text-dark"><i class="fa-solid fa-users me-2"></i> Customers</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'deposits' %}" class="nav-link active"><i class="fa-solid fa-coins me-2"></i> Deposits</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'reports' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-simple me-2"></i> Reports</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'dashboard' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-line me-2"></i> Dashboard</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'stock' %}" class="nav-link text-dark"><i class="fa-solid fa-boxes me-2"></i> Stock</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'sales_list' %}" class="nav-link text-dark"><i class="fa-solid fa-cart-shopping me-2"></i> Sales</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'suppliers' %}" class="nav-link text-dark"><i class="fa-solid fa-building me-2"></i> Suppliers</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'customers' %}" class="nav-link text-dark"><i class="fa-solid fa-users me-2"></i> Customers</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'deposits' %}" class="nav-link active"><i class="fa-solid fa-coins me-2"></i> Deposits</a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'reports' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-simple me-2"></i> Reports</a>
+                        </li>
+                    {% endif %}
+                </ul>
 
+                <!-- Low stock warning alert -->
                 <div class="ns-alert-box mt-4">
-                    <div class="ns-alert-title">⚠ Low Stock</div>
+                    <div class="ns-alert-title"><i class="fa-solid fa-triangle-exclamation me-1"></i> Low Stock</div>
                     <div class="ns-alert-body">{{ low_stock_count }} items need attention</div>
-                    <a href="{% url 'stock' %}" class="ns-alert-link">View →</a>
+                    <a href="{% url 'stock' %}" class="ns-alert-link">View <i class="fas fa-arrow-right ms-1"></i></a>
                 </div>
 
+                <!-- Sidebar footer with system information -->
                 <div class="position-absolute bottom-0 start-0 p-3 w-100">
                     <hr />
-                    <small class="text-muted d-block mb-1">📦 NyondoStock v1.0</small>
-                    <small class="text-muted d-block mb-1">🏪 NYONDO General Hardware</small>
-                    <small class="text-muted d-block">📅 {% now "F Y" %}</small>
+                    <small class="text-muted d-block mb-1"><i class="fa-solid fa-box me-1"></i> NyondoStock v1.0</small>
+                    <small class="text-muted d-block mb-1"><i class="fa-solid fa-store me-1"></i> NYONDO General Hardware</small>
+                    <small class="text-muted d-block"><i class="fa-solid fa-calendar me-1"></i> {% now "F Y" %}</small>
                 </div>
             </aside>
 
-            <!-- MAIN CONTENT -->
+            <!-- Main content area - deposit details -->
             <main class="col-lg-10 col-md-9 p-4 p-lg-5">
 
-                <!-- BREADCRUMB -->
+                <!-- Breadcrumb navigation -->
                 <div class="ns-breadcrumb">
                     <a href="{% url 'deposits' %}">Deposits</a> /
                     <span>Deposit #{{ deposit.id }}</span>
                 </div>
 
-                <!-- PAGE HEADER -->
+                <!-- Page header with deposit title and action buttons -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
                         <h4 class="mb-0">Deposit #{{ deposit.id }} — {{ deposit.customer.full_name }}</h4>
@@ -176,18 +178,18 @@
                         {% if deposit.status == 'Active' %}
                             {% if user.groups.first.name == 'Accounts Admin' or user.groups.first.name == 'Store Manager' %}
                             <button class="ns-btn-primary" data-bs-toggle="modal" data-bs-target="#paymentModal">
-                                <i class="fa-solid fa-money-bill"></i> Record Payment
+                                <i class="fa-solid fa-money-bill me-1"></i> Record Payment
                             </button>
                              <button class="btn btn-outline-success"
             data-bs-toggle="modal" data-bs-target="#editDepositModal"
             style="padding:8px 18px; border-radius:8px; font-size:13.5px; font-weight:500;">
-            <i class="fa-solid fa-pen"></i> Edit Deposit
+            <i class="fa-solid fa-pen me-1"></i> Edit Deposit
         </button>
                             <form method="POST" action="{% url 'cancel_deposit' deposit.id %}" class="d-inline">
                                 {% csrf_token %}
                                 <button type="submit" class="ns-btn-cancel"
                                     onclick="return confirm('Cancel this deposit?')">
-                                    <i class="fa-solid fa-xmark"></i> Cancel Deposit
+                                    <i class="fa-solid fa-xmark me-1"></i> Cancel Deposit
                                 </button>
                             </form>
                             {% if deposit.amount_paid > 0 %}
@@ -195,23 +197,23 @@
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-success"
                                     onclick="return confirm('Collect goods now? Stock will be deducted based on amount paid and current selling price.')">
-                                    <i class="fa-solid fa-box-open"></i> Collect Goods
+                                    <i class="fa-solid fa-box-open me-1"></i> Collect Goods
                                 </button>
                             </form>
                             {% endif %}
                             {% endif %}
                         {% elif deposit.status == 'Completed' %}
                             <a href="{% url 'collection_receipt' deposit.id %}" class="ns-btn-primary">
-                                <i class="fa-solid fa-print"></i> Print Collection Receipt
+                                <i class="fa-solid fa-print me-1"></i> Print Collection Receipt
                             </a>
                         {% endif %}
                         <a href="{% url 'deposits' %}" class="ns-btn-cancel">
-                            <i class="fa-solid fa-arrow-left"></i> Back
+                            <i class="fa-solid fa-arrow-left me-1"></i> Back
                         </a>
                     </div>
                 </div>
 
-                <!-- MESSAGES -->
+                <!-- Flash messages for user feedback -->
                 {% if messages %}
                 <div class="mb-3">
                     {% for message in messages %}
@@ -223,7 +225,7 @@
                 </div>
                 {% endif %}
 
-                <!-- DEPOSIT INFO CARD -->
+                <!-- Main deposit information card -->
                 <div class="ns-form-card mb-4">
                     <div class="ns-section-header">
                         <div class="ns-section-dot"></div>
@@ -240,7 +242,7 @@
                     </div>
                     <div class="ns-section-body">
 
-                        <!-- PROGRESS BAR -->
+                        <!-- Deposit progress indicator -->
                         <div class="mb-4">
                             <div class="d-flex justify-content-between mb-1">
                                 <small class="text-muted">Deposit amount paid</small>
@@ -251,7 +253,7 @@
                             </div>
                         </div>
 
-                        <!-- SUMMARY PANEL -->
+                        <!-- Financial summary panel -->
                         <div class="ns-summary-panel mb-4">
                             <div class="ns-summary-col">
                                 <div class="ns-summary-key">{% if deposit.status == 'Completed' %}Goods Value{% else %}Estimated Value{% endif %}</div>
@@ -273,7 +275,7 @@
                             </div>
                         </div>
 
-                        <!-- CUSTOMER AND ORDER DETAILS -->
+                        <!-- Customer and order details grid -->
                         <div class="row g-3">
                             <div class="col-md-3">
                                 <div class="ns-detail-label">Customer</div>
@@ -304,7 +306,7 @@
                                 <div class="ns-detail-label">Expected Collection</div>
                                 <div class="ns-detail-value">
                                     {% if deposit.due_date < today and deposit.status == 'Active' %}
-                                        <span class="ns-overdue">{{ deposit.due_date|date:"d M Y" }} ⚠</span>
+                                        <span class="ns-overdue">{{ deposit.due_date|date:"d M Y" }} <i class="fa-solid fa-triangle-exclamation"></i></span>
                                     {% else %}
                                         {{ deposit.due_date|date:"d M Y" }}
                                     {% endif %}
@@ -327,7 +329,7 @@
                     </div>
                 </div>
 
-                <!-- PAYMENT HISTORY -->
+                <!-- Payment history table -->
                 <section class="stock-list-card">
                     <div class="stock-list-header">
                         <h5>Payment History</h5>
@@ -375,6 +377,7 @@
                         </table>
                     </div>
 
+                    <!-- Footer showing payment count -->
                     <div class="stock-list-footer">
                         <span>{{ payments.count }} payment{{ payments.count|pluralize }}</span>
                     </div>
@@ -384,7 +387,7 @@
         </div>
     </div>
 
-    <!-- PAYMENT MODAL -->
+    <!-- Modal popup for recording new payments -->
     {% if deposit.status == 'Active' %}
     {% if user.groups.first.name == 'Accounts Admin' or user.groups.first.name == 'Store Manager' %}
     <div class="modal fade" id="paymentModal" tabindex="-1" aria-hidden="true">

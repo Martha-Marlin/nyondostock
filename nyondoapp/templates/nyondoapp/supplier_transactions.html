@@ -24,7 +24,7 @@
   </head>
   <body>
 
-    <!-- TOPBAR -->
+    <!-- Main navigation bar with branding and user info -->
     <nav class="topbar">
       <div class="topbar-left">
         <div class="logo">
@@ -46,85 +46,87 @@
       </div>
     </nav>
 
-    <!-- MAIN LAYOUT -->
+    <!-- Main layout with sidebar and content area -->
     <div class="container-fluid">
       <div class="row">
 
-        <!-- SIDEBAR -->
-<aside class="col-2 bg-light min-vh-100 p-3 pt-4 position-relative">
-  <h6 class="text-muted">MENU</h6>
-  <ul class="nav flex-column">
-    {% if user.groups.all.0.name == 'Store Manager' %}
-      <li class="nav-item mb-3">
-        <a href="{% url 'store_manager_dashboard' %}" class="nav-link text-dark">📊 Dashboard</a>
-      </li>
-      <li class="nav-item mb-3">
-        <a href="{% url 'stock' %}" class="nav-link text-dark">📦 Stock</a>
-      </li>
-      <li class="nav-item mb-3">
-        <a href="{% url 'suppliers' %}" class="nav-link active">🏭 Suppliers</a>
-      </li>
+        <!-- Sidebar navigation - role-based menu items -->
+        <aside class="col-2 bg-light min-vh-100 p-3 pt-4 position-relative">
+          <h6 class="text-muted">MENU</h6>
+          <ul class="nav flex-column">
+            {% if user.groups.all.0.name == 'Store Manager' %}
+              <li class="nav-item mb-3">
+                <a href="{% url 'store_manager_dashboard' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-line me-2"></i> Dashboard</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'stock' %}" class="nav-link text-dark"><i class="fa-solid fa-boxes me-2"></i> Stock</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'suppliers' %}" class="nav-link active"><i class="fa-solid fa-building me-2"></i> Suppliers</a>
+              </li>
 
-    {% elif user.groups.all.0.name == 'Accounts Admin' %}
-      <li class="nav-item mb-3">
-        <a href="{% url 'accounts_dashboard' %}" class="nav-link text-dark">📊 Accounts Dashboard</a>
-      </li>
-      <li class="nav-item mb-3">
-        <a href="{% url 'suppliers' %}" class="nav-link active">🏭 Suppliers</a>
-      </li>
-      <li class="nav-item mb-3">
-        <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
-      </li>
-      <li class="nav-item mb-3">
-        <a href="{% url 'deposits' %}" class="nav-link text-dark">💰 Deposits</a>
-      </li>
-      <li class="nav-item mb-3">
-        <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
-      </li>
+            {% elif user.groups.all.0.name == 'Accounts Admin' %}
+              <li class="nav-item mb-3">
+                <a href="{% url 'accounts_dashboard' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-line me-2"></i> Accounts Dashboard</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'suppliers' %}" class="nav-link active"><i class="fa-solid fa-building me-2"></i> Suppliers</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'customers' %}" class="nav-link text-dark"><i class="fa-solid fa-users me-2"></i> Customers</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'deposits' %}" class="nav-link text-dark"><i class="fa-solid fa-coins me-2"></i> Deposits</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'reports' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-simple me-2"></i> Reports</a>
+              </li>
 
-    {% else %}
-      <li class="nav-item mb-3">
-        <a href="{% url 'dashboard' %}" class="nav-link text-dark">📊 Dashboard</a>
-      </li>
-      <li class="nav-item mb-3">
-        <a href="{% url 'stock' %}" class="nav-link text-dark">📦 Stock</a>
-      </li>
-      <li class="nav-item mb-3">
-        <a href="{% url 'sales_list' %}" class="nav-link text-dark">🛒 Sales</a>
-      </li>
-      <li class="nav-item mb-3">
-        <a href="{% url 'suppliers' %}" class="nav-link active">🏭 Suppliers</a>
-      </li>
-      <li class="nav-item mb-3">
-        <a href="{% url 'customers' %}" class="nav-link text-dark">👤 Customers</a>
-      </li>
-      <li class="nav-item mb-3">
-        <a href="{% url 'deposits' %}" class="nav-link text-dark">💰 Deposits</a>
-      </li>
-      <li class="nav-item mb-3">
-        <a href="{% url 'reports' %}" class="nav-link text-dark">📈 Reports</a>
-      </li>
-    {% endif %}
-  </ul>
+            {% else %}
+              <li class="nav-item mb-3">
+                <a href="{% url 'dashboard' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-line me-2"></i> Dashboard</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'stock' %}" class="nav-link text-dark"><i class="fa-solid fa-boxes me-2"></i> Stock</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'sales_list' %}" class="nav-link text-dark"><i class="fa-solid fa-cart-shopping me-2"></i> Sales</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'suppliers' %}" class="nav-link active"><i class="fa-solid fa-building me-2"></i> Suppliers</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'customers' %}" class="nav-link text-dark"><i class="fa-solid fa-users me-2"></i> Customers</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'deposits' %}" class="nav-link text-dark"><i class="fa-solid fa-coins me-2"></i> Deposits</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'reports' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-simple me-2"></i> Reports</a>
+              </li>
+            {% endif %}
+          </ul>
 
-          <!-- LOW STOCK ALERT -->
+          <!-- Low stock warning alert -->
           <div class="ns-alert-box mt-4">
-            <div class="ns-alert-title">⚠ Low Stock</div>
+            <div class="ns-alert-title"><i class="fa-solid fa-triangle-exclamation me-1"></i> Low Stock</div>
             <div class="ns-alert-body">{{ low_stock_count }} items need attention</div>
-            <a href="{% url 'stock' %}" class="ns-alert-link">View →</a>
+            <a href="{% url 'stock' %}" class="ns-alert-link">View <i class="fas fa-arrow-right ms-1"></i></a>
           </div>
 
-          <!-- SIDEBAR FOOTER -->
+          <!-- Sidebar footer with system version and date -->
           <div class="position-absolute bottom-0 start-0 p-3 w-100">
             <hr />
-            <small class="text-muted d-block mb-1">📦 NyondoStock v1.0</small>
-            <small class="text-muted d-block mb-1">🏪 NYONDO General Hardware</small>
-            <small class="text-muted d-block">📅 {% now "F Y" %}</small>
+            <small class="text-muted d-block mb-1"><i class="fa-solid fa-box me-1"></i> NyondoStock v1.0</small>
+            <small class="text-muted d-block mb-1"><i class="fa-solid fa-store me-1"></i> NYONDO General Hardware</small>
+            <small class="text-muted d-block"><i class="fa-solid fa-calendar me-1"></i> {% now "F Y" %}</small>
           </div>
         </aside>
 
-        <!-- MAIN CONTENT -->
+        <!-- Main content area - supplier transaction history -->
         <main class="col-10 p-5">
+          
+          <!-- Flash messages for user feedback -->
           {% if messages %}
           <div class="mb-3">
             {% for message in messages %}
@@ -136,12 +138,12 @@
           </div>
           {% endif %}
 
-          <!-- BACK LINK -->
+          <!-- Back link to suppliers list -->
           <a href="{% url 'suppliers' %}" class="text-decoration-none text-muted d-inline-block mb-3">
-            ← Back to Suppliers
+            <i class="fas fa-arrow-left me-2"></i> Back to Suppliers
           </a>
 
-          <!-- PAGE HEADER -->
+          <!-- Page header with supplier info and record payment button -->
           <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
               <h4 class="mb-0">{{ supplier.supplier_name }}</h4>
@@ -150,56 +152,56 @@
                 {% if supplier.location %} · {{ supplier.location }}{% endif %}
               </small>
             </div>
-            <!-- RECORD PAYMENT BUTTON -->
+            <!-- Record payment button - opens modal -->
             <button
               type="button"
               class="ns-btn-primary"
               data-bs-toggle="modal"
               data-bs-target="#recordPaymentModal"
             >
-              + Record Payment
+              <i class="fas fa-plus me-1"></i> Record Payment
             </button>
           </div>
 
-          <!-- SUPPLIER SUMMARY CARDS -->
+          <!-- Supplier summary statistics cards -->
           <div class="row mb-4 g-3">
-            <!-- CURRENT BALANCE -->
+            <!-- Current balance owed -->
             <div class="col-12 col-sm-6 col-md-3">
               <div class="stat-card {% if supplier.status == 'Overdue' %}danger{% elif supplier.status == 'Credits Due' %}warn{% endif %}">
-                <div class="stat-label">💰 BALANCE OWED</div>
+                <div class="stat-label"><i class="fa-solid fa-coins me-1"></i> BALANCE OWED</div>
                 <div class="stat-value">UGX {{ supplier.balance|floatformat:0 }}</div>
                 <div class="stat-sub">outstanding balance</div>
               </div>
             </div>
-            <!-- STATUS -->
+            <!-- Account status -->
             <div class="col-12 col-sm-6 col-md-3">
               <div class="stat-card">
-                <div class="stat-label">📋 STATUS</div>
+                <div class="stat-label"><i class="fa-solid fa-clipboard-list me-1"></i> STATUS</div>
                 <div class="stat-value" style="font-size: 22px;">{{ supplier.status }}</div>
                 <div class="stat-sub">account standing</div>
               </div>
             </div>
-            <!-- PAYMENT TERMS -->
+            <!-- Payment terms -->
             <div class="col-12 col-sm-6 col-md-3">
               <div class="stat-card">
-                <div class="stat-label">📅 PAYMENT TERMS</div>
+                <div class="stat-label"><i class="fa-solid fa-calendar me-1"></i> PAYMENT TERMS</div>
                 <div class="stat-value" style="font-size: 22px;">
                   {% if supplier.payment_terms == 0 %}COD{% else %}Net {{ supplier.payment_terms }}d{% endif %}
                 </div>
                 <div class="stat-sub">days to pay</div>
               </div>
             </div>
-            <!-- TOTAL TRANSACTIONS -->
+            <!-- Total transaction count -->
             <div class="col-12 col-sm-6 col-md-3">
               <div class="stat-card">
-                <div class="stat-label">🔄 TRANSACTIONS</div>
+                <div class="stat-label"><i class="fa-solid fa-repeat me-1"></i> TRANSACTIONS</div>
                 <div class="stat-value">{{ transactions.count }}</div>
                 <div class="stat-sub">total records</div>
               </div>
             </div>
           </div>
 
-          <!-- TRANSACTIONS TABLE -->
+          <!-- Transactions history table -->
           <section class="suppliers-list-card">
             <div class="suppliers-list-header">
               <h5>Transaction History</h5>
@@ -255,7 +257,7 @@
       </div>
     </div>
 
-    <!-- ========== RECORD PAYMENT MODAL ========== -->
+    <!-- Record Payment Modal -->
     <div
       class="modal fade add-supplier-modal"
       id="recordPaymentModal"
@@ -265,7 +267,7 @@
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
 
-          <!-- MODAL HEADER -->
+          <!-- Modal header -->
           <div class="modal-header">
             <h5 class="modal-title">
               <i class="fa-solid fa-money-bill me-2"></i> Record Payment
@@ -273,13 +275,13 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
 
-          <!-- MODAL FORM -->
+          <!-- Modal form for recording supplier transactions -->
           <form method="POST" action="{% url 'record_payment' supplier.id %}">
             {% csrf_token %}
             <div class="modal-body">
               <div class="row g-3">
 
-                <!-- TRANSACTION TYPE -->
+                <!-- Transaction type selection -->
                 <div class="col-12">
                   <label class="form-label">Transaction Type *</label>
                   <select class="form-select" name="transaction_type" required>
@@ -289,7 +291,7 @@
                   </select>
                 </div>
 
-                <!-- AMOUNT -->
+                <!-- Amount field -->
                 <div class="col-12">
                   <label class="form-label">Amount (UGX) *</label>
                   <input
@@ -302,7 +304,7 @@
                   />
                 </div>
 
-                <!-- PAYMENT METHOD -->
+                <!-- Payment method dropdown -->
                 <div class="col-12">
                   <label class="form-label">Payment Method</label>
                   <select class="form-select" name="payment_method">
@@ -313,7 +315,7 @@
                   </select>
                 </div>
 
-                <!-- REFERENCE NUMBER -->
+                <!-- Reference number (optional) -->
                 <div class="col-12">
                   <label class="form-label">Reference Number (optional)</label>
                   <input
@@ -324,7 +326,7 @@
                   />
                 </div>
 
-                <!-- DESCRIPTION -->
+                <!-- Description/notes (optional) -->
                 <div class="col-12">
                   <label class="form-label">Description (optional)</label>
                   <textarea
@@ -338,10 +340,10 @@
               </div>
             </div>
 
-            <!-- MODAL FOOTER -->
+            <!-- Modal footer with action buttons -->
             <div class="modal-footer">
               <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                Cancel
+                <i class="fas fa-times me-1"></i> Cancel
               </button>
               <button type="submit" class="btn btn-success">
                 <i class="fa-solid fa-save me-1"></i> Save Transaction
@@ -353,7 +355,7 @@
       </div>
     </div>
 
-    <!-- BOOTSTRAP JAVASCRIPT -->
+    <!-- Bootstrap JavaScript bundle for interactive components -->
     <script
       src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
       integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
