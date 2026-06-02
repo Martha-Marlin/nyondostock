@@ -29,6 +29,25 @@
     <!-- Base and page-specific CSS styles -->
     <link rel="stylesheet" href="{% static 'base.css' %}" />
     <link rel="stylesheet" href="{% static 'stock.css' %}" />
+    
+    <!-- Custom styles for validation -->
+    <style>
+      .form-control.is-invalid, .form-select.is-invalid {
+        border-color: #dc3545 !important;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 16px 16px;
+        padding-right: 2.5rem;
+      }
+      .invalid-feedback {
+        display: block;
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 0.875em;
+        color: #dc3545;
+      }
+    </style>
   </head>
   <body>
 
@@ -149,14 +168,16 @@
         <!-- Main content area - stock management -->
         <main class="col-10 p-5">
 
-          <!-- Django flash messages for user feedback -->
+          <!-- Django flash messages for user feedback (non-field specific) -->
           {% if messages %}
           <div class="mb-3">
             {% for message in messages %}
-            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
-              {{ message }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
+              {% if 'add_item_name_error' not in message.tags and 'add_quantity_error' not in message.tags and 'add_selling_price_error' not in message.tags and 'add_buying_price_error' not in message.tags and 'edit_item_name_error' not in message.tags and 'edit_quantity_error' not in message.tags and 'edit_selling_price_error' not in message.tags and 'edit_buying_price_error' not in message.tags %}
+              <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+              {% endif %}
             {% endfor %}
           </div>
           {% endif %}
@@ -280,7 +301,8 @@
     <span class="status-badge b-red">Out of Stock</span>
   {% endif %}
 </div>
-</td>
+</div>
+
                     <td class="actions d-flex gap-1">
                       <!-- Edit button - only visible to managers and superusers -->
                       {% if user.groups.all.0.name == 'Store Manager' or user.is_superuser %}
@@ -338,56 +360,57 @@
             <input type="hidden" name="action" value="create" />
             <div class="modal-body">
   <!-- Error summary displayed inside modal -->
-  {% for message in messages %}{% if 'add_' in message.tags %}<div class="alert alert-danger py-2 small mb-3"><i class="fa-solid fa-triangle-exclamation me-1"></i> {{ message }}</div>{% endif %}{% endfor %}
+  {% for message in messages %}{% if 'add_item_name_error' in message.tags or 'add_quantity_error' in message.tags or 'add_selling_price_error' in message.tags or 'add_buying_price_error' in message.tags %}<div class="alert alert-danger py-2 small mb-3"><i class="fa-solid fa-triangle-exclamation me-1"></i> {{ message }}</div>{% endif %}{% endfor %}
 
   <div class="row g-3">
     <div class="col-md-6">
-      <label class="form-label">Item Name *</label>
+      <label class="form-label">Item Name <span class="text-danger">*</span></label>
       <input type="text" class="form-control {% for message in messages %}{% if 'add_item_name_error' in message.tags %}is-invalid{% endif %}{% endfor %}" name="item_name" value="{{ posted_item_name }}" placeholder="e.g. CEM II N Cement" />
       {% for message in messages %}{% if 'add_item_name_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
     </div>
     <div class="col-md-6">
-      <label class="form-label">Category *</label>
-      <select class="form-select" name="category">
-  <option value="" {% if not posted_category %}selected{% endif %}>Select category...</option>
-  <option {% if posted_category == 'Cement' %}selected{% endif %}>Cement</option>
-  <option {% if posted_category == 'Iron Bars' %}selected{% endif %}>Iron Bars</option>
-  <option {% if posted_category == 'Iron Sheets' %}selected{% endif %}>Iron Sheets</option>
-  <option {% if posted_category == 'Nails' %}selected{% endif %}>Nails</option>
-  <option {% if posted_category == 'Wheelbarrows' %}selected{% endif %}>Wheelbarrows</option>
-  <option {% if posted_category == 'Wire Mesh' %}selected{% endif %}>Wire Mesh</option>
-  <option {% if posted_category == 'Barbed Wire' %}selected{% endif %}>Barbed Wire</option>
-</select>
+      <label class="form-label">Category <span class="text-danger">*</span></label>
+      <select class="form-select {% for message in messages %}{% if 'add_category_error' in message.tags %}is-invalid{% endif %}{% endfor %}" name="category">
+        <option value="" {% if not posted_category %}selected{% endif %}>Select category...</option>
+        <option {% if posted_category == 'Cement' %}selected{% endif %}>Cement</option>
+        <option {% if posted_category == 'Iron Bars' %}selected{% endif %}>Iron Bars</option>
+        <option {% if posted_category == 'Iron Sheets' %}selected{% endif %}>Iron Sheets</option>
+        <option {% if posted_category == 'Nails' %}selected{% endif %}>Nails</option>
+        <option {% if posted_category == 'Wheelbarrows' %}selected{% endif %}>Wheelbarrows</option>
+        <option {% if posted_category == 'Wire Mesh' %}selected{% endif %}>Wire Mesh</option>
+        <option {% if posted_category == 'Barbed Wire' %}selected{% endif %}>Barbed Wire</option>
+      </select>
+      {% for message in messages %}{% if 'add_category_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
     </div>
     <div class="col-md-4">
-      <label class="form-label">Quantity *</label>
+      <label class="form-label">Quantity <span class="text-danger">*</span></label>
       <input type="number" class="form-control {% for message in messages %}{% if 'add_quantity_error' in message.tags %}is-invalid{% endif %}{% endfor %}" name="quantity" value="{{ posted_quantity }}" min="0" placeholder="0" />
       {% for message in messages %}{% if 'add_quantity_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
     </div>
     <div class="col-md-4">
-      <label class="form-label">Unit of Measure *</label>
+      <label class="form-label">Unit of Measure <span class="text-danger">*</span></label>
       <select class="form-select" name="unit">
-  <option {% if posted_unit == 'Pieces' or not posted_unit %}selected{% endif %}>Pieces</option>
-  <option {% if posted_unit == 'Bags' %}selected{% endif %}>Bags</option>
-  <option {% if posted_unit == 'Sheets' %}selected{% endif %}>Sheets</option>
-  <option {% if posted_unit == 'Packs' %}selected{% endif %}>Packs</option>
-  <option {% if posted_unit == 'Rolls' %}selected{% endif %}>Rolls</option>
-  <option {% if posted_unit == 'Bundles' %}selected{% endif %}>Bundles</option>
-  <option {% if posted_unit == 'Kilograms' %}selected{% endif %}>Kilograms</option>
-  <option {% if posted_unit == 'Metres' %}selected{% endif %}>Metres</option>
-</select>
+        <option {% if posted_unit == 'Pieces' or not posted_unit %}selected{% endif %}>Pieces</option>
+        <option {% if posted_unit == 'Bags' %}selected{% endif %}>Bags</option>
+        <option {% if posted_unit == 'Sheets' %}selected{% endif %}>Sheets</option>
+        <option {% if posted_unit == 'Packs' %}selected{% endif %}>Packs</option>
+        <option {% if posted_unit == 'Rolls' %}selected{% endif %}>Rolls</option>
+        <option {% if posted_unit == 'Bundles' %}selected{% endif %}>Bundles</option>
+        <option {% if posted_unit == 'Kilograms' %}selected{% endif %}>Kilograms</option>
+        <option {% if posted_unit == 'Metres' %}selected{% endif %}>Metres</option>
+      </select>
     </div>
     <div class="col-md-4">
       <label class="form-label">Minimum Stock Level</label>
       <input type="number" class="form-control" name="minimum_stock" value="{{ posted_minimum_stock }}" min="0" placeholder="e.g. 10" />
     </div>
     <div class="col-md-6">
-      <label class="form-label">Buying Price (UGX) *</label>
+      <label class="form-label">Buying Price (UGX) <span class="text-danger">*</span></label>
       <input type="number" class="form-control {% for message in messages %}{% if 'add_buying_price_error' in message.tags %}is-invalid{% endif %}{% endfor %}" name="buying_price" value="{{ posted_buying_price }}" min="0" placeholder="0" />
       {% for message in messages %}{% if 'add_buying_price_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
     </div>
     <div class="col-md-6">
-      <label class="form-label">Selling Price (UGX) *</label>
+      <label class="form-label">Selling Price (UGX) <span class="text-danger">*</span></label>
       <input type="number" class="form-control {% for message in messages %}{% if 'add_selling_price_error' in message.tags %}is-invalid{% endif %}{% endfor %}" name="selling_price" value="{{ posted_selling_price }}" min="0" placeholder="0" />
       {% for message in messages %}{% if 'add_selling_price_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
     </div>
@@ -424,13 +447,22 @@
             <input type="hidden" name="action" value="update" />
             <input type="hidden" name="item_id" id="editItemId" />
             <div class="modal-body">
+              <!-- Show validation errors inside the modal if edit failed -->
+              {% if edit_error %}
+                {% for message in messages %}
+                  {% if 'edit_item_name_error' in message.tags or 'edit_quantity_error' in message.tags or 'edit_selling_price_error' in message.tags or 'edit_buying_price_error' in message.tags %}
+                    <div class="alert alert-danger py-2 small mb-3"><i class="fa-solid fa-triangle-exclamation me-1"></i> {{ message }}</div>
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
               <div class="row g-3">
                 <div class="col-md-6">
-                  <label for="editItemName" class="form-label">Item Name *</label>
-                  <input type="text" class="form-control" id="editItemName" name="item_name" required />
+                  <label for="editItemName" class="form-label">Item Name <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control {% if edit_error %}{% for message in messages %}{% if 'edit_item_name_error' in message.tags %}is-invalid{% endif %}{% endfor %}{% endif %}" id="editItemName" name="item_name" required />
+                  {% if edit_error %}{% for message in messages %}{% if 'edit_item_name_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}{% endif %}
                 </div>
                 <div class="col-md-6">
-                  <label for="editItemCategory" class="form-label">Category *</label>
+                  <label for="editItemCategory" class="form-label">Category <span class="text-danger">*</span></label>
                   <select class="form-select" id="editItemCategory" name="category" required>
                     <option>Cement</option>
                     <option>Iron Bars</option>
@@ -442,11 +474,12 @@
                   </select>
                 </div>
                 <div class="col-md-4">
-                  <label for="editItemQuantity" class="form-label">Quantity *</label>
-                  <input type="number" class="form-control" id="editItemQuantity" name="quantity" min="0" required />
+                  <label for="editItemQuantity" class="form-label">Quantity <span class="text-danger">*</span></label>
+                  <input type="number" class="form-control {% if edit_error %}{% for message in messages %}{% if 'edit_quantity_error' in message.tags %}is-invalid{% endif %}{% endfor %}{% endif %}" id="editItemQuantity" name="quantity" min="0" required />
+                  {% if edit_error %}{% for message in messages %}{% if 'edit_quantity_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}{% endif %}
                 </div>
                 <div class="col-md-4">
-                  <label for="editUnitMeasure" class="form-label">Unit of Measure *</label>
+                  <label for="editUnitMeasure" class="form-label">Unit of Measure <span class="text-danger">*</span></label>
                   <select class="form-select" id="editUnitMeasure" name="unit" required>
                     <option>Pieces</option>
                     <option>Bags</option>
@@ -463,12 +496,14 @@
                   <input type="number" class="form-control" id="editMinimumStock" name="minimum_stock" min="0" />
                 </div>
                 <div class="col-md-6">
-                  <label for="editBuyingPrice" class="form-label">Buying Price (UGX) *</label>
-                  <input type="number" class="form-control" id="editBuyingPrice" name="buying_price" min="0" required />
+                  <label for="editBuyingPrice" class="form-label">Buying Price (UGX) <span class="text-danger">*</span></label>
+                  <input type="number" class="form-control {% if edit_error %}{% for message in messages %}{% if 'edit_buying_price_error' in message.tags %}is-invalid{% endif %}{% endfor %}{% endif %}" id="editBuyingPrice" name="buying_price" min="0" required />
+                  {% if edit_error %}{% for message in messages %}{% if 'edit_buying_price_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}{% endif %}
                 </div>
                 <div class="col-md-6">
-                  <label for="editSellingPrice" class="form-label">Selling Price (UGX) *</label>
-                  <input type="number" class="form-control" id="editSellingPrice" name="selling_price" min="0" required />
+                  <label for="editSellingPrice" class="form-label">Selling Price (UGX) <span class="text-danger">*</span></label>
+                  <input type="number" class="form-control {% if edit_error %}{% for message in messages %}{% if 'edit_selling_price_error' in message.tags %}is-invalid{% endif %}{% endfor %}{% endif %}" id="editSellingPrice" name="selling_price" min="0" required />
+                  {% if edit_error %}{% for message in messages %}{% if 'edit_selling_price_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}{% endif %}
                 </div>
                 <!-- Supplier text input - auto-filled from data attribute -->
                 <div class="col-12">
@@ -476,13 +511,13 @@
                   <input type="text" class="form-control" id="editSupplierName" name="supplier" />
                 </div>
                 <div class="col-12">
-  <label for="editStatus" class="form-label">Status *</label>
-  <select class="form-select" id="editStatus" name="status">
-    <option value="Active">Active</option>
-    <option value="Discontinued">Discontinued</option>
-    <option value="Seasonal">Seasonal</option>
-  </select>
-</div>
+                  <label for="editStatus" class="form-label">Status <span class="text-danger">*</span></label>
+                  <select class="form-select" id="editStatus" name="status">
+                    <option value="Active">Active</option>
+                    <option value="Discontinued">Discontinued</option>
+                    <option value="Seasonal">Seasonal</option>
+                  </select>
+                </div>
               </div>
             </div>
             <div class="modal-footer">
@@ -516,18 +551,33 @@
           document.getElementById("editSellingPrice").value = button.getAttribute("data-selling-price") || 0;
           document.getElementById("editSupplierName").value = button.getAttribute("data-supplier") || "";
           document.getElementById("editStatus").value = button.getAttribute("data-status") || "Active";
+          
+          // Clear any previous validation errors
+          document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+          document.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
         });
       }
     </script>
+    
     <!-- Auto-reopen add modal if there was a validation error -->
-{% if add_error %}
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var modal = new bootstrap.Modal(document.getElementById('addStockModal'));
-    modal.show();
-  });
-</script>
-{% endif %}
+    {% if add_error %}
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var modal = new bootstrap.Modal(document.getElementById('addStockModal'));
+        modal.show();
+      });
+    </script>
+    {% endif %}
+    
+    <!-- Auto-reopen edit modal if there was a validation error -->
+    {% if edit_error %}
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var modal = new bootstrap.Modal(document.getElementById('editStockModal'));
+        modal.show();
+      });
+    </script>
+    {% endif %}
 
   </body>
 </html>

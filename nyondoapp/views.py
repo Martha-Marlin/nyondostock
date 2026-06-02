@@ -337,87 +337,217 @@ def stock_view(request):
             buying_price_raw = request.POST.get('buying_price', '').strip()
             minimum_stock_raw = request.POST.get('minimum_stock', '0').strip()
 
+            # Helper function to render errors for Add modal
+            def error_render():
+                items = StockItem.objects.all().order_by('-id')
+                total_items = items.count()
+                out_of_stock_count = items.filter(quantity=0).count()
+                low_stock_count = items.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count()
+                in_stock_count = total_items - low_stock_count - out_of_stock_count
+                return render(request, 'nyondoapp/stock.html', {
+                    'items': items,
+                    'total_items': total_items,
+                    'in_stock': in_stock_count,
+                    'low_stock': low_stock_count,
+                    'out_of_stock': out_of_stock_count,
+                    'stock_filter': '',
+                    'search': '',
+                    'low_stock_count': low_stock_count,
+                    'suppliers': Supplier.objects.all().order_by('supplier_name'),
+                    'add_error': True,
+                    'posted_item_name': item_name,
+                    'posted_category': category,
+                    'posted_quantity': quantity_raw,
+                    'posted_unit': unit,
+                    'posted_minimum_stock': minimum_stock_raw,
+                    'posted_buying_price': buying_price_raw,
+                    'posted_selling_price': selling_price_raw,
+                    'posted_supplier': supplier,
+                })
+
+            # Server-side validation for Add Stock
             if not item_name:
                 messages.error(request, 'Item name is required.', extra_tags='add_item_name_error')
-            elif not quantity_raw or int(quantity_raw or 0) < 0:
-                messages.error(request, 'Quantity must be zero or greater.', extra_tags='add_quantity_error')
-            elif not selling_price_raw or Decimal(selling_price_raw or 0) <= 0:
-                messages.error(request, 'Selling price must be greater than zero.', extra_tags='add_selling_price_error')
-            elif not buying_price_raw or Decimal(buying_price_raw or 0) <= 0:
-                messages.error(request, 'Buying price must be greater than zero.', extra_tags='add_buying_price_error')
-            elif Decimal(buying_price_raw) > Decimal(selling_price_raw):
+                return error_render()
+            
+            if not quantity_raw:
+                messages.error(request, 'Quantity is required.', extra_tags='add_quantity_error')
+                return error_render()
+            
+            try:
+                quantity = int(quantity_raw)
+                if quantity < 0:
+                    messages.error(request, 'Quantity cannot be negative.', extra_tags='add_quantity_error')
+                    return error_render()
+            except ValueError:
+                messages.error(request, 'Quantity must be a valid number.', extra_tags='add_quantity_error')
+                return error_render()
+            
+            if not selling_price_raw:
+                messages.error(request, 'Selling price is required.', extra_tags='add_selling_price_error')
+                return error_render()
+            
+            try:
+                selling_price = Decimal(selling_price_raw)
+                if selling_price <= 0:
+                    messages.error(request, 'Selling price must be greater than zero.', extra_tags='add_selling_price_error')
+                    return error_render()
+            except:
+                messages.error(request, 'Selling price must be a valid number.', extra_tags='add_selling_price_error')
+                return error_render()
+            
+            if not buying_price_raw:
+                messages.error(request, 'Buying price is required.', extra_tags='add_buying_price_error')
+                return error_render()
+            
+            try:
+                buying_price = Decimal(buying_price_raw)
+                if buying_price <= 0:
+                    messages.error(request, 'Buying price must be greater than zero.', extra_tags='add_buying_price_error')
+                    return error_render()
+            except:
+                messages.error(request, 'Buying price must be a valid number.', extra_tags='add_buying_price_error')
+                return error_render()
+            
+            if buying_price > selling_price:
                 messages.error(request, 'Buying price cannot be greater than selling price.', extra_tags='add_buying_price_error')
-            else:
-                existing_item = StockItem.objects.filter(item_name=item_name, category=category, unit=unit, supplier=supplier).first()
-                if existing_item:
-                    additional_quantity = int(quantity_raw or 0)
-                    existing_item.quantity += additional_quantity
-                    existing_item.buying_price = buying_price_raw
-                    existing_item.selling_price = selling_price_raw
-                    existing_item.minimum_stock = int(minimum_stock_raw or 0)
-                    existing_item.save()
-                    messages.success(request, f'Added {additional_quantity} to existing {item_name}. New total: {existing_item.quantity}')
-                else:
-                    StockItem.objects.create(item_name=item_name, category=category, quantity=int(quantity_raw or 0), unit=unit, minimum_stock=int(minimum_stock_raw or 0), buying_price=buying_price_raw, selling_price=selling_price_raw, supplier=supplier)
-                    messages.success(request, 'New stock item added successfully.')
-                return redirect('stock')
+                return error_render()
+            
+            if not category:
+                messages.error(request, 'Category is required.', extra_tags='add_category_error')
+                return error_render()
 
-            # Validation error — render with posted data
-            items = StockItem.objects.all().order_by('-id')
-            total_items = items.count()
-            out_of_stock_count = items.filter(quantity=0).count()
-            low_stock_count = items.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count()
-            in_stock_count = total_items - low_stock_count - out_of_stock_count
-            return render(request, 'nyondoapp/stock.html', {
-                'items': items,
-                'total_items': total_items,
-                'in_stock': in_stock_count,
-                'low_stock': low_stock_count,
-                'out_of_stock': out_of_stock_count,
-                'stock_filter': '',
-                'search': '',
-                'low_stock_count': low_stock_count,
-                'suppliers': Supplier.objects.all().order_by('supplier_name'),
-                'add_error': True,
-                'posted_item_name': item_name,
-                'posted_category': category,
-                'posted_quantity': quantity_raw,
-                'posted_unit': unit,
-                'posted_minimum_stock': minimum_stock_raw,
-                'posted_buying_price': buying_price_raw,
-                'posted_selling_price': selling_price_raw,
-                'posted_supplier': supplier,
-            })
+            # Check if item exists to update quantity
+            existing_item = StockItem.objects.filter(item_name=item_name, category=category, unit=unit, supplier=supplier).first()
+            if existing_item:
+                additional_quantity = int(quantity_raw or 0)
+                existing_item.quantity += additional_quantity
+                existing_item.buying_price = buying_price
+                existing_item.selling_price = selling_price
+                existing_item.minimum_stock = int(minimum_stock_raw or 0)
+                existing_item.save()
+                messages.success(request, f'Added {additional_quantity} to existing {item_name}. New total: {existing_item.quantity}')
+            else:
+                StockItem.objects.create(
+                    item_name=item_name,
+                    category=category,
+                    quantity=int(quantity_raw or 0),
+                    unit=unit,
+                    minimum_stock=int(minimum_stock_raw or 0),
+                    buying_price=buying_price,
+                    selling_price=selling_price,
+                    supplier=supplier
+                )
+                messages.success(request, 'New stock item added successfully.')
+            return redirect('stock')
 
         elif action == 'update':
-            item = get_object_or_404(StockItem, id=request.POST.get('item_id'))
+            item_id = request.POST.get('item_id')
+            item = get_object_or_404(StockItem, id=item_id)
             item_name = request.POST.get('item_name', '').strip()
+            category = request.POST.get('category', 'Cement')
+            unit = request.POST.get('unit', 'Pieces')
+            supplier = request.POST.get('supplier', '').strip()
+            quantity_raw = request.POST.get('quantity', '').strip()
             selling_price_raw = request.POST.get('selling_price', '').strip()
             buying_price_raw = request.POST.get('buying_price', '').strip()
+            minimum_stock_raw = request.POST.get('minimum_stock', '0').strip()
+            status = request.POST.get('status', 'Active')
 
+            # Helper function to render errors for Edit modal
+            def error_render_edit():
+                items = StockItem.objects.all().order_by('-id')
+                total_items = items.count()
+                out_of_stock_count = items.filter(quantity=0).count()
+                low_stock_count = items.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count()
+                in_stock_count = total_items - low_stock_count - out_of_stock_count
+                return render(request, 'nyondoapp/stock.html', {
+                    'items': items,
+                    'total_items': total_items,
+                    'in_stock': in_stock_count,
+                    'low_stock': low_stock_count,
+                    'out_of_stock': out_of_stock_count,
+                    'stock_filter': '',
+                    'search': '',
+                    'low_stock_count': low_stock_count,
+                    'suppliers': Supplier.objects.all().order_by('supplier_name'),
+                    'edit_error': True,
+                    'edit_item_id': item_id,
+                    'edit_item_name': item_name,
+                    'edit_category': category,
+                    'edit_quantity': quantity_raw,
+                    'edit_unit': unit,
+                    'edit_minimum_stock': minimum_stock_raw,
+                    'edit_buying_price': buying_price_raw,
+                    'edit_selling_price': selling_price_raw,
+                    'edit_supplier': supplier,
+                    'edit_status': status,
+                })
+
+            # Server-side validation for Edit Stock
             if not item_name:
-                messages.error(request, 'Item name is required.')
-                return redirect('stock')
-            if not selling_price_raw or Decimal(selling_price_raw or 0) <= 0:
-                messages.error(request, 'Selling price must be greater than zero.')
-                return redirect('stock')
-            if not buying_price_raw or Decimal(buying_price_raw or 0) <= 0:
-                messages.error(request, 'Buying price must be greater than zero.')
-                return redirect('stock')
-            if Decimal(buying_price_raw) > Decimal(selling_price_raw):
-                messages.error(request, 'Buying price cannot be greater than selling price.')
-                return redirect('stock')
+                messages.error(request, 'Item name is required.', extra_tags='edit_item_name_error')
+                return error_render_edit()
+            
+            if not quantity_raw:
+                messages.error(request, 'Quantity is required.', extra_tags='edit_quantity_error')
+                return error_render_edit()
+            
+            try:
+                quantity = int(quantity_raw)
+                if quantity < 0:
+                    messages.error(request, 'Quantity cannot be negative.', extra_tags='edit_quantity_error')
+                    return error_render_edit()
+            except ValueError:
+                messages.error(request, 'Quantity must be a valid number.', extra_tags='edit_quantity_error')
+                return error_render_edit()
+            
+            if not selling_price_raw:
+                messages.error(request, 'Selling price is required.', extra_tags='edit_selling_price_error')
+                return error_render_edit()
+            
+            try:
+                selling_price = Decimal(selling_price_raw)
+                if selling_price <= 0:
+                    messages.error(request, 'Selling price must be greater than zero.', extra_tags='edit_selling_price_error')
+                    return error_render_edit()
+            except:
+                messages.error(request, 'Selling price must be a valid number.', extra_tags='edit_selling_price_error')
+                return error_render_edit()
+            
+            if not buying_price_raw:
+                messages.error(request, 'Buying price is required.', extra_tags='edit_buying_price_error')
+                return error_render_edit()
+            
+            try:
+                buying_price = Decimal(buying_price_raw)
+                if buying_price <= 0:
+                    messages.error(request, 'Buying price must be greater than zero.', extra_tags='edit_buying_price_error')
+                    return error_render_edit()
+            except:
+                messages.error(request, 'Buying price must be a valid number.', extra_tags='edit_buying_price_error')
+                return error_render_edit()
+            
+            if buying_price > selling_price:
+                messages.error(request, 'Buying price cannot be greater than selling price.', extra_tags='edit_buying_price_error')
+                return error_render_edit()
+            
+            if not category:
+                messages.error(request, 'Category is required.', extra_tags='edit_category_error')
+                return error_render_edit()
 
+            # Update the item
             item.item_name = item_name
-            item.category = request.POST.get('category', 'Cement')
-            item.quantity = int(request.POST.get('quantity', 0) or 0)
-            item.unit = request.POST.get('unit', 'Pieces')
-            item.minimum_stock = int(request.POST.get('minimum_stock', 0) or 0)
-            item.buying_price = buying_price_raw
-            item.selling_price = selling_price_raw
-            item.supplier = request.POST.get('supplier', '').strip()
+            item.category = category
+            item.quantity = quantity
+            item.unit = unit
+            item.minimum_stock = int(minimum_stock_raw or 0)
+            item.buying_price = buying_price
+            item.selling_price = selling_price
+            item.supplier = supplier
+            item.status = status
             item.save()
-            messages.success(request, 'Stock item updated successfully.')
+            messages.success(request, f'{item_name} updated successfully.')
             return redirect('stock')
 
     # GET request — normal page load
@@ -625,6 +755,7 @@ def delete_sale_view(request, sale_id):
     return redirect('sales_list')
 
 
+# EDIT SALE VIEW
 @login_required(login_url='login')
 def edit_sale_view(request, sale_id):
     denied = require_roles(request, SALES_ROLE)
@@ -632,26 +763,79 @@ def edit_sale_view(request, sale_id):
         return denied
 
     sale = get_object_or_404(Sale, id=sale_id)
+    
     if request.method == 'POST':
-        # Update basic sale details
-        sale.customer_name = request.POST.get('customer_name', '').strip()
-        sale.phone_number = request.POST.get('phone_number', '').strip()
-        sale.payment_status = request.POST.get('payment_status', 'Pending').capitalize()
+        customer_name = request.POST.get('customer_name', '').strip()
+        phone_number = request.POST.get('phone_number', '').strip()
+        payment_status = request.POST.get('payment_status', 'Pending').capitalize()
         payment_method_map = {
             'Cash': 'Cash',
             'Mobile Money': 'Mobile Money',
             'Bank Transfer': 'Bank Transfer',
         }
-        sale.payment_method = payment_method_map.get(request.POST.get('payment_method', 'Cash'), 'Cash')
+        payment_method = payment_method_map.get(request.POST.get('payment_method', 'Cash'), 'Cash')
+
+        # Helper function to render errors
+        def error_render():
+            sales_list = Sale.objects.prefetch_related('items__stock_item').all()
+            context = {
+                'sales': sales_list,
+                'search': '',
+                'status': '',
+                'date_from': '',
+                'date_to': '',
+                'total_sales': sales_list.count(),
+                'total_revenue': sales_list.aggregate(total=Sum('total_amount'))['total'] or 0,
+                'pending_count': sales_list.filter(payment_status='Pending').count(),
+                'credit_count': sales_list.filter(payment_status='Credit').count(),
+                'low_stock_count': StockItem.objects.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count(),
+                'now': datetime.now(),
+                'all_stock': StockItem.objects.all().order_by('item_name'),
+                'edit_error': True,
+                'edit_sale_id': sale.id,
+                'edit_customer_name': customer_name,
+                'edit_phone': phone_number,
+            }
+            return render(request, 'nyondoapp/sales_list.html', context)
+
+        # Server-side validation
+        if not customer_name:
+            messages.error(request, 'Customer name is required.', extra_tags='edit_customer_name_error')
+            return error_render()
+
+        if not phone_number:
+            messages.error(request, 'Phone number is required.', extra_tags='edit_phone_error')
+            return error_render()
+
+        if not re.match(r'^(07|03)\d{8}$', phone_number.replace(' ', '')):
+            messages.error(request, 'Enter a valid Ugandan phone number (e.g. 0701234567).', extra_tags='edit_phone_error')
+            return error_render()
+
+        # Update basic sale details
+        sale.customer_name = customer_name
+        sale.phone_number = phone_number
+        sale.payment_status = payment_status
+        sale.payment_method = payment_method
 
         # Update each sale item
         sale_item_ids = request.POST.getlist('sale_item_id')
+        
+        if not sale_item_ids:
+            messages.error(request, 'At least one item is required for the sale.', extra_tags='edit_items_error')
+            return error_render()
+
         new_subtotal = Decimal('0')
+        items_valid = True
 
         for sale_item_id in sale_item_ids:
             sale_item = get_object_or_404(SaleItem, id=sale_item_id)
             new_item_id = request.POST.get(f'item_id_{sale_item_id}')
             new_quantity = int(request.POST.get(f'quantity_{sale_item_id}', 1))
+
+            if new_quantity <= 0:
+                messages.error(request, 'Quantity must be greater than zero for all items.', extra_tags='edit_items_error')
+                items_valid = False
+                break
 
             new_stock_item = get_object_or_404(StockItem, id=new_item_id)
 
@@ -662,8 +846,9 @@ def edit_sale_view(request, sale_id):
 
             # Check new stock has enough
             if new_quantity > new_stock_item.quantity:
-                messages.error(request, f'Not enough stock for {new_stock_item.item_name}. Only {new_stock_item.quantity} available.')
-                return redirect('sales_list')
+                messages.error(request, f'Not enough stock for {new_stock_item.item_name}. Only {new_stock_item.quantity} available.', extra_tags='edit_items_error')
+                items_valid = False
+                break
 
             # Deduct new quantity from stock
             new_stock_item.quantity -= new_quantity
@@ -680,12 +865,17 @@ def edit_sale_view(request, sale_id):
 
             new_subtotal += new_line_total
 
+        if not items_valid:
+            return error_render()
+
         # Recalculate sale totals
         sale.subtotal = new_subtotal
         sale.total_amount = new_subtotal + sale.transport_charge
         sale.save()
 
         messages.success(request, f'Sale #{sale_id} updated successfully.')
+        return redirect('sales_list')
+
     return redirect('sales_list')
 
 
@@ -1661,7 +1851,7 @@ def deposit_detail_view(request, deposit_id):
     return render(request, 'nyondoapp/deposit_detail.html', context)
 
 
-# RECORD DEPOSIT PAYMENT VIEW
+# RECORD DEPOSIT PAYMENT VIEW (UPDATED with validation)
 @login_required(login_url='login')
 def record_deposit_payment_view(request, deposit_id):
     denied = require_roles(request, ACCOUNTS_ROLE)
@@ -1669,24 +1859,54 @@ def record_deposit_payment_view(request, deposit_id):
         return denied
 
     deposit = get_object_or_404(Deposit, id=deposit_id)
+    
     if request.method == 'POST':
-        amount = Decimal(request.POST.get('amount') or 0)
+        amount_raw = request.POST.get('amount', '').strip()
+        payment_method = request.POST.get('payment_method', 'Cash')
+        reference_number = request.POST.get('reference_number', '').strip()
+        note = request.POST.get('note', '').strip()
 
-        if amount <= 0:
-            messages.error(request, 'Payment amount must be greater than zero.')
-            return redirect('deposit_detail', deposit_id=deposit.id)
+        # Helper function to render errors
+        def error_render():
+            return render(request, 'nyondoapp/deposit_detail.html', {
+                'deposit': deposit,
+                'payments': deposit.payments.all().order_by('-paid_at'),
+                'low_stock_count': StockItem.objects.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count(),
+                'today': datetime.now().date(),
+                'payment_error': True,
+                'posted_payment_amount': amount_raw,
+                'posted_reference': reference_number,
+                'posted_note': note,
+            })
 
+        # Server-side validation
+        if not amount_raw:
+            messages.error(request, 'Payment amount is required.', extra_tags='payment_amount_error')
+            return error_render()
+
+        try:
+            amount = Decimal(amount_raw)
+            if amount <= 0:
+                messages.error(request, 'Payment amount must be greater than zero.', extra_tags='payment_amount_error')
+                return error_render()
+        except:
+            messages.error(request, 'Please enter a valid amount.', extra_tags='payment_amount_error')
+            return error_render()
+
+        # Save the payment
         payment = DepositPayment.objects.create(
             deposit=deposit,
             amount=amount,
-            payment_method=request.POST.get('payment_method', 'Cash'),
-            reference_number=request.POST.get('reference_number', '').strip() or None,
-            note=request.POST.get('note', '').strip() or None,
+            payment_method=payment_method,
+            reference_number=reference_number or None,
+            note=note or None,
             paid_by=request.user,
         )
 
+        # Update deposit amount paid
         deposit.amount_paid += amount
         deposit.save()
+        
         messages.success(request, f'Temporary receipt created for UGX {amount:,.0f}. Goods will be determined on collection day.')
         return redirect('deposit_receipt', payment_id=payment.id)
 
@@ -1774,7 +1994,7 @@ def collect_deposit_view(request, deposit_id):
     return redirect('collection_receipt', deposit_id=deposit.id)
 
 
-# EDIT DEPOSIT VIEW
+# EDIT DEPOSIT VIEW (UPDATED with validation)
 @login_required(login_url='login')
 def edit_deposit_view(request, deposit_id):
     denied = require_roles(request, ACCOUNTS_ROLE)
@@ -1789,23 +2009,64 @@ def edit_deposit_view(request, deposit_id):
 
     if request.method == 'POST':
         new_item_type = request.POST.get('item_type', '').strip()
-        new_quantity = int(request.POST.get('quantity_ordered') or 0)
+        new_quantity_raw = request.POST.get('quantity_ordered', '').strip()
+        unit = request.POST.get('unit', 'Bags')
+        due_date = request.POST.get('due_date', '').strip()
+        notes = request.POST.get('notes', '').strip() or None
 
-        if new_quantity < 0:
-            messages.error(request, 'Estimated quantity cannot be negative.')
-            return redirect('deposit_detail', deposit_id=deposit.id)
+        # Helper function to render errors
+        def error_render():
+            return render(request, 'nyondoapp/deposit_detail.html', {
+                'deposit': deposit,
+                'payments': deposit.payments.all().order_by('-paid_at'),
+                'low_stock_count': StockItem.objects.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count(),
+                'today': datetime.now().date(),
+                'edit_error': True,
+            })
 
+        # Server-side validation
+        if not new_item_type:
+            messages.error(request, 'Item type is required.', extra_tags='edit_item_type_error')
+            return error_render()
+
+        if not new_quantity_raw:
+            messages.error(request, 'Estimated quantity is required.', extra_tags='edit_quantity_error')
+            return error_render()
+
+        try:
+            new_quantity = int(new_quantity_raw)
+            if new_quantity < 0:
+                messages.error(request, 'Estimated quantity cannot be negative.', extra_tags='edit_quantity_error')
+                return error_render()
+        except ValueError:
+            messages.error(request, 'Estimated quantity must be a valid number.', extra_tags='edit_quantity_error')
+            return error_render()
+
+        if not due_date:
+            messages.error(request, 'Expected collection date is required.', extra_tags='edit_due_date_error')
+            return error_render()
+
+        due_date_parsed = datetime.strptime(due_date, '%Y-%m-%d').date()
+        if due_date_parsed < timezone.now().date():
+            messages.error(request, 'Expected collection date cannot be in the past.', extra_tags='edit_due_date_error')
+            return error_render()
+
+        # Calculate new total amount
         stock_item = find_deposit_stock_item(new_item_type, available_only=False)
         new_total = stock_item.selling_price * new_quantity if stock_item and new_quantity > 0 else Decimal('0')
+        
+        # Update deposit
         deposit.item_type = new_item_type
         deposit.quantity_ordered = new_quantity
-        deposit.unit = request.POST.get('unit', 'Bags')
-        deposit.due_date = request.POST.get('due_date')
-        deposit.notes = request.POST.get('notes', '').strip() or None
+        deposit.unit = unit
+        deposit.due_date = due_date
+        deposit.notes = notes
         deposit.total_amount = new_total
         deposit.save()
 
         messages.success(request, f'Deposit #{deposit.id} updated successfully. Stock will still be deducted only on collection day.')
+        return redirect('deposit_detail', deposit_id=deposit.id)
+
     return redirect('deposit_detail', deposit_id=deposit.id)
 
 

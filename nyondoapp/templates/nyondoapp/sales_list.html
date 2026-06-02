@@ -29,6 +29,25 @@
     <!-- External CSS files -->
     <link rel="stylesheet" href="{% static 'base.css' %}" />
     <link rel="stylesheet" href="{% static 'sales_list.css' %}" />
+    
+    <!-- Custom styles for validation -->
+    <style>
+      .form-control.is-invalid, .form-select.is-invalid {
+        border-color: #dc3545 !important;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 16px 16px;
+        padding-right: 2.5rem;
+      }
+      .invalid-feedback {
+        display: block;
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 0.875em;
+        color: #dc3545;
+      }
+    </style>
   </head>
   <body>
     <!-- Main top navigation bar with branding and user info -->
@@ -128,7 +147,7 @@
             <small class="text-muted d-block mb-1"
               ><i class="fa-solid fa-store me-1"></i> NYONDO General Hardware</small
             >
-            <small class="text-muted d-block"><i class="fa-solid fa-calendar me-1"></i> April 2026</small>
+            <small class="text-muted d-block"><i class="fa-solid fa-calendar me-1"></i> {% now "F Y" %}</small>
           </div>
         </div>
 
@@ -144,6 +163,20 @@
               <i class="fas fa-plus me-1"></i> Record sale
             </a>
           </div>
+
+          <!-- Flash messages for general feedback (non-field specific) -->
+          {% if messages %}
+          <div class="mb-3">
+            {% for message in messages %}
+              {% if 'edit_customer_name_error' not in message.tags and 'edit_phone_error' not in message.tags and 'edit_items_error' not in message.tags %}
+              <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+          {% endif %}
 
           <!-- Summary statistics cards -->
           <div class="row mb-4 g-3">
@@ -324,62 +357,75 @@
                     {% csrf_token %}
                     <input type="hidden" name="action" value="edit" />
                     <div class="modal-body">
-  <div class="mb-3">
-    <label class="form-label">Customer name</label>
-    <input type="text" name="customer_name" class="form-control form-control-sm" value="{{ sale.customer_name }}" required />
-  </div>
-  <div class="mb-3">
-    <label class="form-label">Phone number</label>
-    <input type="text" name="phone_number" class="form-control form-control-sm" value="{{ sale.phone_number }}" />
-  </div>
+                      <!-- Show validation errors inside the modal if edit failed -->
+                      {% if edit_error and edit_sale_id == sale.id %}
+                        {% for message in messages %}
+                          {% if 'edit_customer_name_error' in message.tags or 'edit_phone_error' in message.tags or 'edit_items_error' in message.tags %}
+                            <div class="alert alert-danger py-2 small mb-3"><i class="fa-solid fa-triangle-exclamation me-1"></i> {{ message }}</div>
+                          {% endif %}
+                        {% endfor %}
+                      {% endif %}
+                      
+                      <div class="mb-3">
+                        <label class="form-label">Customer name <span class="text-danger">*</span></label>
+                        <input type="text" name="customer_name" class="form-control form-control-sm {% if edit_error and edit_sale_id == sale.id %}{% for message in messages %}{% if 'edit_customer_name_error' in message.tags %}is-invalid{% endif %}{% endfor %}{% endif %}" value="{% if edit_error and edit_sale_id == sale.id %}{{ edit_customer_name|default:sale.customer_name }}{% else %}{{ sale.customer_name }}{% endif %}" required />
+                        {% if edit_error and edit_sale_id == sale.id %}{% for message in messages %}{% if 'edit_customer_name_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}{% endif %}
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Phone number <span class="text-danger">*</span></label>
+                        <input type="text" name="phone_number" class="form-control form-control-sm {% if edit_error and edit_sale_id == sale.id %}{% for message in messages %}{% if 'edit_phone_error' in message.tags %}is-invalid{% endif %}{% endfor %}{% endif %}" value="{% if edit_error and edit_sale_id == sale.id %}{{ edit_phone|default:sale.phone_number }}{% else %}{{ sale.phone_number }}{% endif %}" />
+                        {% if edit_error and edit_sale_id == sale.id %}{% for message in messages %}{% if 'edit_phone_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}{% endif %}
+                        <small class="text-muted">Valid Ugandan phone number (10 digits, starts with 07 or 03)</small>
+                      </div>
 
-  <!-- Items section - editable product lines -->
-  <div class="mb-3">
-    <label class="form-label fw-bold">Items</label>
-    <table class="table table-sm table-bordered">
-      <thead class="table-light">
-        <tr>
-          <th>Item</th>
-          <th style="width:100px;">Quantity</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for line in sale.items.all %}
-        <tr>
-          <td>
-            <select name="item_id_{{ line.id }}" class="form-select form-select-sm">
-              {% for stock in all_stock %}
-              <option value="{{ stock.id }}" {% if line.stock_item and line.stock_item.id == stock.id %}selected{% endif %}>{{ stock.item_name }} — UGX {{ stock.selling_price|floatformat:0 }}</option>
-              {% endfor %}
-            </select>
-            <input type="hidden" name="sale_item_id" value="{{ line.id }}" />
-          </td>
-          <td>
-            <input type="number" name="quantity_{{ line.id }}" class="form-control form-control-sm" value="{{ line.quantity }}" min="1" />
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+                      <!-- Items section - editable product lines -->
+                      <div class="mb-3">
+                        <label class="form-label fw-bold">Items <span class="text-danger">*</span></label>
+                        {% if edit_error and edit_sale_id == sale.id %}{% for message in messages %}{% if 'edit_items_error' in message.tags %}<div class="text-danger small mb-2">{{ message }}</div>{% endif %}{% endfor %}{% endif %}
+                        <table class="table table-sm table-bordered">
+                          <thead class="table-light">
+                            <tr>
+                              <th>Item</th>
+                              <th style="width:100px;">Quantity</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for line in sale.items.all %}
+                            <tr>
+                              <td>
+                                <select name="item_id_{{ line.id }}" class="form-select form-select-sm">
+                                  {% for stock in all_stock %}
+                                  <option value="{{ stock.id }}" {% if line.stock_item and line.stock_item.id == stock.id %}selected{% endif %}>{{ stock.item_name }} — UGX {{ stock.selling_price|floatformat:0 }}</option>
+                                  {% endfor %}
+                                </select>
+                                <input type="hidden" name="sale_item_id" value="{{ line.id }}" />
+                              </td>
+                              <td>
+                                <input type="number" name="quantity_{{ line.id }}" class="form-control form-control-sm" value="{{ line.quantity }}" min="1" />
+                              </td>
+                            </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                      </div>
 
-  <div class="mb-3">
-    <label class="form-label">Payment status</label>
-    <select name="payment_status" class="form-select form-select-sm">
-      <option value="Paid" {% if sale.payment_status == 'Paid' %}selected{% endif %}>Paid</option>
-      <option value="Pending" {% if sale.payment_status == 'Pending' %}selected{% endif %}>Pending</option>
-      <option value="Credit" {% if sale.payment_status == 'Credit' %}selected{% endif %}>Credit</option>
-    </select>
-  </div>
-  <div class="mb-3">
-    <label class="form-label">Payment method</label>
-    <select name="payment_method" class="form-select form-select-sm">
-      <option value="Cash" {% if sale.payment_method == 'Cash' %}selected{% endif %}>Cash</option>
-      <option value="Mobile Money" {% if sale.payment_method == 'Mobile Money' %}selected{% endif %}>Mobile money</option>
-      <option value="Bank Transfer" {% if sale.payment_method == 'Bank Transfer' %}selected{% endif %}>Bank transfer</option>
-    </select>
-  </div>
-</div>
+                      <div class="mb-3">
+                        <label class="form-label">Payment status</label>
+                        <select name="payment_status" class="form-select form-select-sm">
+                          <option value="Paid" {% if sale.payment_status == 'Paid' %}selected{% endif %}>Paid</option>
+                          <option value="Pending" {% if sale.payment_status == 'Pending' %}selected{% endif %}>Pending</option>
+                          <option value="Credit" {% if sale.payment_status == 'Credit' %}selected{% endif %}>Credit</option>
+                        </select>
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Payment method</label>
+                        <select name="payment_method" class="form-select form-select-sm">
+                          <option value="Cash" {% if sale.payment_method == 'Cash' %}selected{% endif %}>Cash</option>
+                          <option value="Mobile Money" {% if sale.payment_method == 'Mobile Money' %}selected{% endif %}>Mobile money</option>
+                          <option value="Bank Transfer" {% if sale.payment_method == 'Bank Transfer' %}selected{% endif %}>Bank transfer</option>
+                        </select>
+                      </div>
+                    </div>
                     <div class="modal-footer">
                       <button
                         type="button"
@@ -422,6 +468,16 @@
       </div>
     </div>
 
+    <!-- Reopen Edit Sale modal if there was a validation error -->
+    {% if edit_error and edit_sale_id %}
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var modal = new bootstrap.Modal(document.getElementById("editSaleModal{{ edit_sale_id }}"));
+        modal.show();
+      });
+    </script>
+    {% endif %}
+
     <!-- Bootstrap JavaScript bundle for interactive components -->
     <script
       src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
@@ -433,5 +489,6 @@
       integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
       crossorigin="anonymous"
     ></script>
+
   </body>
 </html>

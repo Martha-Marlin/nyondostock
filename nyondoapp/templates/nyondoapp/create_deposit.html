@@ -11,6 +11,24 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="{% static 'base.css' %}" />
     <link rel="stylesheet" href="{% static 'deposits.css' %}" />
+    
+    <style>
+        .form-control.is-invalid, .form-select.is-invalid {
+            border-color: #dc3545 !important;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px 16px;
+            padding-right: 2.5rem;
+        }
+        .invalid-feedback {
+            display: block;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-size: 0.875em;
+            color: #dc3545;
+        }
+    </style>
 </head>
 <body>
 
@@ -110,15 +128,17 @@
                     <small>Open a salary-earner deposit account. Goods are calculated from total paid on collection day.</small>
                 </div>
 
-                <!-- User feedback messages -->
+                <!-- User feedback messages - non-field specific -->
                 {% if messages %}
                 <div class="mb-3">
                     {% for message in messages %}
-                    <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'success' in message.tags %}alert-success{% elif 'warning' in message.tags %}alert-warning{% endif %} alert-dismissible fade show d-flex align-items-center gap-2" role="alert">
-                        {% if 'error' in message.tags %}<i class="fas fa-exclamation-triangle me-1"></i>{% elif 'success' in message.tags %}<i class="fas fa-check-circle me-1"></i>{% endif %}
-                        <span>{{ message }}</span>
-                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
-                    </div>
+                        {% if 'customer_error' not in message.tags and 'item_type_error' not in message.tags and 'due_date_error' not in message.tags and 'quantity_error' not in message.tags %}
+                        <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'success' in message.tags %}alert-success{% elif 'warning' in message.tags %}alert-warning{% endif %} alert-dismissible fade show d-flex align-items-center gap-2" role="alert">
+                            {% if 'error' in message.tags %}<i class="fas fa-exclamation-triangle me-1"></i>{% elif 'success' in message.tags %}<i class="fas fa-check-circle me-1"></i>{% endif %}
+                            <span>{{ message }}</span>
+                            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+                        </div>
+                        {% endif %}
                     {% endfor %}
                 </div>
                 {% endif %}
@@ -149,12 +169,13 @@
                                     <label class="ns-field-label" for="customer_id">
                                         Registered Customer <span class="req">*</span>
                                     </label>
-                                    <select id="customer_id" name="customer_id" class="ns-input">
+                                    <select id="customer_id" name="customer_id" class="ns-input {% for message in messages %}{% if 'customer_error' in message.tags %}is-invalid{% endif %}{% endfor %}">
                                         <option value="" disabled selected>Select customer</option>
                                         {% for customer in customers %}
-                                        <option value="{{ customer.id }}">{{ customer.full_name }} — {{ customer.phone_number }}</option>
+                                        <option value="{{ customer.id }}" {% if posted_customer_id == customer.id|stringformat:"i" %}selected{% endif %}>{{ customer.full_name }} — {{ customer.phone_number }}</option>
                                         {% endfor %}
                                     </select>
+                                    {% for message in messages %}{% if 'customer_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
                                     <div class="ns-hint">Only registered customers can open a deposit account.</div>
                                 </div>
                             </div>
@@ -173,15 +194,16 @@
                                     <label class="ns-field-label" for="item_type">
                                         Item Type <span class="req">*</span>
                                     </label>
-                                    <select id="item_type" name="item_type" class="ns-input">
+                                    <select id="item_type" name="item_type" class="ns-input {% for message in messages %}{% if 'item_type_error' in message.tags %}is-invalid{% endif %}{% endfor %}">
                                         <option value="" disabled selected>Select item</option>
-                                        <option value="Cement CEM II N">Cement CEM II N</option>
-                                        <option value="Cement CEM III N">Cement CEM III N</option>
-                                        <option value="Iron Sheets">Iron Sheets</option>
-                                        <option value="Iron Bars 10mm">Iron Bars 10mm</option>
-                                        <option value="Iron Bars 12mm">Iron Bars 12mm</option>
-                                        <option value="Iron Bars 16mm">Iron Bars 16mm</option>
+                                        <option value="Cement CEM II N" {% if posted_item_type == 'Cement CEM II N' %}selected{% endif %}>Cement CEM II N</option>
+                                        <option value="Cement CEM III N" {% if posted_item_type == 'Cement CEM III N' %}selected{% endif %}>Cement CEM III N</option>
+                                        <option value="Iron Sheets" {% if posted_item_type == 'Iron Sheets' %}selected{% endif %}>Iron Sheets</option>
+                                        <option value="Iron Bars 10mm" {% if posted_item_type == 'Iron Bars 10mm' %}selected{% endif %}>Iron Bars 10mm</option>
+                                        <option value="Iron Bars 12mm" {% if posted_item_type == 'Iron Bars 12mm' %}selected{% endif %}>Iron Bars 12mm</option>
+                                        <option value="Iron Bars 16mm" {% if posted_item_type == 'Iron Bars 16mm' %}selected{% endif %}>Iron Bars 16mm</option>
                                     </select>
+                                    {% for message in messages %}{% if 'item_type_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
                                 </div>
                                 <div class="col-md-4">
                                     <label class="ns-field-label" for="quantity_ordered">
@@ -191,10 +213,12 @@
                                         type="number"
                                         id="quantity_ordered"
                                         name="quantity_ordered"
-                                        class="ns-input"
+                                        class="ns-input {% for message in messages %}{% if 'quantity_error' in message.tags %}is-invalid{% endif %}{% endfor %}"
                                         min="0"
                                         placeholder="e.g. 50"
+                                        value="{{ posted_quantity|default:'' }}"
                                     />
+                                    {% for message in messages %}{% if 'quantity_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
                                     <div class="ns-hint">Optional estimate only. Final quantity is based on amount paid at pickup.</div>
                                 </div>
                                 <div class="col-md-4">
@@ -202,9 +226,9 @@
                                         Unit <span class="req">*</span>
                                     </label>
                                     <select id="unit" name="unit" class="ns-input">
-                                        <option value="Bags">Bags</option>
-                                        <option value="Sheets">Sheets</option>
-                                        <option value="Pieces">Pieces</option>
+                                        <option value="Bags" {% if posted_unit == 'Bags' or not posted_unit %}selected{% endif %}>Bags</option>
+                                        <option value="Sheets" {% if posted_unit == 'Sheets' %}selected{% endif %}>Sheets</option>
+                                        <option value="Pieces" {% if posted_unit == 'Pieces' %}selected{% endif %}>Pieces</option>
                                     </select>
                                 </div>
                             </div>
@@ -224,8 +248,10 @@
                                         type="date"
                                         id="due_date"
                                         name="due_date"
-                                        class="ns-input"
+                                        class="ns-input {% for message in messages %}{% if 'due_date_error' in message.tags %}is-invalid{% endif %}{% endfor %}"
+                                        value="{{ posted_due_date|default:'' }}"
                                     />
+                                    {% for message in messages %}{% if 'due_date_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
                                 </div>
                                 <div class="col-md-4">
                                     <label class="ns-field-label" for="notes">Notes</label>
@@ -235,6 +261,7 @@
                                         name="notes"
                                         class="ns-input"
                                         placeholder="Any special instructions"
+                                        value="{{ posted_notes|default:'' }}"
                                     />
                                     <div class="ns-hint">Optional</div>
                                 </div>

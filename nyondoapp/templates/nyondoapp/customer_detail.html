@@ -4,37 +4,44 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ customer.full_name }} - NyondoStock</title>
-
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
-      crossorigin="anonymous"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <title>Customers - NyondoStock</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="{% static 'base.css' %}" />
     <link rel="stylesheet" href="{% static 'stock.css' %}" />
     <link rel="stylesheet" href="{% static 'register_customer.css' %}" />
-  </head>
-  <body>
+    
+    <style>
+        .form-control.is-invalid, .form-select.is-invalid {
+            border-color: #dc3545 !important;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px 16px;
+            padding-right: 2.5rem;
+        }
+        .invalid-feedback {
+            display: block;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-size: 0.875em;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+
     <!-- Main navigation bar with branding and user info -->
     <nav class="topbar">
       <div class="topbar-left">
-       <div class="logo">
-    <svg width="42" height="42" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <polygon points="50,6 90,28 90,72 50,94 10,72 10,28" fill="rgba(255,255,255,0.2)"/>
-        <polygon points="50,14 82,32 82,68 50,86 18,68 18,32" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
-        <text x="50" y="64" text-anchor="middle" font-family="DM Sans, Arial, sans-serif" font-weight="900" font-size="42" fill="#ffffff">N</text>
-    </svg>
-</div>
+        <div class="logo">
+          <svg width="42" height="42" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="50,6 90,28 90,72 50,94 10,72 10,28" fill="rgba(255,255,255,0.2)"/>
+            <polygon points="50,14 82,32 82,68 50,86 18,68 18,32" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
+            <text x="50" y="64" text-anchor="middle" font-family="DM Sans, Arial, sans-serif" font-weight="900" font-size="42" fill="#ffffff">N</text>
+          </svg>
+        </div>
         <div>
           <div class="brand-name">NyondoStock</div>
           <div class="brand-sub">NYONDO General Hardware LTD</div>
@@ -42,190 +49,136 @@
       </div>
       <div class="topbar-right">
         <span class="welcome">Welcome, {{ user.username }}</span>
-        <span class="role"
-          >{{ user.groups.first.name|default:"Sales Attendant" }}</span
-        >
+        <span class="role">{{ user.groups.first.name|default:"Superuser" }}</span>
         <a href="{% url 'logout' %}" class="logout">Logout</a>
       </div>
     </nav>
 
     <div class="container-fluid">
       <div class="row">
-        <!-- Sidebar navigation - shows different menus based on user role -->
-        <aside
-          class="col-lg-2 col-md-3 bg-light min-vh-100 p-3 pt-4 position-relative"
-        >
+
+        <!-- Sidebar navigation - menu items change based on user role -->
+        <aside class="col-lg-2 col-md-3 bg-light min-vh-100 p-3 pt-4 position-relative">
           <h6 class="text-muted">MENU</h6>
           <ul class="nav flex-column">
-  {% if user.groups.all.0.name == 'Sales Attendant' %}
-    <li class="nav-item mb-3">
-      <a href="{% url 'sales_dashboard' %}" class="nav-link text-dark"><i class="fas fa-chart-line me-2"></i> Sales Dashboard</a>
-    </li>
-    <li class="nav-item mb-3">
-      <a href="{% url 'stock' %}" class="nav-link text-dark"><i class="fas fa-boxes me-2"></i> Stock</a>
-    </li>
-    <li class="nav-item mb-3">
-      <a href="{% url 'sales_list' %}" class="nav-link text-dark"><i class="fas fa-shopping-cart me-2"></i> Sales</a>
-    </li>
-    <li class="nav-item mb-3">
-      <a href="{% url 'customers' %}" class="nav-link active"><i class="fas fa-users me-2"></i> Customers</a>
-    </li>
+            {% if user.groups.all.0.name == 'Sales Attendant' %}
+              <li class="nav-item mb-3">
+                <a href="{% url 'sales_dashboard' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-bar me-2"></i> Sales Dashboard</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'stock' %}" class="nav-link text-dark"><i class="fa-solid fa-boxes-stacked me-2"></i> Stock</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'sales_list' %}" class="nav-link text-dark"><i class="fa-solid fa-cart-shopping me-2"></i> Sales</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'customers' %}" class="nav-link active"><i class="fa-solid fa-users me-2"></i> Customers</a>
+              </li>
 
-  {% elif user.groups.all.0.name == 'Accounts Admin' %}
-    <li class="nav-item mb-3">
-      <a href="{% url 'accounts_dashboard' %}" class="nav-link text-dark"><i class="fas fa-chart-line me-2"></i> Accounts Dashboard</a>
-    </li>
-    <li class="nav-item mb-3">
-      <a href="{% url 'suppliers' %}" class="nav-link text-dark"><i class="fas fa-building me-2"></i> Suppliers</a>
-    </li>
-    <li class="nav-item mb-3">
-      <a href="{% url 'customers' %}" class="nav-link active"><i class="fas fa-users me-2"></i> Customers</a>
-    </li>
-    <li class="nav-item mb-3">
-      <a href="{% url 'deposits' %}" class="nav-link text-dark"><i class="fas fa-coins me-2"></i> Deposits</a>
-    </li>
-    <li class="nav-item mb-3">
-      <a href="{% url 'reports' %}" class="nav-link text-dark"><i class="fas fa-chart-simple me-2"></i> Reports</a>
-    </li>
+            {% elif user.groups.all.0.name == 'Accounts Admin' %}
+              <li class="nav-item mb-3">
+                <a href="{% url 'accounts_dashboard' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-bar me-2"></i> Accounts Dashboard</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'suppliers' %}" class="nav-link text-dark"><i class="fa-solid fa-truck me-2"></i> Suppliers</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'customers' %}" class="nav-link active"><i class="fa-solid fa-users me-2"></i> Customers</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'deposits' %}" class="nav-link text-dark"><i class="fa-solid fa-piggy-bank me-2"></i> Deposits</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'reports' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-line me-2"></i> Reports</a>
+              </li>
 
-  {% else %}
-    <li class="nav-item mb-3">
-      <a href="{% url 'dashboard' %}" class="nav-link text-dark"><i class="fas fa-chart-line me-2"></i> Dashboard</a>
-    </li>
-    <li class="nav-item mb-3">
-      <a href="{% url 'stock' %}" class="nav-link text-dark"><i class="fas fa-boxes me-2"></i> Stock</a>
-    </li>
-    <li class="nav-item mb-3">
-      <a href="{% url 'sales_list' %}" class="nav-link text-dark"><i class="fas fa-shopping-cart me-2"></i> Sales</a>
-    </li>
-    <li class="nav-item mb-3">
-      <a href="{% url 'suppliers' %}" class="nav-link text-dark"><i class="fas fa-building me-2"></i> Suppliers</a>
-    </li>
-    <li class="nav-item mb-3">
-      <a href="{% url 'customers' %}" class="nav-link active"><i class="fas fa-users me-2"></i> Customers</a>
-    </li>
-    <li class="nav-item mb-3">
-      <a href="{% url 'deposits' %}" class="nav-link text-dark"><i class="fas fa-coins me-2"></i> Deposits</a>
-    </li>
-    <li class="nav-item mb-3">
-      <a href="{% url 'reports' %}" class="nav-link text-dark"><i class="fas fa-chart-simple me-2"></i> Reports</a>
-    </li>
-  {% endif %}
-</ul>
+            {% else %}
+              <!-- Superuser or unassigned role sees all available modules -->
+              <li class="nav-item mb-3">
+                <a href="{% url 'dashboard' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-bar me-2"></i> Dashboard</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'stock' %}" class="nav-link text-dark"><i class="fa-solid fa-boxes-stacked me-2"></i> Stock</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'sales_list' %}" class="nav-link text-dark"><i class="fa-solid fa-cart-shopping me-2"></i> Sales</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'suppliers' %}" class="nav-link text-dark"><i class="fa-solid fa-truck me-2"></i> Suppliers</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'customers' %}" class="nav-link active"><i class="fa-solid fa-users me-2"></i> Customers</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'deposits' %}" class="nav-link text-dark"><i class="fa-solid fa-piggy-bank me-2"></i> Deposits</a>
+              </li>
+              <li class="nav-item mb-3">
+                <a href="{% url 'reports' %}" class="nav-link text-dark"><i class="fa-solid fa-chart-line me-2"></i> Reports</a>
+              </li>
+            {% endif %}
+          </ul>
 
-          <!-- Low stock warning alert for quick action -->
+          <!-- Low stock warning alert for quick awareness -->
           <div class="ns-alert-box mt-4">
-            <div class="ns-alert-title"><i class="fas fa-exclamation-triangle me-1"></i> Low Stock</div>
+            <div class="ns-alert-title"><i class="fa-solid fa-triangle-exclamation me-1"></i> Low Stock</div>
             <div class="ns-alert-body">{{ low_stock_count }} items need attention</div>
             <a href="{% url 'stock' %}" class="ns-alert-link">View <i class="fas fa-arrow-right ms-1"></i></a>
           </div>
 
-          <!-- Sidebar footer with system version and date -->
+          <!-- Sidebar footer with system info and current date -->
           <div class="position-absolute bottom-0 start-0 p-3 w-100">
             <hr />
-            <small class="text-muted d-block mb-1"><i class="fas fa-box me-1"></i> NyondoStock v1.0</small>
-            <small class="text-muted d-block mb-1"><i class="fas fa-store me-1"></i> NYONDO General Hardware</small>
-            <small class="text-muted d-block"><i class="far fa-calendar me-1"></i> {% now "F Y" %}</small>
+            <small class="text-muted d-block mb-1"><i class="fa-solid fa-box me-1"></i> NyondoStock v1.0</small>
+            <small class="text-muted d-block mb-1"><i class="fa-solid fa-store me-1"></i> NYONDO General Hardware</small>
+            <small class="text-muted d-block"><i class="fa-solid fa-calendar me-1"></i> {% now "F Y" %}</small>
           </div>
         </aside>
 
-        <!-- Main content area - customer details and credit history -->
+        <!-- Main content area - customer management -->
         <main class="col-lg-10 col-md-9 p-4 p-lg-5">
-          <!-- Navigation breadcrumb for context -->
-          <div class="ns-breadcrumb">
-            <a href="{% url 'customers' %}">Customers</a> /
-            <span>{{ customer.full_name }}</span>
-          </div>
 
-          <!-- Page header with customer name and back button -->
+          <!-- Page header with title and add customer button -->
           <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-              <h4 class="mb-0">{{ customer.full_name }}</h4>
-              <small class="text-muted">Customer detail</small>
+              <h4 class="mb-0">Customers</h4>
+              <small class="text-muted">Deposit scheme registered customers</small>
             </div>
-            <a href="{% url 'customers' %}" class="ns-btn-cancel">
-              <i class="fa-solid fa-arrow-left me-2"></i> Back to Customers
+            {% if user.groups.all.0.name == 'Accounts Admin' or user.is_superuser %}
+            <a href="{% url 'register_customer' %}" class="ns-btn-primary">
+              <i class="fa-solid fa-user-plus me-2"></i> Register Customer
             </a>
+            {% endif %}
           </div>
 
-          <!-- System feedback messages display area -->
+          <!-- Flash messages for user feedback -->
           {% if messages %}
           <div class="mb-3">
             {% for message in messages %}
-            <div
-              class="alert alert-{{ message.tags }} alert-dismissible fade show"
-              role="alert"
-            >
-              {{ message }}
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="alert"
-              ></button>
+            <div class="alert {% if 'error' in message.tags %}alert-danger{% elif 'success' in message.tags %}alert-success{% elif 'warning' in message.tags %}alert-warning{% endif %} alert-dismissible fade show d-flex align-items-center gap-2" role="alert">
+              {% if 'error' in message.tags %}<i class="fa-solid fa-triangle-exclamation me-1"></i>{% elif 'success' in message.tags %}<i class="fa-solid fa-circle-check me-1"></i>{% endif %}
+              <span>{{ message }}</span>
+              <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
             </div>
             {% endfor %}
           </div>
           {% endif %}
 
-          <!-- Customer personal information card -->
-          <div class="ns-form-card mb-4">
-            <div class="ns-section-header">
-              <div class="ns-section-dot"></div>
-              <div class="ns-section-title"><i class="fas fa-user-circle me-2"></i>Customer Information</div>
-            </div>
-            <div class="ns-section-body">
-              <div class="row g-3">
-                <div class="col-md-4">
-                  <div class="ns-detail-label">Full Name</div>
-                  <div class="ns-detail-value">{{ customer.full_name }}</div>
-                </div>
-                <div class="col-md-4">
-                  <div class="ns-detail-label">Phone Number</div>
-                  <div class="ns-detail-value">{{ customer.phone_number }}</div>
-                </div>
-                <div class="col-md-4">
-                  <div class="ns-detail-label">NIN</div>
-                  <div class="ns-detail-value">
-                    <code style="font-size: 13px; color: #3a4e3a"
-                      >{{ customer.nin }}</code
-                    >
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="ns-detail-label">Area / Location</div>
-                  <div class="ns-detail-value">
-                    {{ customer.area|default:"—" }}
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="ns-detail-label">Notes</div>
-                  <div class="ns-detail-value">
-                    {{ customer.notes|default:"—" }}
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="ns-detail-label">Registered By</div>
-                  <div class="ns-detail-value">
-                    {{ customer.registered_by.username|default:"—" }}
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="ns-detail-label">Registered On</div>
-                  <div class="ns-detail-value">
-                    {{ customer.registered_on|date:"d M Y" }}
-                  </div>
-                </div>
+          <!-- Summary statistics card -->
+          <div class="row mb-4 g-3">
+            <div class="col-12 col-sm-6 col-md-3">
+              <div class="stat-card">
+                <div class="stat-label"><i class="fa-solid fa-users me-1"></i> TOTAL CUSTOMERS</div>
+                <div class="stat-value">{{ total_customers }}</div>
+                <div class="stat-sub">registered for deposits</div>
               </div>
             </div>
           </div>
 
-          <!-- Customer credit history section -->
+          <!-- Customers data table -->
           <section class="stock-list-card mt-4">
             <div class="stock-list-header">
-              <h5><i class="fas fa-file-invoice-dollar me-2"></i>Credit History</h5>
-              <span class="text-muted" style="font-size: 13px"
-                >Goods taken on credit by this customer</span
-              >
+              <h5>Customers List</h5>
+              <span>Showing {{ total_customers }} customer{{ total_customers|pluralize }}</span>
             </div>
 
             <div class="table-responsive">
@@ -233,197 +186,137 @@
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Item</th>
-                    <th>Total Amount</th>
-                    <th>Amount Paid</th>
-                    <th>Balance Due</th>
-                    <th>Progress</th>
-                    <th>Date</th>
-                    <th>Status</th>
+                    <th>Full Name</th>
+                    <th>Phone</th>
+                    <th>NIN</th>
+                    <th>Gender</th>
+                    <th>Area</th>
+                    <th>Registered On</th>
+                    <th>Registered By</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {% for entry in credit_sales_data %}
+                  {% for customer in customers %}
                   <tr>
                     <td>{{ forloop.counter|stringformat:"03d" }}</td>
-                  <td>
-  {% for item in entry.sale.items.all %}
-   {% if item.stock_item %}
-    {{ item.stock_item.item_name }}{% if not forloop.last %}, {% endif %}
-{% else %}
-    [Product Discontinued]{% if not forloop.last %}, {% endif %}
-{% endif %}
-  {% endfor %}
-</td>
-                    <td>UGX {{ entry.sale.total_amount|floatformat:0 }}</td>
-                    <td>UGX {{ entry.total_paid|floatformat:0 }}</td>
-                    <td>UGX {{ entry.balance_due|floatformat:0 }}</td>
                     <td>
-                      <div class="progress" style="height: 6px">
-                        <div
-                          class="progress-bar bg-success"
-                          style="width: {{ entry.percent_paid }}%"
-                        ></div>
+                      <div class="item-cell">
+                        <strong>{{ customer.full_name }}</strong>
                       </div>
-                      <small class="text-muted"
-                        >{{ entry.percent_paid }}% paid</small
-                      >
-                     </td>
-                    <td>{{ entry.sale.sale_date|date:"d M Y" }}</td>
+                    </td>
+                    <td>{{ customer.phone_number }}</td>
                     <td>
-                      {% if entry.balance_due == 0 %}
-                      <span class="badge bg-success">Cleared</span>
+                      <code style="font-size: 12px; color: #3a4e3a">{{ customer.nin }}</code>
+                    </td>
+                    <!-- Gender badge - clean pill shape design -->
+                    <td>
+                      {% if customer.gender == 'M' %}
+                        <span style="background: #e7f1ff; color: #0d6efd; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; display: inline-block;">
+                          Male
+                        </span>
+                      {% elif customer.gender == 'F' %}
+                        <span style="background: #ffe7e9; color: #dc3545; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; display: inline-block;">
+                          Female
+                        </span>
                       {% else %}
-                      <span class="badge bg-warning text-dark">Owing</span>
+                        <span style="background: #e9ecef; color: #6c757d; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; display: inline-block;">
+                          Unknown
+                        </span>
                       {% endif %}
-                     </td>
-                    <td>
-    {% if entry.balance_due > 0 %}
-        {% if user.groups.all.0.name == 'Accounts Admin' %}
-        <button
-            class="btn btn-sm btn-success"
-            data-bs-toggle="modal"
-            data-bs-target="#paymentModal{{ entry.sale.id }}"
-        >
-            <i class="fas fa-money-bill-wave me-1"></i> Record Payment
-        </button>
-        {% else %}
-        <span class="text-muted">—</span>
-        {% endif %}
-    {% else %}
-    <span class="text-muted">—</span>
-    {% endif %}
-</td>
+                    </td>
+                    <td>{{ customer.area|default:"—" }}</td>
+                    <td>{{ customer.registered_on|date:"d M Y" }}</td>
+                    <td>{{ customer.registered_by.username|default:"—" }}</td>
+                    <td class="actions d-flex gap-1">
+                      {% if user.groups.all.0.name == 'Accounts Admin' or user.is_superuser %}
+                      <a href="#" class="btn btn-sm btn-outline-success" title="Edit"
+                        data-bs-toggle="modal"
+                        data-bs-target="#editCustomerModal{{ customer.id }}">
+                        <i class="fa-solid fa-pen"></i>
+                      </a>
+                      <form method="POST" action="{% url 'delete_customer' customer.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"
+                          onclick="return confirm('Remove {{ customer.full_name|escapejs }} from the system?')">
+                          <i class="fa-solid fa-trash"></i>
+                        </button>
+                      </form>
+                      {% endif %}
+                      <a href="{% url 'customer_detail' customer.id %}" class="btn btn-sm btn-success" title="View">
+                        <i class="fa-solid fa-eye"></i>
+                      </a>
+                    </td>
                   </tr>
                   {% empty %}
                   <tr>
                     <td colspan="9" class="text-center text-muted py-4">
-                      No credit sales recorded for this customer.
-                     </td>
+                      No customers registered yet.
+                      {% if user.groups.all.0.name == 'Accounts Admin' or user.is_superuser %}
+                      <a href="{% url 'register_customer' %}">Register one now</a>
+                      {% endif %}
+                    </td>
                   </tr>
                   {% endfor %}
                 </tbody>
               </table>
             </div>
 
-            <!-- Footer showing total credit sales count -->
+            <!-- Table footer with record count -->
             <div class="stock-list-footer">
-              <span
-                >{{ credit_sales_data|length }} credit sale{{credit_sales_data|length|pluralize }}</span
-              >
+              <span>Showing {{ total_customers }} customer{{ total_customers|pluralize }}</span>
             </div>
-          </section>
 
-          <!-- Modal popups for recording credit payments -->
-          {% for entry in credit_sales_data %}
-          <div
-            class="modal fade"
-            id="paymentModal{{ entry.sale.id }}"
-            tabindex="-1"
-            aria-hidden="true"
-          >
-            <div class="modal-dialog modal-dialog-centered">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title">
-                    Record Payment — Sale #{{ entry.sale.id }}
-                  </h5>
-                  <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal"
-                  ></button>
+            <!-- Edit customer modals - one popup per customer row -->
+            {% for customer in customers %}
+            <div class="modal fade" id="editCustomerModal{{ customer.id }}" tabindex="-1" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa-solid fa-pen me-2"></i> Edit Customer — {{ customer.full_name }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+                  <form method="POST" action="{% url 'edit_customer' customer.id %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                      <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" name="full_name" class="form-control form-control-sm" value="{{ customer.full_name }}" required />
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Phone Number</label>
+                        <input type="tel" name="phone_number" class="form-control form-control-sm" value="{{ customer.phone_number }}" required />
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">NIN</label>
+                        <input type="text" name="nin" class="form-control form-control-sm" value="{{ customer.nin }}" maxlength="14" required />
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Area / Location</label>
+                        <input type="text" name="area" class="form-control form-control-sm" value="{{ customer.area|default:'' }}" />
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Notes</label>
+                        <textarea name="notes" class="form-control form-control-sm" rows="2">{{ customer.notes|default:'' }}</textarea>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                      <button type="submit" class="btn btn-success"><i class="fa-solid fa-save me-1"></i> Save Changes</button>
+                    </div>
+                  </form>
                 </div>
-                <form
-                  method="POST"
-                  action="{% url 'record_customer_credit_payment' entry.sale.id %}"
-                >
-                  {% csrf_token %}
-                  <div class="modal-body">
-                    <div
-                      class="mb-2 p-2"
-                      style="
-                        background: #f4f9f6;
-                        border-radius: 8px;
-                        font-size: 13px;
-                      "
-                    >
-                      <strong
-                        >Balance due: UGX {{ entry.balance_due|floatformat:0 }}</strong
-                      >
-                    </div>
-                    <div class="mb-3 mt-3">
-                      <label class="form-label">Amount (UGX) *</label>
-                      <input
-                        type="number"
-                        name="amount"
-                        class="form-control form-control-sm"
-                        min="1"
-                        max="{{ entry.balance_due }}"
-                        required
-                      />
-                    </div>
-                    <div class="mb-3">
-                      <label class="form-label">Payment Method</label>
-                      <select
-                        name="payment_method"
-                        class="form-select form-select-sm"
-                      >
-                        <option value="Cash">Cash</option>
-                        <option value="Mobile Money">Mobile Money</option>
-                        <option value="Bank Transfer">Bank Transfer</option>
-                      </select>
-                    </div>
-                    <div class="mb-3">
-                      <label class="form-label">Reference Number</label>
-                      <input
-                        type="text"
-                        name="reference_number"
-                        class="form-control form-control-sm"
-                        placeholder="e.g. MTN transaction ID"
-                      />
-                    </div>
-                    <div class="mb-3">
-                      <label class="form-label">Note</label>
-                      <textarea
-                        name="note"
-                        class="form-control form-control-sm"
-                        rows="2"
-                        placeholder="Optional note about this payment"
-                      ></textarea>
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                    <button
-                      type="button"
-                      class="btn btn-outline-secondary"
-                      data-bs-dismiss="modal"
-                    >
-                      Cancel
-                    </button>
-                    <button type="submit" class="btn btn-success">
-                      <i class="fas fa-save me-1"></i> Record Payment
-                    </button>
-                  </div>
-                </form>
               </div>
             </div>
-          </div>
-          {% endfor %}
+            {% endfor %}
+
+          </section>
         </main>
       </div>
     </div>
 
-    <script
-      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
-      integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
-      crossorigin="anonymous"
-    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>
+
   </body>
 </html>

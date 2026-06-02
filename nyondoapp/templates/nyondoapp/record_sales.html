@@ -11,6 +11,24 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="{% static 'base.css' %}" />
     <link rel="stylesheet" href="{% static 'record_sales.css' %}" />
+    
+    <style>
+      .form-control.is-invalid, .form-select.is-invalid {
+        border-color: #dc3545 !important;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 16px 16px;
+        padding-right: 2.5rem;
+      }
+      .invalid-feedback {
+        display: block;
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 0.875em;
+        color: #dc3545;
+      }
+    </style>
 </head>
 <body>
 
@@ -95,15 +113,17 @@
 
                 <a href="{% url 'sales_list' %}" class="back-link"><i class="fas fa-arrow-left me-2"></i> Back to Sales</a>
 
-                <!-- Flash messages for user feedback -->
+                <!-- Flash messages for user feedback (non-field specific) -->
                 {% if messages %}
 <div class="mb-3 mt-3">
     {% for message in messages %}
-    <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'success' in message.tags %}alert-success{% elif 'warning' in message.tags %}alert-warning{% endif %} alert-dismissible fade show d-flex align-items-center gap-2" role="alert">
-        {% if 'error' in message.tags %}<i class="fa-solid fa-triangle-exclamation me-1"></i>{% elif 'success' in message.tags %}<i class="fa-solid fa-circle-check me-1"></i>{% endif %}
-        <span>{{ message }}</span>
-        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
-    </div>
+        {% if 'customer_name_error' not in message.tags and 'phone_error' not in message.tags and 'items_error' not in message.tags and 'credit_error' not in message.tags %}
+        <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'success' in message.tags %}alert-success{% elif 'warning' in message.tags %}alert-warning{% endif %} alert-dismissible fade show d-flex align-items-center gap-2" role="alert">
+            {% if 'error' in message.tags %}<i class="fa-solid fa-triangle-exclamation me-1"></i>{% elif 'success' in message.tags %}<i class="fa-solid fa-circle-check me-1"></i>{% endif %}
+            <span>{{ message }}</span>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
+        {% endif %}
     {% endfor %}
 </div>
 {% endif %}
@@ -123,27 +143,23 @@
                         <div class="row g-3">
                            <!-- Customer Name input -->
 <div class="col-md-6">
-    <label class="form-label">Customer Name *</label>
+    <label class="form-label">Customer Name <span class="text-danger">*</span></label>
     <input type="text" name="customer_name" placeholder="e.g. John Katongole" value="{{ posted_customer_name }}" class="form-control {% for message in messages %}{% if 'customer_name_error' in message.tags %}is-invalid{% endif %}{% endfor %}" />
     {% for message in messages %}{% if 'customer_name_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
 </div>
 
-<!-- Phone Number input - numbers only, no letters allowed -->
+<!-- Phone Number input - Django validation only (no HTML5 validation) -->
 <div class="col-md-6">
-    <label class="form-label">Phone Number *</label>
+    <label class="form-label">Phone Number <span class="text-danger">*</span></label>
     <input 
         type="tel" 
         name="phone_number" 
         placeholder="e.g. 0701234567" 
         value="{{ posted_phone }}" 
         class="form-control {% for message in messages %}{% if 'phone_error' in message.tags %}is-invalid{% endif %}{% endfor %}"
-        inputmode="numeric"
-        pattern="[0-9]{10,13}"
-        title="Please enter only numbers (10-13 digits)"
-        onkeypress="return event.charCode >= 48 && event.charCode <= 57"
     />
     {% for message in messages %}{% if 'phone_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
-    <small class="text-muted">Numbers only, no letters or special characters. Example: 0701234567</small>
+    <small class="text-muted">Valid Ugandan phone number (10 digits, starts with 07 or 03)</small>
 </div>
                         </div>
 
@@ -154,9 +170,10 @@
                                 <select class="form-select" name="registered_customer_id" id="registered-customer-select">
                                     <option value="" selected disabled>Select registered customer</option>
                                     {% for c in registered_customers %}
-                                    <option value="{{ c.id }}">{{ c.full_name }} — {{ c.phone_number }}</option>
+                                    <option value="{{ c.id }}" {% if posted_registered_customer == c.id %}selected{% endif %}>{{ c.full_name }} — {{ c.phone_number }}</option>
                                     {% endfor %}
                                 </select>
+                                {% for message in messages %}{% if 'credit_error' in message.tags %}<div class="invalid-feedback d-block">{{ message }}</div>{% endif %}{% endfor %}
                                 <p class="field-help">Credit sales must be linked to a registered customer.</p>
                             </div>
                         </div>
@@ -174,8 +191,8 @@
                             <table class="table table-bordered align-middle" id="items-table">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Item *</th>
-                                        <th style="width:120px;">Quantity *</th>
+                                        <th>Item <span class="text-danger">*</span></th>
+                                        <th style="width:120px;">Quantity <span class="text-danger">*</span></th>
                                         <th style="width:160px;">Unit Price (UGX)</th>
                                         <th style="width:160px;">Line Total (UGX)</th>
                                         <th style="width:60px;"></th>
@@ -202,6 +219,8 @@
                                                 min="1"
                                                 value="1"
                                             />
+                                        </div>
+</div>
                                         </td>
                                         <td>
                                             <input
@@ -212,6 +231,8 @@
                                                 placeholder="Auto-filled"
                                                 style="background:#f4f9f6;"
                                             />
+                                        </div>
+</div>
                                         </td>
                                         <td>
                                             <input
@@ -221,13 +242,18 @@
                                                 placeholder="0"
                                                 style="background:#f4f9f6; font-weight:600;"
                                             />
+                                        </div>
+</div>
                                         </td>
                                         <td class="text-center">
                                             <!-- First row has no remove button -->
-                                        </td>
-                                    </tr>
+                                        </div>
+</div>
+                                    </div>
+</div>
                                 </tbody>
-                            </table>
+                            </div>
+</div>
                         </div>
 
                         {% for message in messages %}{% if 'items_error' in message.tags %}<div class="text-danger small mt-1">{{ message }}</div>{% endif %}{% endfor %}
@@ -258,6 +284,7 @@
                                 name="wants_delivery"
                                 id="delivery-checkbox"
                                 value="yes"
+                                {% if posted_wants_delivery %}checked{% endif %}
                             />
                             <label class="form-check-label" for="delivery-checkbox" style="font-weight:600; font-size:14px;">
                                 Customer wants delivery
@@ -266,7 +293,7 @@
                         </div>
 
                         <!-- Delivery fields - shown only when delivery is checked -->
-                        <div id="delivery-fields" style="display:none;">
+                        <div id="delivery-fields" style="display: {% if posted_wants_delivery %}block{% else %}none{% endif %};">
                             <div class="transport-note">
                                 <i class="fas fa-info-circle me-1"></i> Free delivery within 10km for orders above UGX 500,000. Otherwise, UGX 30,000 flat charge.
                             </div>
@@ -279,7 +306,7 @@
                                         name="distance"
                                         id="distance-input"
                                         min="0"
-                                        value="0"
+                                        value="{{ posted_distance|default:'0' }}"
                                     />
                                 </div>
                                 <div class="col-md-6">
@@ -306,19 +333,19 @@
                         <h6><i class="fas fa-credit-card me-2"></i>4. PAYMENT DETAILS</h6>
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label">Payment Status *</label>
+                                <label class="form-label">Payment Status <span class="text-danger">*</span></label>
                                 <select class="form-select" name="payment_status" id="payment-status" required>
-                                    <option value="paid">Paid</option>
-                                    <option value="pending">Pending</option>
-                                    <option value="credit">Credit</option>
+                                    <option value="paid" {% if posted_payment_status == 'paid' %}selected{% endif %}>Paid</option>
+                                    <option value="pending" {% if posted_payment_status == 'pending' %}selected{% endif %}>Pending</option>
+                                    <option value="credit" {% if posted_payment_status == 'credit' %}selected{% endif %}>Credit</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Payment Method</label>
                                 <select class="form-select" name="payment_method">
-                                    <option value="cash">Cash</option>
-                                    <option value="mobile_money">Mobile Money</option>
-                                    <option value="bank_transfer">Bank Transfer</option>
+                                    <option value="cash" {% if posted_payment_method == 'cash' %}selected{% endif %}>Cash</option>
+                                    <option value="mobile_money" {% if posted_payment_method == 'mobile_money' %}selected{% endif %}>Mobile Money</option>
+                                    <option value="bank_transfer" {% if posted_payment_method == 'bank_transfer' %}selected{% endif %}>Bank Transfer</option>
                                 </select>
                             </div>
                             <div class="col-12">
