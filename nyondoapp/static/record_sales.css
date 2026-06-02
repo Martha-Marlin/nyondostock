@@ -1,4 +1,4 @@
-/* GLOBAL RESET */
+/* Global Reset */
 body {
   margin: 0;
   padding: 0;
@@ -8,7 +8,7 @@ body {
   font-size: 16px;
 }
 
-/* TOPBAR CONTAINER */
+/* Topbar Container */
 .topbar {
   background: #1d9e75;
   height: 64px;
@@ -19,14 +19,14 @@ body {
   box-shadow: 0 2px 12px rgba(15, 110, 86, 0.18);
 }
 
-/* TOPBAR LEFT SIDE */
+/* Topbar Left Side - Logo and company name */
 .topbar-left {
   display: flex;
   align-items: center;
   gap: 14px;
 }
 
-/* LOGO CIRCLE */
+/* Logo Circle Container */
 .logo {
   width: 42px;
   height: 42px;
@@ -38,7 +38,7 @@ body {
   justify-content: center;
 }
 
-/* LOGO IMAGE */
+/* Logo Image */
 .logo img {
   width: 42px;
   height: 42px;
@@ -46,7 +46,7 @@ body {
   border-radius: 50%;
 }
 
-/* COMPANY NAME */
+/* Company Name */
 .brand-name {
   font-size: 18px;
   font-weight: 700;
@@ -54,26 +54,26 @@ body {
   line-height: 1.2;
 }
 
-/* COMPANY SUBTITLE */
+/* Company Subtitle */
 .brand-sub {
   font-size: 13px;
   color: rgba(255, 255, 255, 0.8);
 }
 
-/* TOPBAR RIGHT SIDE */
+/* Topbar Right Side - User info and logout */
 .topbar-right {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-/* WELCOME MESSAGE */
+/* Welcome Message */
 .welcome {
   font-size: 14px;
   color: rgba(255, 255, 255, 0.9);
 }
 
-/* USER ROLE BADGE */
+/* User Role Badge */
 .role {
   background: rgba(255, 255, 255, 0.18);
   color: #fff;
@@ -84,7 +84,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.28);
 }
 
-/* LOGOUT BUTTON */
+/* Logout Button */
 .logout {
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.38);
@@ -95,29 +95,29 @@ body {
   text-decoration: none;
 }
 
-/* LOGOUT BUTTON HOVER */
+/* Logout Button Hover */
 .logout:hover {
   background: rgba(255, 255, 255, 0.12);
   color: #fff;
 }
 
-/* SIDEBAR BACKGROUND */
+/* Sidebar Background */
 .bg-light {
   background: #f8f9fa !important;
   border-right: 0;
 }
 
-/* SIDEBAR FULL HEIGHT */
+/* Sidebar Full Height */
 .bg-light.min-vh-100 {
   min-height: calc(100vh - 64px) !important;
 }
 
-/* MUTED TEXT COLOR */
+/* Muted Text Color */
 .text-muted {
   color: #6c757d !important;
 }
 
-/* NAVIGATION LINKS */
+/* Navigation Links */
 .nav-link {
   padding: 8px 12px;
   border-radius: 6px;
@@ -131,12 +131,12 @@ body {
     transform 0.15s ease;
 }
 
-/* NAVIGATION LINK DARK TEXT */
+/* Navigation Link Dark Text */
 .nav-link.text-dark {
   color: #212529 !important;
 }
 
-/* NAVIGATION LINKS HOVER */
+/* Navigation Links Hover */
 .nav-link:hover {
   background: #f0f8f0;
   border-left-color: #9fe1cb;
@@ -144,7 +144,7 @@ body {
   transform: translateX(2px);
 }
 
-/* ACTIVE NAVIGATION LINK */
+/* Active Navigation Link */
 .bg-light .nav-link.active {
   background: #e6f5ee !important;
   border-left-color: #1d9e75;
@@ -152,7 +152,7 @@ body {
   font-weight: 600;
 }
 
-/* LOCKED NAVIGATION (RESTRICTED ACCESS) */
+/* Locked Navigation - Restricted access items */
 .nav-locked {
   color: #b0c4b0 !important;
   cursor: not-allowed;
@@ -160,12 +160,12 @@ body {
   pointer-events: none;
 }
 
-/* MAIN CONTENT BACKGROUND */
+/* Main Content Background */
 main.col-10 {
   background: #fff;
 }
 
-/* BACK LINK (RETURN TO DASHBOARD) */
+/* Back Link - Return to dashboard */
 .back-link {
   color: #1d9e75;
   display: block;
@@ -178,18 +178,18 @@ main.col-10 {
   width: 100%;
 }
 
-/* BACK LINK HOVER */
+/* Back Link Hover */
 .back-link:hover {
   color: #0f6e56;
 }
 
-/* PAGE TITLE CONTAINER */
+/* Page Title Container */
 .page-title {
   margin: 0 auto 18px;
   max-width: 1280px;
 }
 
-/* PAGE TITLE HEADING */
+/* Page Title Heading */
 .page-title h4 {
   color: #142e1a;
   font-size: 28px;
@@ -197,20 +197,20 @@ main.col-10 {
   margin-bottom: 2px;
 }
 
-/* PAGE TITLE DATE */
+/* Page Title Date */
 .page-title small {
   color: #6c757d;
   font-size: 15px;
 }
 
-/* SALES FORM CONTAINER */
+/* Sales Form Container */
 .sales-form {
   margin-left: auto;
   margin-right: auto;
   max-width: 1280px;
 }
 
-/* REQUIRED FIELDS NOTE */
+/* Required Fields Note */
 .required-note {
   color: #ff6b6b;
   font-size: 14px;
@@ -218,7 +218,7 @@ main.col-10 {
   margin-bottom: 10px;
 }
 
-/* FORM SECTIONS (CUSTOMER, ITEMS, PAYMENT) */
+/* Form Sections - Customer, Items, Payment */
 .form-section,
 .summary-section {
   background: #fff;
@@ -229,7 +229,7 @@ main.col-10 {
   padding: 22px;
 }
 
-/* FORM SECTION HEADINGS */
+/* Form Section Headings */
 .form-section h6,
 .summary-section h6 {
   border-bottom: 1px solid #e6efe9;
@@ -240,14 +240,14 @@ main.col-10 {
   padding-bottom: 9px;
 }
 
-/* FORM LABELS */
+/* Form Labels */
 .form-label {
   color: #5c7a64;
   font-size: 14px;
   font-weight: 600;
 }
 
-/* FORM INPUTS AND SELECTS */
+/* Form Inputs and Selects */
 .form-control,
 .form-select {
   background-color: #fff;
@@ -258,7 +258,7 @@ main.col-10 {
   min-height: 44px;
 }
 
-/* FORM INPUTS FOCUS STATE */
+/* Form Inputs Focus State */
 .form-control:focus,
 .form-select:focus {
   background-color: #fff;
@@ -267,12 +267,12 @@ main.col-10 {
   color: #111;
 }
 
-/* FORM INPUTS PLACEHOLDER */
+/* Form Inputs Placeholder */
 .form-control::placeholder {
   color: #9aad9a;
 }
 
-/* READONLY INPUTS (AUTO-FILLED FIELDS) */
+/* Readonly Inputs - Auto-filled fields */
 .form-control[readonly] {
   background: #f7f9f7;
   border-color: #dce7dd;
@@ -280,14 +280,14 @@ main.col-10 {
   opacity: 1;
 }
 
-/* FIELD HELPER TEXT */
+/* Field Helper Text */
 .field-help {
   color: #7a907a;
   font-size: 13px;
   margin: 8px 0 0;
 }
 
-/* ADD ANOTHER ITEM LINK */
+/* Add Another Item Link */
 .add-item-link {
   color: #1d9e75;
   display: inline-block;
@@ -297,21 +297,21 @@ main.col-10 {
   text-decoration: none;
 }
 
-/* TRANSPORT SECTION (SPECIAL BACKGROUND) */
+/* Transport Section - Special background for delivery section */
 .transport-section {
   background: #fffbf0;
   border-color: #f7d58a;
   color: #142e1a;
 }
 
-/* TRANSPORT SECTION TEXT COLORS */
+/* Transport Section Text Colors */
 .transport-section h6,
 .transport-section .form-label,
 .transport-section .field-help {
   color: #3b3322;
 }
 
-/* TRANSPORT NOTE BOX */
+/* Transport Note Box */
 .transport-note {
   background: #fff;
   border-radius: 5px;
@@ -322,7 +322,7 @@ main.col-10 {
   padding: 8px 10px;
 }
 
-/* TRANSPORT CHARGE RESULT BOX */
+/* Transport Charge Result Box */
 .transport-result {
   background: #e6f5ee;
   border: 1px solid #9fe1cb;
@@ -333,20 +333,20 @@ main.col-10 {
   text-align: center;
 }
 
-/* TRANSPORT CHARGE LABEL */
+/* Transport Charge Label */
 .transport-result span {
   display: block;
   font-size: 14px;
   font-weight: 700;
 }
 
-/* TRANSPORT CHARGE VALUE */
+/* Transport Charge Value */
 .transport-result strong {
   display: block;
   font-size: 22px;
 }
 
-/* ORDER SUMMARY ROW */
+/* Order Summary Row */
 .summary-line {
   align-items: center;
   border-bottom: 1px solid #e6efe9;
@@ -355,26 +355,26 @@ main.col-10 {
   padding: 7px 0;
 }
 
-/* ORDER SUMMARY TEXT */
+/* Order Summary Text */
 .summary-line span,
 .summary-line strong {
   color: #142e1a;
   font-size: 15px;
 }
 
-/* TOTAL ROW (NO BORDER, LARGER TEXT) */
+/* Total Row - No border, larger text */
 .summary-line.total {
   border-bottom: 0;
 }
 
-/* TOTAL ROW TEXT */
+/* Total Row Text */
 .summary-line.total span,
 .summary-line.total strong {
   font-size: 18px;
   font-weight: 700;
 }
 
-/* FORM ACTION BUTTONS CONTAINER */
+/* Form Action Buttons Container */
 .form-actions {
   display: flex;
   flex-wrap: wrap;
@@ -383,7 +383,7 @@ main.col-10 {
   margin-bottom: 24px;
 }
 
-/* BASE BUTTON STYLES */
+/* Base Button Styles */
 .btn {
   border-radius: 6px;
   font-size: 15px;
@@ -391,41 +391,41 @@ main.col-10 {
   padding: 9px 18px;
 }
 
-/* SUCCESS BUTTON (SAVE SALE) */
+/* Success Button - Save Sale */
 .btn-success {
   background: #1d9e75;
   border-color: #1d9e75;
 }
 
-/* SUCCESS BUTTON HOVER */
+/* Success Button Hover */
 .btn-success:hover,
 .btn-outline-success:hover {
   background: #148764;
   border-color: #148764;
 }
 
-/* OUTLINE SUCCESS BUTTON (SAVE & PRINT) */
+/* Outline Success Button - Save & Print */
 .btn-outline-success {
   border-color: #1d9e75;
   color: #1d9e75;
 }
 
-/* OUTLINE SECONDARY BUTTON (CANCEL) */
+/* Outline Secondary Button - Cancel */
 .btn-outline-secondary {
   border-color: #d5e0d5;
   color: #2a3e2a;
 }
 
-/* OUTLINE SECONDARY BUTTON HOVER */
+/* Outline Secondary Button Hover */
 .btn-outline-secondary:hover {
   background: #f7f9f7;
   border-color: #9fe1cb;
   color: #0f6e56;
 }
 
-/* RESPONSIVE: TABLET AND MOBILE */
+/* Responsive - Tablet and Mobile */
 @media (max-width: 900px) {
-  /* STACK SIDEBAR AND MAIN CONTENT */
+  /* Stack sidebar and main content */
   .col-2,
   .col-10 {
     flex: 0 0 100%;
@@ -433,36 +433,36 @@ main.col-10 {
     width: 100%;
   }
 
-  /* SIDEBAR BECOMES DYNAMIC HEIGHT */
+  /* Sidebar becomes dynamic height */
   aside.position-relative {
     min-height: auto !important;
   }
 
-  /* HIDE SIDEBAR FOOTER ON MOBILE */
+  /* Hide sidebar footer on mobile */
   aside .position-absolute {
     display: none;
   }
 
-  /* STACK TOPBAR CONTENT */
+  /* Stack topbar content */
   .topbar {
     height: auto;
     padding: 14px;
     gap: 12px;
   }
 
-  /* STACK TOPBAR RIGHT ITEMS VERTICALLY */
+  /* Stack topbar right items vertically */
   .topbar,
   .topbar-right {
     align-items: flex-start;
     flex-direction: column;
   }
 
-  /* BUTTONS STACK FULL WIDTH */
+  /* Buttons stack full width */
   .form-actions {
     justify-content: stretch;
   }
 
-  /* BUTTONS TAKE FULL WIDTH ON MOBILE */
+  /* Buttons take full width on mobile */
   .form-actions .btn {
     flex: 1 1 100%;
   }

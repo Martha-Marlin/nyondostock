@@ -1,4 +1,4 @@
-/* GLOBAL RESET */
+/* Global Reset */
 body {
   margin: 0;
   padding: 0;
@@ -7,7 +7,7 @@ body {
   color: #111;
 }
 
-/* TOPBAR CONTAINER */
+/* Topbar Container */
 .topbar {
   background: #1d9e75;
   height: 64px;
@@ -18,28 +18,28 @@ body {
   box-shadow: 0 2px 12px rgba(15, 110, 86, 0.18);
 }
 
-/* TOPBAR LEFT SIDE */
+/* Topbar Left Side */
 .topbar-left {
   display: flex;
   align-items: center;
   gap: 14px;
 }
 
-/* LOGO CIRCLE */
+/* Logo Circle */
 .logo {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* LOGO IMAGE */
+/* Logo Image */
 .logo img {
   height: 48px;
   width: auto;
   object-fit: contain;
 }
 
-/* COMPANY NAME */
+/* Company Name */
 .brand-name {
   font-size: 18px;
   font-weight: 600;
@@ -48,26 +48,26 @@ body {
   line-height: 1.2;
 }
 
-/* COMPANY SUBTITLE */
+/* Company Subtitle */
 .brand-sub {
   font-size: 13px;
   color: rgba(255, 255, 255, 0.72);
 }
 
-/* TOPBAR RIGHT SIDE */
+/* Topbar Right Side */
 .topbar-right {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-/* WELCOME MESSAGE */
+/* Welcome Message */
 .welcome {
   font-size: 15px;
   color: rgba(255, 255, 255, 0.85);
 }
 
-/* USER ROLE BADGE */
+/* User Role Badge */
 .role {
   background: rgba(255, 255, 255, 0.18);
   color: #fff;
@@ -78,7 +78,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.28);
 }
 
-/* LOGOUT BUTTON */
+/* Logout Button */
 .logout {
   background: transparent;
   color: #fff;
@@ -92,23 +92,23 @@ body {
   transition: background 0.15s;
 }
 
-/* LOGOUT BUTTON HOVER */
+/* Logout Button Hover */
 .logout:hover {
   background: rgba(255, 255, 255, 0.12);
   color: #fff;
 }
 
-/* SIDEBAR FULL HEIGHT */
+/* Sidebar Full Height */
 .bg-light.min-vh-100 {
   min-height: calc(100vh - 64px) !important;
 }
 
-/* SIDEBAR FOOTER POSITION */
+/* Sidebar Footer Position */
 .position-absolute.bottom-0 {
   bottom: 1rem !important;
 }
 
-/* NAVIGATION LINKS */
+/* Navigation Links */
 .nav-link {
   padding: 8px 12px;
   border-radius: 6px;
@@ -121,7 +121,7 @@ body {
     transform 0.15s ease;
 }
 
-/* NAVIGATION LINKS HOVER */
+/* Navigation Links Hover */
 .nav-link:hover {
   background-color: #f0f8f0;
   color: #0f6e56 !important;
@@ -129,7 +129,7 @@ body {
   transform: translateX(2px);
 }
 
-/* ACTIVE NAVIGATION LINK */
+/* Active Navigation Link */
 .bg-light .nav-link.active {
   background-color: #e6f5ee !important;
   color: #0f6e56 !important;
@@ -137,7 +137,7 @@ body {
   font-weight: 600;
 }
 
-/* LOCKED NAVIGATION (RESTRICTED ACCESS) */
+/* Locked Navigation - Restricted Access */
 .nav-locked {
   color: #b0c4b0 !important;
   cursor: not-allowed;
@@ -145,20 +145,20 @@ body {
   opacity: 0.6;
 }
 
-/* BASE CARD STYLES */
+/* Base Card Styles */
 .card {
   min-height: 120px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
   transition: all 0.2s ease;
 }
 
-/* CARD HOVER EFFECT */
+/* Card Hover Effect */
 .card:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
   transform: translateY(-3px);
 }
 
-/* STATISTICS CARD BASE */
+/* Statistics Card Base */
 .stat-card {
   background: #fff;
   border: 1px solid #e0e8e0;
@@ -169,28 +169,28 @@ body {
   height: 100%;
 }
 
-/* STATISTICS CARD HOVER */
+/* Statistics Card Hover */
 .stat-card:hover {
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
   transform: translateY(-2px);
 }
 
-/* WARNING CARD VARIANT */
+/* Warning Card Variant */
 .stat-card.warn {
   border-top-color: #ef9f27;
 }
 
-/* DANGER CARD VARIANT */
+/* Danger Card Variant */
 .stat-card.danger {
   border-top-color: #e24b4a;
 }
 
-/* SOFT CARD VARIANT */
+/* Soft Card Variant */
 .stat-card.soft {
   border-top-color: #9fe1cb;
 }
 
-/* STAT LABEL */
+/* Stat Label */
 .stat-label {
   font-size: 15px;
   font-weight: 600;
@@ -200,7 +200,7 @@ body {
   letter-spacing: 0.6px;
 }
 
-/* STAT VALUE */
+/* Stat Value */
 .stat-value {
   font-size: 36px;
   font-weight: 700;
@@ -209,14 +209,14 @@ body {
   line-height: 1.1;
 }
 
-/* STAT SUBTEXT */
+/* Stat Subtext */
 .stat-sub {
   font-size: 14px;
   color: #a0b8a0;
   margin-top: 4px;
 }
 
-/* LOW STOCK ALERT BOX */
+/* Low Stock Alert Box */
 .ns-alert-box {
   margin-top: 1rem;
   background: #fffbf0;
@@ -225,21 +225,21 @@ body {
   padding: 11px 13px;
 }
 
-/* ALERT BOX TITLE */
+/* Alert Box Title */
 .ns-alert-title {
   font-size: 14px;
   font-weight: 600;
   color: #855000;
 }
 
-/* ALERT BOX BODY */
+/* Alert Box Body */
 .ns-alert-body {
   font-size: 13px;
   color: #b07010;
   margin-top: 3px;
 }
 
-/* ALERT BOX LINK */
+/* Alert Box Link */
 .ns-alert-link {
   font-size: 13px;
   color: #1d9e75;
@@ -249,7 +249,7 @@ body {
   font-weight: 500;
 }
 
-/* PRIMARY BUTTON */
+/* Primary Button */
 .ns-btn-primary {
   background: #1d9e75;
   color: #fff;
@@ -268,13 +268,13 @@ body {
   transition: background 0.15s;
 }
 
-/* PRIMARY BUTTON HOVER */
+/* Primary Button Hover */
 .ns-btn-primary:hover {
   background: #0f6e56;
   color: #fff;
 }
 
-/* STATUS BADGE BASE */
+/* Status Badge Base */
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -285,35 +285,37 @@ body {
   white-space: nowrap;
 }
 
-/* GREEN STATUS BADGE (PAID, IN STOCK) */
+/* Green Status Badge - Paid, In Stock */
 .b-green {
   background: #e6f5ee;
   color: #0f6e56;
 }
 
-/* YELLOW STATUS BADGE (PENDING, LOW STOCK) */
+/* Yellow Status Badge - Pending, Low Stock */
 .b-yellow {
   background: #fff4e0;
   color: #854f0b;
 }
 
-/* RED STATUS BADGE (CREDIT, OUT OF STOCK) */
+/* Red Status Badge - Credit, Out of Stock */
 .b-red {
   background: #fdeaea;
   color: #a32d2d;
 }
-/* BLUE STATUS BADGE (SEASONAL) */
+
+/* Blue Status Badge - Seasonal */
 .b-blue {
   background: #e8f0fe;
   color: #1a56a0;
 }
-/* GREY STATUS BADGE (DISCONTINUED) */
+
+/* Grey Status Badge - Discontinued */
 .b-grey {
   background: #f0f0f0;
   color: #555555;
 }
 
-/* QUICK ACTIONS BUTTONS */
+/* Quick Actions Buttons */
 .ns-qa-btn {
   display: flex;
   align-items: center;
@@ -331,27 +333,27 @@ body {
   width: 100%;
 }
 
-/* QUICK ACTIONS BUTTONS HOVER */
+/* Quick Actions Buttons Hover */
 .ns-qa-btn:hover {
   background: #e6f5ee;
   border-color: #1d9e75;
   color: #0f6e56;
 }
 
-/* PRIMARY QUICK ACTION BUTTON */
+/* Primary Quick Action Button */
 .ns-qa-btn.primary {
   background: #1d9e75;
   border-color: #1d9e75;
   color: #fff;
 }
 
-/* PRIMARY QUICK ACTION BUTTON HOVER */
+/* Primary Quick Action Button Hover */
 .ns-qa-btn.primary:hover {
   background: #0f6e56;
   color: #fff;
 }
 
-/* LOCKED NAVIGATION NOTE BOX */
+/* Locked Navigation Note Box */
 .lock-note {
   font-size: 14px;
   color: #a0b8a0;
@@ -362,12 +364,12 @@ body {
   line-height: 1.6;
 }
 
-/* ROW SPACING */
+/* Row Spacing */
 .row.g-3 {
   margin-top: 5px;
 }
 
-/* TABLET AND SMALL SCREEN LAYOUT */
+/* Tablet and Small Screen Layout */
 @media (max-width: 992px) {
   .col-2.bg-light,
   .col-10 {
@@ -378,9 +380,10 @@ body {
     position: static !important;
   }
 }
-/*  FORM VALIDATION STYLES*/
 
-/* ERROR STATE - input and select */
+/* Form Validation Styles */
+
+/* Error State - input and select */
 .form-control.is-invalid,
 .form-select.is-invalid {
   border-color: #e24b4a !important;
@@ -388,14 +391,14 @@ body {
   box-shadow: 0 0 0 0.15rem rgba(226, 75, 74, 0.15) !important;
 }
 
-/* ERROR STATE FOCUS */
+/* Error State Focus */
 .form-control.is-invalid:focus,
 .form-select.is-invalid:focus {
   border-color: #e24b4a !important;
   box-shadow: 0 0 0 0.2rem rgba(226, 75, 74, 0.25) !important;
 }
 
-/* SUCCESS STATE - input and select */
+/* Success State - input and select */
 .form-control.is-valid,
 .form-select.is-valid {
   border-color: #1d9e75 !important;
@@ -403,14 +406,14 @@ body {
   box-shadow: 0 0 0 0.15rem rgba(29, 158, 117, 0.15) !important;
 }
 
-/* SUCCESS STATE FOCUS */
+/* Success State Focus */
 .form-control.is-valid:focus,
 .form-select.is-valid:focus {
   border-color: #1d9e75 !important;
   box-shadow: 0 0 0 0.2rem rgba(29, 158, 117, 0.25) !important;
 }
 
-/* INLINE ERROR MESSAGE BELOW FIELD */
+/* Inline Error Message Below Field */
 .ns-field-error {
   font-size: 12.5px;
   color: #a32d2d;
@@ -425,14 +428,14 @@ body {
   font-size: 12px;
 }
 
-/* INLINE HELP TEXT BELOW FIELD */
+/* Inline Help Text Below Field */
 .ns-field-help {
   font-size: 12.5px;
   color: #7a907a;
   margin-top: 4px;
 }
 
-/* DJANGO MESSAGES - ERROR ALERT */
+/* Django Messages - Error Alert */
 .alert-error,
 .alert-danger {
   background: #fdeaea;
@@ -445,7 +448,7 @@ body {
   font-weight: 500;
 }
 
-/* DJANGO MESSAGES - SUCCESS ALERT */
+/* Django Messages - Success Alert */
 .alert-success {
   background: #e6f5ee;
   border: 1px solid #9fe1cb;
@@ -457,7 +460,7 @@ body {
   font-weight: 500;
 }
 
-/* DJANGO MESSAGES - WARNING ALERT */
+/* Django Messages - Warning Alert */
 .alert-warning {
   background: #fff8e6;
   border: 1px solid #f7d58a;
@@ -469,12 +472,12 @@ body {
   font-weight: 500;
 }
 
-/* EMPTY DROPDOWN OPTION - placeholder styling */
+/* Empty Dropdown Option - placeholder styling */
 select option[value=""] {
   color: #a0b8a0;
 }
 
-/* DISABLED / READONLY FIELDS */
+/* Disabled / Readonly Fields */
 .form-control[readonly],
 .form-control:disabled {
   background: #f4faf6 !important;

@@ -1,16 +1,16 @@
-/* STOCK FILTER BAR */
+/* Stock Filter Bar */
 .stock-filter {
   border: 1px solid #dce7dd;
   background: #fff !important;
   border-radius: 12px;
 }
 
-/* SEARCH ICON CONTAINER */
+/* Search Icon Container */
 .search-control {
   position: relative;
 }
 
-/* SEARCH ICON POSITIONING */
+/* Search Icon Positioning */
 .search-control .fa-magnifying-glass {
   position: absolute;
   left: 14px;
@@ -21,12 +21,12 @@
   pointer-events: none;
 }
 
-/* SEARCH INPUT PADDING (MAKES ROOM FOR ICON) */
+/* Search Input Padding - Makes room for the search icon */
 .search-control .form-control {
   padding-left: 38px;
 }
 
-/* STOCK LIST CARD CONTAINER */
+/* Stock List Card Container */
 .stock-list-card {
   background: #fff;
   border: 1px solid #dce7dd;
@@ -35,7 +35,7 @@
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
 }
 
-/* STOCK LIST HEADER */
+/* Stock List Header */
 .stock-list-header {
   display: flex;
   align-items: center;
@@ -45,7 +45,7 @@
   border-bottom: 1px solid #edf2ee;
 }
 
-/* STOCK LIST HEADER TITLE */
+/* Stock List Header Title */
 .stock-list-header h5 {
   margin: 0;
   color: #142e1a;
@@ -53,19 +53,19 @@
   font-weight: 700;
 }
 
-/* STOCK LIST HEADER AND FOOTER TEXT */
+/* Stock List Header and Footer Text */
 .stock-list-header span,
 .stock-list-footer span {
   color: #8aa39a;
   font-size: 14px;
 }
 
-/* STOCK TABLE MINIMUM WIDTH */
+/* Stock Table Minimum Width */
 .stock-table {
   min-width: 960px;
 }
 
-/* TABLE HEADER CELLS */
+/* Table Header Cells */
 .stock-table thead th {
   background: #f6faf7;
   color: #789076;
@@ -77,7 +77,7 @@
   text-transform: uppercase;
 }
 
-/* TABLE BODY CELLS */
+/* Table Body Cells */
 .stock-table tbody td {
   color: #132f24;
   font-size: 15px;
@@ -86,14 +86,14 @@
   border-color: #edf2ee;
 }
 
-/* BOLD TEXT INSIDE TABLE CELLS */
+/* Bold Text Inside Table Cells */
 .stock-table tbody td strong {
   display: block;
   color: #061d14;
   font-weight: 700;
 }
 
-/* SMALL CATEGORY TEXT BELOW ITEM NAMES */
+/* Small Category Text Below Item Names */
 .stock-table tbody td small {
   display: block;
   color: #7a907a;
@@ -101,18 +101,18 @@
   margin-top: 3px;
 }
 
-/* TABLE ROW HOVER */
+/* Table Row Hover Effect */
 .stock-table tbody tr:hover {
   background: #f4faf6;
   transition: background 0.2s ease;
 }
 
-/* ACTIONS COLUMN (EDIT/DELETE BUTTONS) */
+/* Actions Column - Contains edit and delete buttons */
 .stock-table .actions {
   white-space: nowrap;
 }
 
-/* ACTION BUTTONS */
+/* Action Buttons */
 .stock-table .actions button {
   background: transparent;
   border: 1px solid transparent;
@@ -124,24 +124,24 @@
   transition: all 0.2s ease;
 }
 
-/* ACTION BUTTONS HOVER */
+/* Action Buttons Hover State */
 .stock-table .actions button:hover {
   background: #e6f5ee;
   border-color: #bfe3d4;
 }
 
-/* DELETE BUTTON (RED VARIANT) */
+/* Delete Button - Red variant for danger actions */
 .stock-table .actions button:last-child {
   color: #d54444;
 }
 
-/* DELETE BUTTON HOVER */
+/* Delete Button Hover State */
 .stock-table .actions button:last-child:hover {
   background: #fdeaea;
   border-color: #f5c2c2;
 }
 
-/* STOCK LIST FOOTER */
+/* Stock List Footer */
 .stock-list-footer {
   display: flex;
   align-items: center;
@@ -151,38 +151,38 @@
   border-top: 1px solid #edf2ee;
 }
 
-/* PAGINATION LINKS */
+/* Pagination Links */
 .stock-list-footer .page-link {
   color: #1d7d60;
   border-color: #d5e2d8;
   font-size: 13px;
 }
 
-/* ACTIVE PAGINATION PAGE */
+/* Active Pagination Page */
 .stock-list-footer .active .page-link {
   background: #1d9e75;
   border-color: #1d9e75;
   color: #fff;
 }
 
-/* ITEM CELL (STACKS ITEM NAME AND CATEGORY) */
+/* Item Cell - Stacks item name and category vertically */
 .item-cell {
   display: flex;
   flex-direction: column;
 }
 
-/* ITEM CELL SMALL TEXT */
+/* Item Cell Small Text */
 .item-cell small {
   color: #9ca3af;
   font-size: 12px;
 }
 
-/* ADD STOCK MODAL WIDTH */
+/* Add Stock Modal Width */
 .add-stock-modal .modal-dialog {
   max-width: 860px;
 }
 
-/* MODAL CONTENT (POPUP BOX) */
+/* Modal Content - Popup box styling */
 .add-stock-modal .modal-content {
   border: 0;
   border-radius: 16px;
@@ -190,7 +190,7 @@
   box-shadow: 0 18px 45px rgba(0, 0, 0, 0.24);
 }
 
-/* MODAL HEADER (GREEN TITLE BAR) */
+/* Modal Header - Green title bar */
 .add-stock-modal .modal-header {
   background: #229e78;
   border-bottom: 0;
@@ -198,25 +198,25 @@
   padding: 0.95rem 1.35rem;
 }
 
-/* MODAL TITLE */
+/* Modal Title */
 .add-stock-modal .modal-title {
   color: #fff;
   font-size: 17px;
   font-weight: 700;
 }
 
-/* MODAL CLOSE BUTTON (MAKES IT VISIBLE ON GREEN) */
+/* Modal Close Button - Makes it visible on green header */
 .add-stock-modal .btn-close {
   filter: invert(1) grayscale(100%) brightness(180%);
   opacity: 0.8;
 }
 
-/* MODAL BODY SPACING */
+/* Modal Body Spacing */
 .add-stock-modal .modal-body {
   padding: 1.55rem 1.55rem 1.3rem;
 }
 
-/* MODAL FORM LABELS */
+/* Modal Form Labels */
 .add-stock-modal .form-label {
   color: #5c7a64;
   font-size: 13px;
@@ -224,7 +224,7 @@
   margin-bottom: 8px;
 }
 
-/* MODAL INPUTS AND DROPDOWNS */
+/* Modal Inputs and Dropdowns */
 .add-stock-modal .form-control,
 .add-stock-modal .form-select {
   border-color: #cbdccf;
@@ -233,21 +233,21 @@
   transition: all 0.2s ease;
 }
 
-/* MODAL INPUTS FOCUS STATE */
+/* Modal Inputs Focus State */
 .add-stock-modal .form-control:focus,
 .add-stock-modal .form-select:focus {
   border-color: #1d9e75;
   box-shadow: 0 0 0 0.15rem rgba(29, 158, 117, 0.15);
 }
 
-/* MODAL FOOTER */
+/* Modal Footer */
 .add-stock-modal .modal-footer {
   background: #f8fbf8;
   border-top: 1px solid #dfe8e0;
   padding: 1rem 1.35rem;
 }
 
-/* MODAL FOOTER BUTTONS */
+/* Modal Footer Buttons */
 .add-stock-modal .modal-footer .btn {
   border-radius: 6px;
   font-size: 14px;
@@ -255,14 +255,14 @@
   padding: 7px 14px;
 }
 
-/* MODAL SAVE BUTTON */
+/* Modal Save Button */
 .add-stock-modal .modal-footer .btn-success {
   background: #168b62;
   border-color: #168b62;
   min-width: 150px;
 }
 
-/* PHONE SPACING FOR MODAL */
+/* Responsive - Mobile spacing for modal */
 @media (max-width: 576px) {
   .add-stock-modal .modal-dialog {
     margin: 0.75rem;

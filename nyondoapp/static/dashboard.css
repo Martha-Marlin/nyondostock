@@ -5,6 +5,7 @@ body {
   font-family: "DM Sans", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   color: #111;
 }
+
 /* Topbar: Green navigation bar at the top */
 .topbar {
   background: #1d9e75;
@@ -15,13 +16,15 @@ body {
   justify-content: space-between;
   box-shadow: 0 2px 12px rgba(15, 110, 86, 0.18);
 }
-/* left side of the top bar */
+
+/* Left side of the top bar */
 .topbar-left {
   display: flex;
   align-items: center;
   gap: 14px;
 }
-/* The Logo and the company name */
+
+/* The logo and the company name container */
 .logo {
   width: 42px;
   height: 42px;
@@ -32,14 +35,16 @@ body {
   align-items: center;
   justify-content: center;
 }
-/* The logo edits */
+
+/* Logo image styling */
 .logo img {
   width: 42px;
   height: 42px;
   object-fit: cover;
   border-radius: 50%;
 }
-/* Company Name edits */
+
+/* Company name styling */
 .brand-name {
   font-size: 16px;
   font-weight: 600;
@@ -47,23 +52,27 @@ body {
   letter-spacing: -0.3px;
   line-height: 1.2;
 }
-/* subtitle below the the company */
+
+/* Subtitle below the company name */
 .brand-sub {
   font-size: 11px;
   color: rgba(255, 255, 255, 0.72);
 }
-/* the right side with the welcome text, the log out button */
+
+/* Right side with welcome text, role badge, and logout button */
 .topbar-right {
   display: flex;
   align-items: center;
   gap: 10px;
 }
-/* the welcome text edits */
+
+/* Welcome text styling */
 .welcome {
   font-size: 13px;
   color: rgba(255, 255, 255, 0.85);
 }
-/* the role of the employee  */
+
+/* User role badge styling */
 .role {
   background: rgba(255, 255, 255, 0.18);
   color: #fff;
@@ -73,7 +82,8 @@ body {
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.28);
 }
-/* log out button */
+
+/* Logout button styling */
 .logout {
   background: transparent;
   color: #fff;
@@ -90,11 +100,14 @@ body {
   background: rgba(255, 255, 255, 0.12);
   color: #fff;
 }
+
+/* Sidebar container */
 .ns-sidebar {
   min-height: calc(100vh - 64px);
   position: relative;
 }
-/* nav links: rounded padding */
+
+/* Navigation links with rounded corners and left border */
 .nav-link {
   padding: 8px 12px;
   border-radius: 6px;
@@ -105,33 +118,37 @@ body {
     border-color 0.15s ease,
     transform 0.15s ease;
 }
-/* Hovering state */
+
+/* Navigation link hover state */
 .nav-link:hover {
   background-color: #f0f8f0;
   color: #0f6e56 !important;
   border-left-color: #9fe1cb;
   transform: translateX(2px);
 }
-/* active links */
+
+/* Active navigation link styling */
 .bg-light .nav-link.active {
   background-color: #e6f5ee !important;
   color: #0f6e56 !important;
   border-left-color: #1d9e75;
   font-weight: 600;
 }
-/* edits on all the cards  */
+
+/* Card container styling */
 .card{
   min-height: 120px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important; 
   transition: all 0.2s ease;
 }
 
-/* card hovering effect  */
+/* Card hover effect */
 .card:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
   transform: translateY(-3px);
 }
-/* Applies on all the stat cards */
+
+/* Stat card - applies to all summary cards */
 .stat-card {
   background: #fff;
   border: 1px solid #e0e8e0;
@@ -144,19 +161,23 @@ body {
 .stat-card:hover {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
-/* warn Variant to caution */
+
+/* Warning variant - for cautionary stats */
 .stat-card.warn {
   border-top-color: #ef9f27;
 }
-/* danger variant critical */
+
+/* Danger variant - for critical stats */
 .stat-card.danger {
   border-top-color: #e24b4a;
 }
-/* soft variant for neutral */
+
+/* Soft variant - for neutral stats */
 .stat-card.soft {
   border-top-color: #9fe1cb;
 }
-/* stat labels */
+
+/* Stat label styling */
 .stat-label {
   font-size: 11px;
   font-weight: 600;
@@ -165,7 +186,8 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.6px;
 }
-/* stat values */
+
+/* Stat value styling - large numbers */
 .stat-value {
   font-size: 28px;
   font-weight: 700;
@@ -173,13 +195,15 @@ body {
   letter-spacing: -0.5px;
   line-height: 1.1;
 }
-/* stat sub the small description below the number */
+
+/* Stat subtext - small description below the value */
 .stat-sub {
   font-size: 11.5px;
   color: #a0b8a0;
   margin-top: 4px;
 }
-/* applies on all the badges */
+
+/* Status badge - applies to all status indicators */
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -189,22 +213,26 @@ body {
   font-weight: 600;
   white-space: nowrap;
 }
-/* green badge for paid, deposited*/
+
+/* Green badge for positive statuses (paid, deposited) */
 .b-green {
   background: #e6f5ee;
   color: #0f6e56;
 }
-/* yellow badge for pending, low stock, due soon  */
+
+/* Yellow badge for cautionary statuses (pending, low stock, due soon) */
 .b-yellow {
   background: #fff4e0;
   color: #854f0b;
 }
-/* red badge credit, out of stock, overdue */
+
+/* Red badge for negative statuses (credit, out of stock, overdue) */
 .b-red {
   background: #fdeaea;
   color: #a32d2d;
 }
-/* Table cells  */
+
+/* Table cell padding */
 .table td {
   padding-top: 12px;
   padding-bottom: 12px;

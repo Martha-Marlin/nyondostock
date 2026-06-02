@@ -1,9 +1,9 @@
-/* REPORTS PAGE LAYOUT */
+/* Reports Page Layout */
 .reports-page {
   padding: 2rem 2.5rem;
 }
 
-/* PAGE HEADER */
+/* Page Header */
 .reports-header {
   display: flex;
   justify-content: space-between;
@@ -21,7 +21,7 @@
   font-size: 13px;
 }
 
-/* REPORT TYPE TABS */
+/* Report Type Tabs */
 .report-tabs {
   display: flex;
   gap: 8px;
@@ -51,7 +51,7 @@
   font-weight: 600;
 }
 
-/* STAT CARDS ROW */
+/* Stat Cards Row */
 .report-stat-card {
   background: #fff;
   border: 1px solid #e0e8e0;
@@ -89,7 +89,7 @@
   margin-top: 4px;
 }
 
-/* FILTER BAR */
+/* Filter Bar */
 .report-filter-card {
   background: #fff;
   border: 1px solid #dce7dd;
@@ -116,7 +116,7 @@
   box-shadow: 0 0 0 0.15rem rgba(29,158,117,0.15);
 }
 
-/* REPORT TABLE CARD */
+/* Report Table Card */
 .report-list-card {
   background: #fff;
   border: 1px solid #dce7dd;
@@ -144,7 +144,7 @@
   color: #8aa39a;
 }
 
-/* REPORT TABLE */
+/* Report Table */
 .report-table {
   min-width: 800px;
   width: 100%;
@@ -171,7 +171,7 @@
   transition: background 0.2s ease;
 }
 
-/* TOTAL SUMMARY CARDS */
+/* Total Summary Cards */
 .report-total-card {
   background: #fff;
   border: 1px solid #dce7dd;
@@ -210,7 +210,7 @@
   border-top: 3px solid #1d9e75;
 }
 
-/* EXPORT BUTTONS */
+/* Export Buttons */
 .export-btn-row {
   display: flex;
   justify-content: flex-end;
@@ -218,20 +218,21 @@
   margin-top: 1.5rem;
 }
 
-/* RESPONSIVE */
+/* Responsive - Tablet and mobile adjustments */
 @media (max-width: 992px) {
   .reports-page { padding: 1.25rem; }
   .report-tabs  { gap: 6px; }
   .report-tab   { padding: 7px 14px; font-size: 13px; }
 }
 
+/* Print Styles - Hides navigation and shows only report content */
 @media print {
-  /* Hide EVERYTHING on the page */
+  /* Hide everything on the page */
   body * {
     visibility: hidden !important;
   }
 
-  /* Then show ONLY the reports content */
+  /* Then show only the reports content */
   .reports-page,
   .reports-page * {
     visibility: visible !important;
@@ -246,7 +247,7 @@
     padding: 1rem !important;
   }
 
-  /* Clean up for paper */
+  /* Clean up for paper printing */
   .report-stat-card,
   .report-list-card,
   .report-total-card {

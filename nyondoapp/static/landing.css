@@ -1,7 +1,7 @@
-/* ── RESET ── */
+/* Reset */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ── BODY ── */
+/* Body */
 body {
     font-family: "DM Sans", sans-serif;
     background: #142e1a;
@@ -12,7 +12,7 @@ body {
     flex-direction: column;
 }
 
-/* ── ANIMATED BG GLOW ── */
+/* Animated Background Glow */
 body::before {
     content: '';
     position: fixed;
@@ -29,7 +29,7 @@ body::before {
     to   { opacity: 1;   transform: scale(1.08); }
 }
 
-/* ── NAVBAR ── */
+/* Navbar */
 .lp-nav {
     background: rgba(255,255,255,0.96);
     backdrop-filter: blur(16px);
@@ -115,7 +115,7 @@ body::before {
 
 .lp-nav-btn:active { transform: translateY(0) scale(0.97); }
 
-/* ── HERO ── */
+/* Hero Section */
 .lp-hero {
     background: #142e1a;
     padding: 40px 2.5rem 40px;
@@ -134,7 +134,7 @@ body::before {
     align-items: center;
 }
 
-/* ── HERO TEXT ── */
+/* Hero Text */
 .lp-hero-text {
     animation: fadeUp 0.7s 0.15s cubic-bezier(0.16,1,0.3,1) both;
 }
@@ -253,7 +253,7 @@ body::before {
     box-shadow: 0 4px 12px rgba(29,158,117,0.3);
 }
 
-/* ── DASHBOARD PREVIEW ── */
+/* Dashboard Preview */
 .lp-dashboard-preview {
     background: #1d3a22;
     border: 1px solid rgba(255,255,255,0.08);
@@ -394,7 +394,7 @@ body::before {
 .lp-dp-badge.credit  { background: rgba(226,75,74,0.25);  color: #f09595; }
 .lp-dp-badge.pending { background: rgba(239,159,39,0.25); color: #fac775; }
 
-/* ── STATS BAR ── */
+/* Stats Bar */
 .lp-stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -447,7 +447,7 @@ body::before {
 
 .lp-stat:hover .lp-stat-label { color: #0f6e56; }
 
-/* ── FOOTER ── */
+/* Footer */
 .lp-footer {
     background: #0d1f12;
     padding: 20px 2.5rem;
@@ -469,7 +469,6 @@ body::before {
 .lp-footer-logo {
     width: 28px;
     height: 28px;
-    /* REMOVED: border-radius: 50%; - no more round border */
     overflow: hidden;
     transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
 }
@@ -493,13 +492,13 @@ body::before {
     color: rgba(255,255,255,0.3);
 }
 
-/* ── SHARED ANIMATION ── */
+/* Shared Animation */
 @keyframes fadeUp {
     from { opacity: 0; transform: translateY(26px); }
     to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── RESPONSIVE ── */
+/* Responsive */
 @media (max-width: 768px) {
     .lp-hero { padding: 48px 1.5rem 48px; }
     .lp-hero-inner { grid-template-columns: 1fr; gap: 32px; }

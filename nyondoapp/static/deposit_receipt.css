@@ -1,4 +1,4 @@
-/* RESET */
+/* Reset */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
@@ -9,7 +9,7 @@ body {
     padding: 40px 20px;
 }
 
-/* RECEIPT CARD */
+/* Receipt Card */
 .receipt {
     background: #fff;
     width: 400px;
@@ -18,7 +18,7 @@ body {
     overflow: hidden;
 }
 
-/* HEADER */
+/* Header */
 .receipt-header {
     background: #1d9e75;
     padding: 24px 24px 20px;
@@ -56,12 +56,12 @@ body {
     border-color: rgba(255, 255, 255, 0.4);
 }
 
-/* BODY */
+/* Body */
 .receipt-body {
     padding: 20px 24px;
 }
 
-/* HIGHLIGHT BOX */
+/* Highlight Box */
 .receipt-highlight {
     background: #f4f9f6;
     border: 1px solid #d5ede3;
@@ -92,7 +92,7 @@ body {
     margin-top: 4px;
 }
 
-/* PROGRESS */
+/* Progress Bar */
 .receipt-progress {
     margin-bottom: 18px;
 }
@@ -114,7 +114,7 @@ body {
     text-align: right;
 }
 
-/* SECTION */
+/* Section */
 .receipt-section {
     margin-bottom: 16px;
 }
@@ -129,7 +129,7 @@ body {
     border-bottom: 1px solid #eef2ee;
 }
 
-/* ROW */
+/* Row */
 .receipt-row {
     display: flex;
     justify-content: space-between;
@@ -151,7 +151,7 @@ body {
     color: #e24b4a;
 }
 
-/* NOTICE */
+/* Notice */
 .receipt-notice {
     background: #fffbe6;
     border: 1px solid #f5c842;
@@ -164,7 +164,7 @@ body {
     line-height: 1.6;
 }
 
-/* STAMP */
+/* Stamp */
 .receipt-stamp {
     text-align: center;
     font-size: 14px;
@@ -177,7 +177,7 @@ body {
     letter-spacing: 0.5px;
 }
 
-/* SIGNATURE */
+/* Signature */
 .receipt-signature {
     display: flex;
     gap: 16px;
@@ -199,7 +199,7 @@ body {
     text-align: center;
 }
 
-/* FOOTER */
+/* Footer */
 .receipt-footer {
     border-top: 1px dashed #d5e0d5;
     padding: 16px 24px;
@@ -249,7 +249,7 @@ body {
     font-weight: 700;
 }
 
-/* PRINT STYLES */
+/* Print Styles */
 @media print {
     body { background: #fff; padding: 0; }
     .receipt { box-shadow: none; border-radius: 0; width: 100%; }

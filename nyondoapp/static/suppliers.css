@@ -1,18 +1,18 @@
-/* ========== SUPPLIERS PAGE SPECIFIC STYLES ========== */
+/* Suppliers Page Specific Styles */
 
-/* SUPPLIERS FILTER BAR */
+/* Suppliers filter bar - search and filter container */
 .stock-filter {
   border: 1px solid #dce7dd;
   background: #fff !important;
   border-radius: 12px;
 }
 
-/* SEARCH ICON CONTAINER */
+/* Search icon container wrapper */
 .search-control {
   position: relative;
 }
 
-/* SEARCH ICON POSITIONING */
+/* Search icon positioning inside the input field */
 .search-control .fa-magnifying-glass {
   position: absolute;
   left: 14px;
@@ -23,12 +23,12 @@
   pointer-events: none;
 }
 
-/* SEARCH INPUT PADDING (MAKES ROOM FOR ICON) */
+/* Search input padding - makes room for the search icon */
 .search-control .form-control {
   padding-left: 38px;
 }
 
-/* SUPPLIERS LIST CARD CONTAINER */
+/* Suppliers list card container - main wrapper for the suppliers table */
 .stock-list-card {
   background: #fff;
   border: 1px solid #dce7dd;
@@ -37,7 +37,7 @@
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
 }
 
-/* SUPPLIERS LIST HEADER */
+/* Suppliers list header - contains title and record count */
 .stock-list-header {
   display: flex;
   align-items: center;
@@ -47,7 +47,7 @@
   border-bottom: 1px solid #edf2ee;
 }
 
-/* SUPPLIERS LIST HEADER TITLE */
+/* Suppliers list header title styling */
 .stock-list-header h5 {
   margin: 0;
   color: #142e1a;
@@ -55,14 +55,14 @@
   font-weight: 700;
 }
 
-/* SUPPLIERS LIST HEADER AND FOOTER TEXT */
+/* Suppliers list header and footer text styling */
 .stock-list-header span,
 .stock-list-footer span {
   color: #8aa39a;
   font-size: 14px;
 }
 
-/* SUPPLIERS TABLE */
+/* Suppliers table - responsive with minimum width */
 .stock-table {
   min-width: 960px;
 }
@@ -75,7 +75,7 @@
   white-space: nowrap;
 }
 
-/* TABLE HEADER CELLS */
+/* Table header cells - uppercase with consistent styling */
 .stock-table thead th {
   background: #f6faf7;
   color: #789076;
@@ -87,7 +87,7 @@
   text-transform: uppercase;
 }
 
-/* TABLE BODY CELLS */
+/* Table body cells - consistent padding and colors */
 .stock-table tbody td {
   color: #132f24;
   font-size: 15px;
@@ -96,14 +96,14 @@
   border-color: #edf2ee;
 }
 
-/* BOLD TEXT INSIDE TABLE CELLS */
+/* Bold text inside table cells - supplier name */
 .stock-table tbody td strong {
   display: block;
   color: #061d14;
   font-weight: 700;
 }
 
-/* SMALL ID TEXT BELOW SUPPLIER NAMES */
+/* Small ID text below supplier names for additional info */
 .stock-table tbody td small {
   display: block;
   color: #7a907a;
@@ -111,30 +111,30 @@
   margin-top: 3px;
 }
 
-/* SUPPLIER CELL */
+/* Supplier cell - flex container for stacked content */
 .item-cell {
   display: flex;
   flex-direction: column;
 }
 
-/* TABLE ROW HOVER */
+/* Table row hover effect for better user experience */
 .stock-table tbody tr:hover {
   background: #f4faf6;
   transition: background 0.2s ease;
 }
 
-/* ACTIONS COLUMN (EDIT/DELETE/VIEW BUTTONS) */
+/* Actions column - contains edit, delete, and view buttons */
 .stock-table .actions {
   white-space: nowrap;
 }
 
-/* ACTION BUTTONS */
+/* Action buttons - consistent sizing and transitions */
 .stock-table .actions .btn {
   border-radius: 6px;
   transition: all 0.2s ease;
 }
 
-/* SUPPLIERS LIST FOOTER */
+/* Suppliers list footer - contains record count and pagination */
 .stock-list-footer {
   display: flex;
   align-items: center;
@@ -144,28 +144,28 @@
   border-top: 1px solid #edf2ee;
 }
 
-/* PAGINATION LINKS */
+/* Pagination links styling */
 .stock-list-footer .page-link {
   color: #1d7d60;
   border-color: #d5e2d8;
   font-size: 13px;
 }
 
-/* ACTIVE PAGINATION PAGE */
+/* Active pagination page highlight */
 .stock-list-footer .active .page-link {
   background: #1d9e75;
   border-color: #1d9e75;
   color: #fff;
 }
 
-/* ========== ADD SUPPLIER MODAL ========== */
+/* Add Supplier Modal */
 
-/* MODAL DIALOG */
+/* Modal dialog sizing - wider for better form layout */
 .add-stock-modal .modal-dialog {
   max-width: 860px;
 }
 
-/* MODAL CONTENT */
+/* Modal content styling - clean card appearance */
 .add-stock-modal .modal-content {
   border: 0;
   border-radius: 16px;
@@ -173,7 +173,7 @@
   box-shadow: 0 18px 45px rgba(0, 0, 0, 0.24);
 }
 
-/* MODAL HEADER - GREEN THEME */
+/* Modal header - green theme matching the brand */
 .add-stock-modal .modal-header {
   background: #1d9e75;
   border-bottom: 0;
@@ -181,14 +181,14 @@
   padding: 0.95rem 1.35rem;
 }
 
-/* MODAL TITLE */
+/* Modal title - white text on green background */
 .add-stock-modal .modal-title {
   color: #fff;
   font-size: 17px;
   font-weight: 700;
 }
 
-/* MODAL CLOSE BUTTON (VISIBLE ON GREEN) */
+/* Modal close button - visible on green header */
 .add-stock-modal .btn-close {
   filter: brightness(0) invert(1);
   opacity: 0.8;
@@ -198,13 +198,13 @@
   opacity: 1;
 }
 
-/* MODAL BODY */
+/* Modal body - form content area */
 .add-stock-modal .modal-body {
   padding: 1.55rem 1.55rem 1.3rem;
   background: #fff;
 }
 
-/* FORM LABELS */
+/* Form labels - clear and readable */
 .add-stock-modal .form-label {
   color: #5c7a64;
   font-size: 13px;
@@ -213,7 +213,7 @@
   letter-spacing: 0.3px;
 }
 
-/* FORM INPUTS AND DROPDOWNS */
+/* Form inputs, dropdowns, and textareas */
 .add-stock-modal .form-control,
 .add-stock-modal .form-select,
 .add-stock-modal textarea {
@@ -224,7 +224,7 @@
   transition: all 0.2s ease;
 }
 
-/* INPUT FOCUS STATE */
+/* Input focus state - brand color highlight */
 .add-stock-modal .form-control:focus,
 .add-stock-modal .form-select:focus,
 .add-stock-modal textarea:focus {
@@ -233,14 +233,14 @@
   outline: none;
 }
 
-/* INPUT PLACEHOLDER */
+/* Input placeholder styling */
 .add-stock-modal .form-control::placeholder,
 .add-stock-modal textarea::placeholder {
   color: #cbd5e1;
   font-size: 0.85rem;
 }
 
-/* HELPER TEXT */
+/* Helper text styling */
 .add-stock-modal .text-muted {
   font-size: 0.7rem;
   color: #94a3b8 !important;
@@ -248,14 +248,14 @@
   display: block;
 }
 
-/* MODAL FOOTER */
+/* Modal footer - action buttons container */
 .add-stock-modal .modal-footer {
   background: #f8fbf8;
   border-top: 1px solid #dfe8e0;
   padding: 1rem 1.35rem;
 }
 
-/* MODAL FOOTER BUTTONS */
+/* Modal footer buttons - consistent sizing */
 .add-stock-modal .modal-footer .btn {
   border-radius: 6px;
   font-size: 14px;
@@ -263,7 +263,7 @@
   padding: 7px 14px;
 }
 
-/* CANCEL BUTTON */
+/* Cancel button styling */
 .add-stock-modal .btn-outline-secondary {
   border-color: #cbd5e1;
   color: #64748b;
@@ -277,7 +277,7 @@
   color: #334155;
 }
 
-/* SAVE BUTTON */
+/* Save button styling - brand green */
 .add-stock-modal .modal-footer .btn-success {
   background: #1d9e75;
   border-color: #1d9e75;
@@ -290,7 +290,9 @@
   transform: translateY(-1px);
 }
 
-/* ========== RESPONSIVE ========== */
+/* Responsive Styles */
+
+/* Mobile responsive adjustments */
 @media (max-width: 576px) {
   .add-stock-modal .modal-dialog {
     margin: 0.75rem;

@@ -1,41 +1,41 @@
-/* BLUE STATUS BADGE (CUSTOM FOR ACCOUNTS DASHBOARD) */
+/* Blue Status Badge - Custom for accounts dashboard */
 .b-blue {
-  background: #e8f0ff;    /* Light blue background */
-  color: #2457b8;         /* Dark blue text */
+  background: #e8f0ff;
+  color: #2457b8;
 }
 
-/* FINANCIAL SUMMARY LIST CONTAINER */
+/* Financial Summary List Container */
 .summary-list {
-  padding: 12px 18px 18px;  /* Top, right/left, bottom padding */
+  padding: 12px 18px 18px;
 }
 
-/* FINANCIAL SUMMARY ROW (Revenue, Expenses, Profit) */
+/* Financial Summary Row - Revenue, Expenses, Profit */
 .summary-row {
   align-items: center;
-  border-bottom: 1px solid #e6efe9;  /* Light green separator line */
+  border-bottom: 1px solid #e6efe9;
   display: flex;
-  justify-content: space-between;     /* Pushes label left, value right */
-  padding: 12px 0;                   /* Vertical padding only */
+  justify-content: space-between;
+  padding: 12px 0;
 }
 
-/* LAST ROW - NO BORDER */
+/* Last Row - No Border */
 .summary-row:last-child {
-  border-bottom: 0;                  /* Removes border from final row */
+  border-bottom: 0;
 }
 
-/* SUMMARY LABEL (e.g., "Revenue (month)") */
+/* Summary Label - e.g., "Revenue (month)" */
 .summary-row span {
-  color: #5c7a64;    /* Muted green-gray */
+  color: #5c7a64;
   font-size: 15px;
 }
 
-/* SUMMARY VALUE (e.g., "UGX 48.2M") */
+/* Summary Value - e.g., "UGX 48.2M" */
 .summary-row strong {
-  color: #142e1a;    /* Dark forest green */
+  color: #142e1a;
   font-size: 15px;
 }
 
-/* CARDS/SECTION POLISH FOR ACCOUNTS DASHBOARD */
+/* Cards and Section Polish for Accounts Dashboard */
 .accounts-dashboard-header h4 {
   color: #142e1a;
   font-size: 28px;
@@ -86,15 +86,16 @@
   justify-content: center;
 }
 
-/* RESPONSIVE: STACK HEADER ON TABLET/MOBILE */
+/* Responsive - Stack header on tablet and mobile */
 @media (max-width: 992px) {
   .accounts-dashboard-header {
-    align-items: flex-start !important;  /* Align to top */
-    flex-direction: column;              /* Stack vertically */
-    gap: 12px;                          /* Space between stacked items */
+    align-items: flex-start !important;
+    flex-direction: column;
+    gap: 12px;
   }
 }
-/* SUMMARY ROW HOVER EFFECT  */
+
+/* Summary Row Hover Effect */
 .summary-row:hover {
   background-color: #f8faf6;
   margin-left: -5px;

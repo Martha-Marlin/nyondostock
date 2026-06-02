@@ -1,9 +1,9 @@
-/* PAGE BACKGROUND */
+/* Page Background */
 body {
     background: #f4f6f3;
 }
 
-/* CREATE DEPOSIT PAGE HEADER */
+/* Create Deposit Page Header */
 .ns-back-link {
     color: #1d9e75;
     display: block;
@@ -28,7 +28,7 @@ body {
     font-size: 15px;
 }
 
-/* DEPOSITS TABLE - item cell with name and phone stacked */
+/* Deposits Table - item cell with name and phone stacked */
 .item-cell {
     display: flex;
     flex-direction: column;
@@ -43,7 +43,7 @@ body {
     color: #7a907a;
 }
 
-/* PROGRESS BAR CONTAINER */
+/* Progress Bar Container */
 .ns-progress-wrap {
     display: flex;
     flex-direction: column;
@@ -65,33 +65,33 @@ body {
 .ns-progress-bar-fill.yellow { background: #ef9f27; }
 .ns-progress-bar-fill.red    { background: #e24b4a; }
 
-/* OVERDUE DATE */
+/* Overdue Date */
 .ns-overdue {
     color: #e24b4a;
     font-weight: 600;
     font-size: 13px;
 }
 
-/* CLEARED BALANCE */
+/* Cleared Balance */
 .ns-cleared {
     color: #0f6e56;
     font-weight: 600;
     font-size: 13px;
 }
 
-/* BALANCE DUE */
+/* Balance Due */
 .ns-balance-due {
     color: #e24b4a;
     font-weight: 600;
     font-size: 13px;
 }
 
-/* CANCELLED ROW */
+/* Cancelled Row */
 .ns-row-cancelled {
     opacity: 0.5;
 }
 
-/* DEPOSIT FORM CARD - used on create_deposit.html */
+/* Deposit Form Card - used on create_deposit.html */
 .ns-form-card {
     background: #fff;
     border: 1px solid #e0e8e0;
@@ -100,7 +100,7 @@ body {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-/* SECTION HEADER */
+/* Section Header */
 .ns-section-header {
     display: flex;
     align-items: center;
@@ -124,12 +124,12 @@ body {
     letter-spacing: 0.5px;
 }
 
-/* SECTION BODY */
+/* Section Body */
 .ns-section-body {
     padding: 20px;
 }
 
-/* FIELD LABEL */
+/* Field Label */
 .ns-field-label {
     font-size: 13px;
     font-weight: 600;
@@ -142,7 +142,7 @@ body {
     margin-left: 2px;
 }
 
-/* INPUT */
+/* Input Field */
 .ns-input {
     font-size: 13.5px;
     border: 1px solid #d5e0d5;
@@ -163,21 +163,21 @@ body {
     color: #b0c4b0;
 }
 
-/* HINT TEXT */
+/* Hint Text */
 .ns-hint {
     font-size: 11.5px;
     color: #a0b8a0;
     margin-top: 4px;
 }
 
-/* DIVIDER */
+/* Divider */
 .ns-divider {
     height: 1px;
     background: #eef2ee;
     margin: 0;
 }
 
-/* FORM ACTIONS */
+/* Form Actions */
 .ns-form-actions {
     display: flex;
     justify-content: flex-end;
@@ -187,7 +187,7 @@ body {
     background: #fafbfa;
 }
 
-/* CANCEL BUTTON */
+/* Cancel Button */
 .ns-btn-cancel {
     background: #fff;
     color: #3a4e3a;
@@ -210,7 +210,7 @@ body {
     border-color: #9fe1cb;
 }
 
-/* DETAIL PAGE FIELD LABEL */
+/* Detail Page Field Label */
 .ns-detail-label {
     font-size: 11.5px;
     text-transform: uppercase;
@@ -220,14 +220,14 @@ body {
     margin-bottom: 4px;
 }
 
-/* DETAIL PAGE FIELD VALUE */
+/* Detail Page Field Value */
 .ns-detail-value {
     font-size: 14px;
     color: #142e1a;
     font-weight: 500;
 }
 
-/* SUMMARY INFO PANEL - used on deposit detail page */
+/* Summary Info Panel - used on deposit detail page */
 .ns-summary-panel {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -260,7 +260,7 @@ body {
     font-weight: 700;
 }
 
-/* Print styles */
+/* Print Styles */
 @media print {
     /* Hide buttons and navigation when printing */
     .receipt-actions {

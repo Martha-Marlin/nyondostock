@@ -1,4 +1,4 @@
-/* RESET */
+/* Reset */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 html { scroll-behavior: smooth; }
@@ -9,7 +9,7 @@ body {
     color: #142e1a;
 }
 
-/* ─── NAVBAR ─── */
+/* Navbar */
 .lp-nav {
     background: #fff;
     border-bottom: 1px solid #e0e8e0;
@@ -65,7 +65,7 @@ body {
     color: #fff;
 }
 
-/* ─── HERO ─── */
+/* Hero Section */
 .lp-hero {
     background: #142e1a;
     padding: 64px 2rem 0;
@@ -125,7 +125,7 @@ body {
     color: #fff;
 }
 
-/* ─── DASHBOARD PREVIEW ─── */
+/* Dashboard Preview */
 .lp-preview {
     background: #1a3520;
     border: 1px solid rgba(255,255,255,0.07);
@@ -221,7 +221,7 @@ body {
 .lp-badge.credit  { background: rgba(226,75,74,0.2);   color: #f09595; }
 .lp-badge.pending { background: rgba(239,159,39,0.2);  color: #fac775; }
 
-/* ─── FEATURES ─── */
+/* Features Section */
 .lp-features-section {
     padding: 56px 2rem;
     background: #fff;
@@ -272,7 +272,7 @@ body {
     line-height: 1.65;
 }
 
-/* ─── FOOTER ─── */
+/* Footer */
 .lp-footer {
     background: #142e1a;
     padding: 28px 2rem;
@@ -355,7 +355,7 @@ body {
     color: rgba(255,255,255,0.3);
 }
 
-/* ─── RESPONSIVE ─── */
+/* Responsive Styles */
 @media (max-width: 900px) {
     .lp-features-inner { grid-template-columns: 1fr 1fr; }
 }
