@@ -337,7 +337,6 @@ def stock_view(request):
             buying_price_raw = request.POST.get('buying_price', '').strip()
             minimum_stock_raw = request.POST.get('minimum_stock', '0').strip()
 
-            # Helper function to render errors for Add modal
             def error_render():
                 items = StockItem.objects.all().order_by('-id')
                 total_items = items.count()
@@ -365,15 +364,14 @@ def stock_view(request):
                     'posted_supplier': supplier,
                 })
 
-            # Server-side validation for Add Stock
             if not item_name:
                 messages.error(request, 'Item name is required.', extra_tags='add_item_name_error')
                 return error_render()
-            
+
             if not quantity_raw:
                 messages.error(request, 'Quantity is required.', extra_tags='add_quantity_error')
                 return error_render()
-            
+
             try:
                 quantity = int(quantity_raw)
                 if quantity < 0:
@@ -382,11 +380,11 @@ def stock_view(request):
             except ValueError:
                 messages.error(request, 'Quantity must be a valid number.', extra_tags='add_quantity_error')
                 return error_render()
-            
+
             if not selling_price_raw:
                 messages.error(request, 'Selling price is required.', extra_tags='add_selling_price_error')
                 return error_render()
-            
+
             try:
                 selling_price = Decimal(selling_price_raw)
                 if selling_price <= 0:
@@ -395,11 +393,11 @@ def stock_view(request):
             except:
                 messages.error(request, 'Selling price must be a valid number.', extra_tags='add_selling_price_error')
                 return error_render()
-            
+
             if not buying_price_raw:
                 messages.error(request, 'Buying price is required.', extra_tags='add_buying_price_error')
                 return error_render()
-            
+
             try:
                 buying_price = Decimal(buying_price_raw)
                 if buying_price <= 0:
@@ -408,16 +406,15 @@ def stock_view(request):
             except:
                 messages.error(request, 'Buying price must be a valid number.', extra_tags='add_buying_price_error')
                 return error_render()
-            
+
             if buying_price > selling_price:
                 messages.error(request, 'Buying price cannot be greater than selling price.', extra_tags='add_buying_price_error')
                 return error_render()
-            
+
             if not category:
                 messages.error(request, 'Category is required.', extra_tags='add_category_error')
                 return error_render()
 
-            # Check if item exists to update quantity
             existing_item = StockItem.objects.filter(item_name=item_name, category=category, unit=unit, supplier=supplier).first()
             if existing_item:
                 additional_quantity = int(quantity_raw or 0)
@@ -454,7 +451,6 @@ def stock_view(request):
             minimum_stock_raw = request.POST.get('minimum_stock', '0').strip()
             status = request.POST.get('status', 'Active')
 
-            # Helper function to render errors for Edit modal
             def error_render_edit():
                 items = StockItem.objects.all().order_by('-id')
                 total_items = items.count()
@@ -484,15 +480,14 @@ def stock_view(request):
                     'edit_status': status,
                 })
 
-            # Server-side validation for Edit Stock
             if not item_name:
                 messages.error(request, 'Item name is required.', extra_tags='edit_item_name_error')
                 return error_render_edit()
-            
+
             if not quantity_raw:
                 messages.error(request, 'Quantity is required.', extra_tags='edit_quantity_error')
                 return error_render_edit()
-            
+
             try:
                 quantity = int(quantity_raw)
                 if quantity < 0:
@@ -501,11 +496,11 @@ def stock_view(request):
             except ValueError:
                 messages.error(request, 'Quantity must be a valid number.', extra_tags='edit_quantity_error')
                 return error_render_edit()
-            
+
             if not selling_price_raw:
                 messages.error(request, 'Selling price is required.', extra_tags='edit_selling_price_error')
                 return error_render_edit()
-            
+
             try:
                 selling_price = Decimal(selling_price_raw)
                 if selling_price <= 0:
@@ -514,11 +509,11 @@ def stock_view(request):
             except:
                 messages.error(request, 'Selling price must be a valid number.', extra_tags='edit_selling_price_error')
                 return error_render_edit()
-            
+
             if not buying_price_raw:
-                messages.error(request, 'Buying price is required.', extra_tags='edit_buying_price_error')
+                messages.error(request, 'Buying price is required.', extra_tags='add_buying_price_error')
                 return error_render_edit()
-            
+
             try:
                 buying_price = Decimal(buying_price_raw)
                 if buying_price <= 0:
@@ -527,16 +522,15 @@ def stock_view(request):
             except:
                 messages.error(request, 'Buying price must be a valid number.', extra_tags='edit_buying_price_error')
                 return error_render_edit()
-            
+
             if buying_price > selling_price:
                 messages.error(request, 'Buying price cannot be greater than selling price.', extra_tags='edit_buying_price_error')
                 return error_render_edit()
-            
+
             if not category:
                 messages.error(request, 'Category is required.', extra_tags='edit_category_error')
                 return error_render_edit()
 
-            # Update the item
             item.item_name = item_name
             item.category = category
             item.quantity = quantity
@@ -620,13 +614,11 @@ def add_sale_view(request):
         payment_method = request.POST.get('payment_method', 'Cash')
         notes = request.POST.get('notes', '').strip()
 
-        # Context to re-render the form with errors
         def error_context(extra_tags=''):
             return {
                 'stock_items': StockItem.objects.filter(quantity__gt=0, status='Active').order_by('item_name'),
                 'registered_customers': Customer.objects.all().order_by('full_name'),
                 'now': datetime.now(),
-                # Pass back what user typed so form repopulates
                 'posted_customer_name': customer_name,
                 'posted_phone': phone_number,
                 'posted_notes': notes,
@@ -637,7 +629,6 @@ def add_sale_view(request):
                 'error_field': extra_tags,
             }
 
-        # ---- SERVER-SIDE VALIDATION ----
         if not customer_name:
             messages.error(request, 'Customer name is required.', extra_tags='customer_name_error')
             return render(request, 'nyondoapp/record_sales.html', error_context('customer_name_error'))
@@ -654,7 +645,6 @@ def add_sale_view(request):
         if not valid_item_ids:
             messages.error(request, 'Please select at least one item.', extra_tags='items_error')
             return render(request, 'nyondoapp/record_sales.html', error_context('items_error'))
-        # ---- END VALIDATION ----
 
         registered_customer = None
         if payment_status.capitalize() == 'Credit':
@@ -763,7 +753,7 @@ def edit_sale_view(request, sale_id):
         return denied
 
     sale = get_object_or_404(Sale, id=sale_id)
-    
+
     if request.method == 'POST':
         customer_name = request.POST.get('customer_name', '').strip()
         phone_number = request.POST.get('phone_number', '').strip()
@@ -775,7 +765,6 @@ def edit_sale_view(request, sale_id):
         }
         payment_method = payment_method_map.get(request.POST.get('payment_method', 'Cash'), 'Cash')
 
-        # Helper function to render errors
         def error_render():
             sales_list = Sale.objects.prefetch_related('items__stock_item').all()
             context = {
@@ -798,7 +787,6 @@ def edit_sale_view(request, sale_id):
             }
             return render(request, 'nyondoapp/sales_list.html', context)
 
-        # Server-side validation
         if not customer_name:
             messages.error(request, 'Customer name is required.', extra_tags='edit_customer_name_error')
             return error_render()
@@ -811,15 +799,13 @@ def edit_sale_view(request, sale_id):
             messages.error(request, 'Enter a valid Ugandan phone number (e.g. 0701234567).', extra_tags='edit_phone_error')
             return error_render()
 
-        # Update basic sale details
         sale.customer_name = customer_name
         sale.phone_number = phone_number
         sale.payment_status = payment_status
         sale.payment_method = payment_method
 
-        # Update each sale item
         sale_item_ids = request.POST.getlist('sale_item_id')
-        
+
         if not sale_item_ids:
             messages.error(request, 'At least one item is required for the sale.', extra_tags='edit_items_error')
             return error_render()
@@ -839,22 +825,18 @@ def edit_sale_view(request, sale_id):
 
             new_stock_item = get_object_or_404(StockItem, id=new_item_id)
 
-            # Restore old stock quantity
             if sale_item.stock_item:
                 sale_item.stock_item.quantity += sale_item.quantity
                 sale_item.stock_item.save()
 
-            # Check new stock has enough
             if new_quantity > new_stock_item.quantity:
                 messages.error(request, f'Not enough stock for {new_stock_item.item_name}. Only {new_stock_item.quantity} available.', extra_tags='edit_items_error')
                 items_valid = False
                 break
 
-            # Deduct new quantity from stock
             new_stock_item.quantity -= new_quantity
             new_stock_item.save()
 
-            # Update the sale item
             new_unit_price = new_stock_item.selling_price
             new_line_total = new_unit_price * new_quantity
             sale_item.stock_item = new_stock_item
@@ -868,7 +850,6 @@ def edit_sale_view(request, sale_id):
         if not items_valid:
             return error_render()
 
-        # Recalculate sale totals
         sale.subtotal = new_subtotal
         sale.total_amount = new_subtotal + sale.transport_charge
         sale.save()
@@ -944,7 +925,8 @@ def sales_list_view(request):
     }
     return render(request, 'nyondoapp/sales_list.html', context)
 
-# SUPPLIERS LIST VIEW - displays all suppliers
+
+# SUPPLIERS LIST VIEW
 @login_required(login_url='login')
 def suppliers_view(request):
     denied = require_roles(request, ACCOUNTS_ROLE, MANAGER_ROLE)
@@ -977,7 +959,8 @@ def suppliers_view(request):
     }
     return render(request, 'nyondoapp/suppliers.html', context)
 
-# ADD SUPPLIER VIEW - handles adding a new supplier
+
+# ADD SUPPLIER VIEW
 @login_required(login_url='login')
 def add_supplier_view(request):
     denied = require_roles(request, ACCOUNTS_ROLE, MANAGER_ROLE)
@@ -1016,14 +999,10 @@ def add_supplier_view(request):
                 'posted_notes': notes,
             })
 
-        # Server-side validation
-        
-        # Supplier Name - Required
         if not supplier_name:
             messages.error(request, 'Supplier name is required.', extra_tags='supplier_name_error')
             return error_render('supplier_name_error')
 
-        # Phone Number - Required
         if not phone:
             messages.error(request, 'Phone number is required.', extra_tags='phone_error')
             return error_render('phone_error')
@@ -1036,38 +1015,34 @@ def add_supplier_view(request):
             messages.error(request, 'A supplier with this phone number already exists.', extra_tags='phone_error')
             return error_render('phone_error')
 
-        # TIN Number - Required
         if not tin_number:
             messages.error(request, 'TIN number is required.', extra_tags='tin_error')
             return error_render('tin_error')
-        
+
         if not tin_number.isdigit() or len(tin_number) != 10:
             messages.error(request, 'TIN number must be exactly 10 digits (numbers only).', extra_tags='tin_error')
             return error_render('tin_error')
-        
+
         if Supplier.objects.filter(tin_number=tin_number).exists():
             messages.error(request, 'A supplier with this TIN number already exists.', extra_tags='tin_error')
             return error_render('tin_error')
 
-        # Email - Required
         if not email:
             messages.error(request, 'Email address is required.', extra_tags='email_error')
             return error_render('email_error')
-        
+
         if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
             messages.error(request, 'Please enter a valid email address (e.g., supplier@example.com).', extra_tags='email_error')
             return error_render('email_error')
 
-        # Location - Required
         if not location:
             messages.error(request, 'Location is required.', extra_tags='location_error')
             return error_render('location_error')
 
-        # Payment Terms - Required
         if not payment_terms:
             messages.error(request, 'Payment terms are required.', extra_tags='payment_terms_error')
             return error_render('payment_terms_error')
-        
+
         try:
             payment_terms_int = int(payment_terms)
             if payment_terms_int not in [0, 7, 15, 30]:
@@ -1076,9 +1051,6 @@ def add_supplier_view(request):
         except ValueError:
             messages.error(request, 'Payment terms must be a valid number.', extra_tags='payment_terms_error')
             return error_render('payment_terms_error')
-
-        # Initial Balance - Optional
-        # Notes - Optional
 
         Supplier.objects.create(
             supplier_name=supplier_name,
@@ -1095,7 +1067,7 @@ def add_supplier_view(request):
     return redirect('suppliers')
 
 
-# EDIT SUPPLIER VIEW - handles editing a supplier
+# EDIT SUPPLIER VIEW
 @login_required(login_url='login')
 def edit_supplier_view(request, supplier_id):
     denied = require_roles(request, ACCOUNTS_ROLE, MANAGER_ROLE)
@@ -1136,14 +1108,10 @@ def edit_supplier_view(request, supplier_id):
                 'posted_edit_notes': notes,
             })
 
-        # Server-side validation
-        
-        # Supplier Name - Required
         if not supplier_name:
             messages.error(request, 'Supplier name is required.', extra_tags='edit_supplier_name_error')
             return error_render('edit_supplier_name_error')
 
-        # Phone Number - Required
         if not phone:
             messages.error(request, 'Phone number is required.', extra_tags='edit_phone_error')
             return error_render('edit_phone_error')
@@ -1156,38 +1124,34 @@ def edit_supplier_view(request, supplier_id):
             messages.error(request, 'Another supplier with this phone number already exists.', extra_tags='edit_phone_error')
             return error_render('edit_phone_error')
 
-        # TIN Number - Required
         if not tin_number:
             messages.error(request, 'TIN number is required.', extra_tags='edit_tin_error')
             return error_render('edit_tin_error')
-        
+
         if not tin_number.isdigit() or len(tin_number) != 10:
             messages.error(request, 'TIN number must be exactly 10 digits (numbers only).', extra_tags='edit_tin_error')
             return error_render('edit_tin_error')
-        
+
         if Supplier.objects.filter(tin_number=tin_number).exclude(id=supplier_id).exists():
             messages.error(request, 'Another supplier with this TIN number already exists.', extra_tags='edit_tin_error')
             return error_render('edit_tin_error')
 
-        # Email - Required
         if not email:
             messages.error(request, 'Email address is required.', extra_tags='edit_email_error')
             return error_render('edit_email_error')
-        
+
         if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
             messages.error(request, 'Please enter a valid email address (e.g., supplier@example.com).', extra_tags='edit_email_error')
             return error_render('edit_email_error')
 
-        # Location - Required
         if not location:
             messages.error(request, 'Location is required.', extra_tags='edit_location_error')
             return error_render('edit_location_error')
 
-        # Payment Terms - Required
         if not payment_terms:
             messages.error(request, 'Payment terms are required.', extra_tags='edit_payment_terms_error')
             return error_render('edit_payment_terms_error')
-        
+
         try:
             payment_terms_int = int(payment_terms)
             if payment_terms_int not in [0, 7, 15, 30]:
@@ -1241,7 +1205,7 @@ def supplier_transactions_view(request, supplier_id):
     return render(request, 'nyondoapp/supplier_transactions.html', context)
 
 
-# RECORD SUPPLIER TRANSACTION VIEW (UPDATED with error handling)
+# RECORD SUPPLIER TRANSACTION VIEW
 @login_required(login_url='login')
 def record_payment_view(request, supplier_id):
     denied = require_roles(request, ACCOUNTS_ROLE, MANAGER_ROLE)
@@ -1249,7 +1213,7 @@ def record_payment_view(request, supplier_id):
         return denied
 
     supplier = get_object_or_404(Supplier, id=supplier_id)
-    
+
     if request.method == 'POST':
         transaction_type = request.POST.get('transaction_type', 'Payment')
         amount_raw = request.POST.get('amount', '').strip()
@@ -1268,7 +1232,6 @@ def record_payment_view(request, supplier_id):
                 'posted_description': description,
             })
 
-        # Server-side validation
         if not amount_raw:
             messages.error(request, 'Amount is required.', extra_tags='amount_error')
             return error_render()
@@ -1282,7 +1245,6 @@ def record_payment_view(request, supplier_id):
             messages.error(request, 'Please enter a valid amount.', extra_tags='amount_error')
             return error_render()
 
-        # Create the transaction
         SupplierTransaction.objects.create(
             supplier=supplier,
             transaction_type=transaction_type,
@@ -1293,7 +1255,6 @@ def record_payment_view(request, supplier_id):
             created_by=request.user,
         )
 
-        # Update supplier balance
         if transaction_type == 'Credit':
             supplier.balance += amount
         elif transaction_type in ['Payment', 'Adjustment']:
@@ -1338,13 +1299,12 @@ def add_supplier_credit_view(request, supplier_id):
         return denied
 
     supplier = get_object_or_404(Supplier, id=supplier_id)
-    
+
     if request.method == 'POST':
         description = request.POST.get('description', '').strip()
         due_date = request.POST.get('due_date', '').strip()
         total_amount_raw = request.POST.get('total_amount', '').strip()
 
-        # Helper function to render errors
         def error_render():
             credits = supplier.credits.all()
             total_owed = sum(c.total_amount for c in credits)
@@ -1364,7 +1324,6 @@ def add_supplier_credit_view(request, supplier_id):
                 'low_stock_count': StockItem.objects.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count(),
             })
 
-        # Server-side validation
         if not description:
             messages.error(request, 'Description is required.', extra_tags='description_error')
             return error_render()
@@ -1388,7 +1347,6 @@ def add_supplier_credit_view(request, supplier_id):
             messages.error(request, 'Due date cannot be in the past.', extra_tags='due_date_error')
             return error_render()
 
-        # Save the credit
         SupplierCredit.objects.create(
             supplier=supplier,
             description=description,
@@ -1404,6 +1362,7 @@ def add_supplier_credit_view(request, supplier_id):
 
     return redirect('supplier_credit_detail', supplier_id=supplier.id)
 
+
 # RECORD CREDIT PAYMENT VIEW
 @login_required(login_url='login')
 def record_credit_payment_view(request, credit_id):
@@ -1413,11 +1372,10 @@ def record_credit_payment_view(request, credit_id):
 
     credit = get_object_or_404(SupplierCredit, id=credit_id)
     supplier = credit.supplier
-    
+
     if request.method == 'POST':
         amount_raw = request.POST.get('amount', '').strip()
 
-        # Helper function to render errors
         def error_render():
             credits = supplier.credits.all()
             total_owed = sum(c.total_amount for c in credits)
@@ -1436,7 +1394,6 @@ def record_credit_payment_view(request, credit_id):
                 'low_stock_count': StockItem.objects.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count(),
             })
 
-        # Server-side validation
         if not amount_raw:
             messages.error(request, 'Payment amount is required.', extra_tags='amount_error')
             return error_render()
@@ -1452,7 +1409,6 @@ def record_credit_payment_view(request, credit_id):
             messages.error(request, f'Amount exceeds balance due. Maximum payable is UGX {balance_remaining:,.0f}.', extra_tags='amount_error')
             return error_render()
 
-        # Save the payment
         SupplierCreditPayment.objects.create(
             credit=credit,
             amount=amount,
@@ -1504,7 +1460,7 @@ def customers_view(request):
     return render(request, 'nyondoapp/customers_list.html', context)
 
 
-# REGISTER CUSTOMER VIEW 
+# REGISTER CUSTOMER VIEW
 @login_required(login_url='login')
 def register_customer_view(request):
     denied = require_roles(request, ACCOUNTS_ROLE)
@@ -1530,12 +1486,10 @@ def register_customer_view(request):
                 'posted_notes': notes or '',
             })
 
-        # Full name validation
         if not full_name:
             messages.error(request, 'Full name is required.', extra_tags='full_name_error')
             return error_render()
 
-        # Phone number validation
         if not phone_number:
             messages.error(request, 'Phone number is required.', extra_tags='phone_error')
             return error_render()
@@ -1544,7 +1498,6 @@ def register_customer_view(request):
             messages.error(request, 'Enter a valid Ugandan phone number (e.g. 0701234567).', extra_tags='phone_error')
             return error_render()
 
-        # NIN validation - CORRECTED for alphanumeric NIN
         if not nin:
             messages.error(request, 'NIN is required.', extra_tags='nin_error')
             return error_render()
@@ -1554,37 +1507,30 @@ def register_customer_view(request):
             return error_render()
 
         nin_prefix = nin[:2]
-        nin_suffix = nin[2:]  # Remaining 12 characters (can be letters AND numbers)
+        nin_suffix = nin[2:]
 
         if nin_prefix not in ['CM', 'CF']:
             messages.error(request, 'Invalid NIN format. Must start with CM (Male) or CF (Female).', extra_tags='nin_error')
             return error_render()
 
-        
-        # NIN should only contain letters and numbers, no special characters
         if not nin_suffix.isalnum():
             messages.error(request, 'NIN can only contain letters and numbers (no special characters like @, #, $, etc.).', extra_tags='nin_error')
             return error_render()
 
-        # Check for duplicate NIN in database
         if Customer.objects.filter(nin=nin).exists():
             messages.error(request, f'A customer with NIN {nin} is already registered.', extra_tags='nin_error')
             return error_render()
 
-        # Check for duplicate full name (case-insensitive)
         if Customer.objects.filter(full_name__iexact=full_name).exists():
             messages.error(request, f'A customer named "{full_name}" is already registered. Please verify this is a different person.', extra_tags='full_name_error')
             return error_render()
 
-        # Check for duplicate phone number
         if Customer.objects.filter(phone_number=phone_number).exists():
             messages.error(request, 'A customer with this phone number is already registered.', extra_tags='phone_error')
             return error_render()
 
-        # Auto-detect gender from NIN prefix
         gender = 'M' if nin_prefix == 'CM' else 'F'
 
-        # Create the customer
         Customer.objects.create(
             full_name=full_name,
             phone_number=phone_number,
@@ -1600,7 +1546,7 @@ def register_customer_view(request):
     return render(request, 'nyondoapp/register_customer.html', {'low_stock_count': low_stock_count})
 
 
-# EDIT CUSTOMER VIEW (CORRECTED - NIN can have letters and numbers)
+# EDIT CUSTOMER VIEW
 @login_required(login_url='login')
 def edit_customer_view(request, customer_id):
     customer = get_object_or_404(Customer, id=customer_id)
@@ -1611,7 +1557,6 @@ def edit_customer_view(request, customer_id):
         area = request.POST.get('area', '').strip() or None
         notes = request.POST.get('notes', '').strip() or None
 
-        # NIN validation
         if not nin:
             messages.error(request, 'NIN is required.')
             return redirect('customers')
@@ -1627,20 +1572,16 @@ def edit_customer_view(request, customer_id):
             messages.error(request, 'Invalid NIN format. Must start with CM (Male) or CF (Female).')
             return redirect('customers')
 
-        # Check for invalid special characters
         if not nin_suffix.isalnum():
             messages.error(request, 'NIN can only contain letters and numbers (no special characters).')
             return redirect('customers')
 
-        # Check for duplicate NIN (excluding current customer)
         if Customer.objects.filter(nin=nin).exclude(id=customer.id).exists():
             messages.error(request, f'A customer with NIN {nin} is already registered.')
             return redirect('customers')
 
-        # Auto-detect gender from NIN prefix
         gender = 'M' if nin_prefix == 'CM' else 'F'
 
-        # Update customer
         customer.full_name = full_name
         customer.phone_number = phone_number
         customer.nin = nin
@@ -1789,7 +1730,6 @@ def create_deposit_view(request):
             'low_stock_count': low_stock_count,
         }
 
-        # ---- SERVER-SIDE VALIDATION ----
         if not customer_id:
             messages.error(request, 'Please select a registered customer.')
             return render(request, 'nyondoapp/create_deposit.html', context)
@@ -1812,7 +1752,6 @@ def create_deposit_view(request):
         if quantity_ordered < 0:
             messages.error(request, 'Estimated quantity cannot be negative.')
             return render(request, 'nyondoapp/create_deposit.html', context)
-        # ---- END VALIDATION ----
 
         customer = get_object_or_404(Customer, id=customer_id)
         stock_item = find_deposit_stock_item(item_type, available_only=False)
@@ -1842,16 +1781,24 @@ def deposit_detail_view(request, deposit_id):
         return denied
 
     deposit = get_object_or_404(Deposit, id=deposit_id)
+
+    # Calculate progress percentage towards savings goal
+    progress_percent = 0
+    if deposit.total_amount > 0:
+        progress_percent = int((deposit.amount_paid / deposit.total_amount) * 100)
+        progress_percent = min(progress_percent, 100)  # cap at 100%
+
     context = {
         'deposit': deposit,
         'payments': deposit.payments.all().order_by('-paid_at'),
         'low_stock_count': StockItem.objects.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count(),
         'today': datetime.now().date(),
+        'progress_percent': progress_percent,
     }
     return render(request, 'nyondoapp/deposit_detail.html', context)
 
 
-# RECORD DEPOSIT PAYMENT VIEW (UPDATED with validation)
+# RECORD DEPOSIT PAYMENT VIEW
 @login_required(login_url='login')
 def record_deposit_payment_view(request, deposit_id):
     denied = require_roles(request, ACCOUNTS_ROLE)
@@ -1859,14 +1806,13 @@ def record_deposit_payment_view(request, deposit_id):
         return denied
 
     deposit = get_object_or_404(Deposit, id=deposit_id)
-    
+
     if request.method == 'POST':
         amount_raw = request.POST.get('amount', '').strip()
         payment_method = request.POST.get('payment_method', 'Cash')
         reference_number = request.POST.get('reference_number', '').strip()
         note = request.POST.get('note', '').strip()
 
-        # Helper function to render errors
         def error_render():
             return render(request, 'nyondoapp/deposit_detail.html', {
                 'deposit': deposit,
@@ -1877,9 +1823,9 @@ def record_deposit_payment_view(request, deposit_id):
                 'posted_payment_amount': amount_raw,
                 'posted_reference': reference_number,
                 'posted_note': note,
+                'progress_percent': int(min((deposit.amount_paid / deposit.total_amount) * 100, 100)) if deposit.total_amount > 0 else 0,
             })
 
-        # Server-side validation
         if not amount_raw:
             messages.error(request, 'Payment amount is required.', extra_tags='payment_amount_error')
             return error_render()
@@ -1903,10 +1849,13 @@ def record_deposit_payment_view(request, deposit_id):
             paid_by=request.user,
         )
 
-        # Update deposit amount paid
+        # Update deposit amount paid and recalculate estimated value from current stock price
         deposit.amount_paid += amount
+        stock_item = find_deposit_stock_item(deposit.item_type, available_only=False)
+        if stock_item and deposit.quantity_ordered > 0:
+            deposit.total_amount = stock_item.selling_price * deposit.quantity_ordered
         deposit.save()
-        
+
         messages.success(request, f'Temporary receipt created for UGX {amount:,.0f}. Goods will be determined on collection day.')
         return redirect('deposit_receipt', payment_id=payment.id)
 
@@ -1939,15 +1888,20 @@ def deposit_receipt_view(request, payment_id):
         return denied
 
     payment = get_object_or_404(DepositPayment, id=payment_id)
+    deposit = payment.deposit
+    balance_due = deposit.total_amount - deposit.amount_paid if deposit.total_amount > 0 else None
+
     context = {
         'payment': payment,
-        'deposit': payment.deposit,
+        'deposit': deposit,
+        'balance_due': balance_due,
+        'progress_percent': int(min((deposit.amount_paid / deposit.total_amount) * 100, 100)) if deposit.total_amount > 0 else 0,
     }
     return render_receipt_response(
         request,
         'nyondoapp/deposit_receipt.html',
         context,
-        f'deposit-receipt-{payment.deposit.id}-payment-{payment.id}.html',
+        f'deposit-receipt-{deposit.id}-payment-{payment.id}.html',
     )
 
 
@@ -1994,7 +1948,7 @@ def collect_deposit_view(request, deposit_id):
     return redirect('collection_receipt', deposit_id=deposit.id)
 
 
-# EDIT DEPOSIT VIEW (UPDATED with validation)
+# EDIT DEPOSIT VIEW
 @login_required(login_url='login')
 def edit_deposit_view(request, deposit_id):
     denied = require_roles(request, ACCOUNTS_ROLE)
@@ -2014,17 +1968,17 @@ def edit_deposit_view(request, deposit_id):
         due_date = request.POST.get('due_date', '').strip()
         notes = request.POST.get('notes', '').strip() or None
 
-        # Helper function to render errors
         def error_render():
+            progress_percent = int(min((deposit.amount_paid / deposit.total_amount) * 100, 100)) if deposit.total_amount > 0 else 0
             return render(request, 'nyondoapp/deposit_detail.html', {
                 'deposit': deposit,
                 'payments': deposit.payments.all().order_by('-paid_at'),
                 'low_stock_count': StockItem.objects.filter(quantity__gt=0, quantity__lte=F('minimum_stock')).count(),
                 'today': datetime.now().date(),
                 'edit_error': True,
+                'progress_percent': progress_percent,
             })
 
-        # Server-side validation
         if not new_item_type:
             messages.error(request, 'Item type is required.', extra_tags='edit_item_type_error')
             return error_render()
@@ -2051,11 +2005,10 @@ def edit_deposit_view(request, deposit_id):
             messages.error(request, 'Expected collection date cannot be in the past.', extra_tags='edit_due_date_error')
             return error_render()
 
-        # Calculate new total amount
+        # Recalculate total amount from current stock price
         stock_item = find_deposit_stock_item(new_item_type, available_only=False)
         new_total = stock_item.selling_price * new_quantity if stock_item and new_quantity > 0 else Decimal('0')
-        
-        # Update deposit
+
         deposit.item_type = new_item_type
         deposit.quantity_ordered = new_quantity
         deposit.unit = unit

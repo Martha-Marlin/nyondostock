@@ -280,7 +280,7 @@
                                 <small class="text-muted">Goods not fixed until collection</small>
                             </div>
                             <div style="background: #e0e8e0; border-radius: 999px; height: 12px; overflow: hidden;">
-                                <div style="width: {% if deposit.amount_paid > 0 %}100{% else %}0{% endif %}%; height: 100%; border-radius: 999px; background: #1d9e75; transition: width 0.3s;"></div>
+                                <div style="width: {{ progress_percent }}%; height: 100%; border-radius: 999px; background: #1d9e75; transition: width 0.3s;"></div>
                             </div>
                         </div>
 

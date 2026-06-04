@@ -56,8 +56,18 @@
                     <span class="label">Goods Calculation</span>
                     <span class="value balance">At collection day price</span>
                 </div>
-                <div class="receipt-progress-bar-bg">
-                    <div class="receipt-progress-bar-fill" style="width: {% if payment.deposit.amount_paid > 0 %}100{% else %}0{% endif %}%;"></div>
+                <div class="receipt-row">
+    <span class="label">Balance Due</span>
+    <span class="value" style="color: #855000; font-weight: 600;">
+        {% if balance_due is not None %}
+            UGX {{ balance_due|floatformat:0 }}
+        {% else %}
+            Calculated at collection
+        {% endif %}
+    </span>
+</div>
+       <div class="receipt-progress-bar-bg">
+                    <div class="receipt-progress-bar-fill" style="width: {{ progress_percent }}%;"></div>
                 </div>
                 <div class="receipt-progress-label">Temporary payment received</div>
             </div>
