@@ -166,7 +166,6 @@ def store_manager_dashboard_view(request):
     if denied:
         return denied
 
-    today = timezone.now().date()
 
     all_items = StockItem.objects.all()
     total_items = all_items.count()
@@ -390,7 +389,7 @@ def stock_view(request):
                 if selling_price <= 0:
                     messages.error(request, 'Selling price must be greater than zero.', extra_tags='add_selling_price_error')
                     return error_render()
-            except:
+            except Exception:
                 messages.error(request, 'Selling price must be a valid number.', extra_tags='add_selling_price_error')
                 return error_render()
 
@@ -403,7 +402,7 @@ def stock_view(request):
                 if buying_price <= 0:
                     messages.error(request, 'Buying price must be greater than zero.', extra_tags='add_buying_price_error')
                     return error_render()
-            except:
+            except Exception:
                 messages.error(request, 'Buying price must be a valid number.', extra_tags='add_buying_price_error')
                 return error_render()
 
@@ -506,7 +505,7 @@ def stock_view(request):
                 if selling_price <= 0:
                     messages.error(request, 'Selling price must be greater than zero.', extra_tags='edit_selling_price_error')
                     return error_render_edit()
-            except:
+            except Exception:
                 messages.error(request, 'Selling price must be a valid number.', extra_tags='edit_selling_price_error')
                 return error_render_edit()
 
@@ -519,7 +518,7 @@ def stock_view(request):
                 if buying_price <= 0:
                     messages.error(request, 'Buying price must be greater than zero.', extra_tags='edit_buying_price_error')
                     return error_render_edit()
-            except:
+            except Exception:
                 messages.error(request, 'Buying price must be a valid number.', extra_tags='edit_buying_price_error')
                 return error_render_edit()
 
@@ -1241,7 +1240,7 @@ def record_payment_view(request, supplier_id):
             if amount <= 0:
                 messages.error(request, 'Amount must be greater than zero.', extra_tags='amount_error')
                 return error_render()
-        except:
+        except Exception:
             messages.error(request, 'Please enter a valid amount.', extra_tags='amount_error')
             return error_render()
 
@@ -1835,7 +1834,7 @@ def record_deposit_payment_view(request, deposit_id):
             if amount <= 0:
                 messages.error(request, 'Payment amount must be greater than zero.', extra_tags='payment_amount_error')
                 return error_render()
-        except:
+        except Exception:
             messages.error(request, 'Please enter a valid amount.', extra_tags='payment_amount_error')
             return error_render()
 
