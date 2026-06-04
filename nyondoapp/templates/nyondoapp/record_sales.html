@@ -219,8 +219,6 @@
                                                 min="1"
                                                 value="1"
                                             />
-                                        </div>
-</div>
                                         </td>
                                         <td>
                                             <input
@@ -231,8 +229,7 @@
                                                 placeholder="Auto-filled"
                                                 style="background:#f4f9f6;"
                                             />
-                                        </div>
-</div>
+
                                         </td>
                                         <td>
                                             <input
@@ -242,18 +239,14 @@
                                                 placeholder="0"
                                                 style="background:#f4f9f6; font-weight:600;"
                                             />
-                                        </div>
-</div>
+
                                         </td>
                                         <td class="text-center">
                                             <!-- First row has no remove button -->
-                                        </div>
-</div>
-                                    </div>
-</div>
+                                                                                     </td>
+                                    </tr>
                                 </tbody>
-                            </div>
-</div>
+                            </table>
                         </div>
 
                         {% for message in messages %}{% if 'items_error' in message.tags %}<div class="text-danger small mt-1">{{ message }}</div>{% endif %}{% endfor %}
