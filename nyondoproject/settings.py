@@ -132,3 +132,4 @@ SESSION_COOKIE_SECURE = False  # Set True in production with HTTPS
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+CSRF_TRUSTED_ORIGINS = ['https://web-production-32224.up.railway.app']
